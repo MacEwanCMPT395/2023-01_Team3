@@ -4,4 +4,4 @@
 *This repository will contain a classroom scheduling app*
 
 ##Group Members:
-*Vlad Moise
+*Vlad Moise*
