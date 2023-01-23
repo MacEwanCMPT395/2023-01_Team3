@@ -5,3 +5,4 @@
 
 ##Group Members:
 * Vlad Moise
+* Richard Zhu
