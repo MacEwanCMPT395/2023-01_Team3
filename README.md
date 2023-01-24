@@ -5,4 +5,4 @@
 
 ##Group Members:
 * Vlad Moise
-* Richard Zhu (forked)
+* Richard Zhu
