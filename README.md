@@ -7,3 +7,4 @@
 * Vlad Moise
 * Richard Zhu
 * Victor Tadros
+* Sage Jurr
