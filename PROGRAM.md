@@ -68,3 +68,7 @@ Data we need to make before the CSV is given to us to determine class order and 
 * Half Hour Increments
 * Hourly Limitations (i.e. before or after a certain time of day)
   * These limitations can be given by the program the class is a part of.
+
+In short, there should be both macro and micro elements to be edited and specified
+* weekly limitations such as no class on fridays, saturdays or sundays
+* But also, specific holidays that days cannot fall on.
