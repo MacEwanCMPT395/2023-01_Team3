@@ -47,3 +47,24 @@ Things to Think about
 * What will our for loops look like?
 * How will we determine how to place a class?
   * The class must be on certain days?
+
+Programming Order
+* We should make the algorithms for the data first
+* Like efficiently placing classes, etc.
+* We are not sure when we will be given the csv data so we should create our own data for now. Opening and dispersing the data into lists will be the easy part.
+  * If we make our program flexible, this shouldn't be an issue anyways.
+
+Data we need to make before the CSV is given to us to determine class order and whatnot
+* Schedule information
+
+
+## Editor Approach:
+* Semester
+  * Start and End Semester Dates
+  * Holiday and Cancellation Dates
+* Weekly
+  * Weekly restrictions (only certain days, or NOT on only certain days)
+* Daily
+* Half Hour Increments
+* Hourly Limitations (i.e. before or after a certain time of day)
+  * These limitations can be given by the program the class is a part of.
