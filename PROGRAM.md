@@ -45,3 +45,5 @@ Things to Think about
 * How to most efficiently use classrooms? (I have this figured out)
 * How will we edit the classes, and determine order, etc?
 * What will our for loops look like?
+* How will we determine how to place a class?
+  * The class must be on certain days?
