@@ -181,6 +181,7 @@ button3.grid(row=12, column=1, padx=5, pady=5)
 
 # View
 
+
 button_view = Button(tab2, text="View All", width=12, bg="#03A9F4", fg='#fff', command=view_all_users)
 button_view.grid(row=1, column=0, padx=10, pady=10)
 tree= ttk.Treeview(tab2, column=("column1", "column2", "column3", "column4", "column5", "column6", "column7",), show='headings')
