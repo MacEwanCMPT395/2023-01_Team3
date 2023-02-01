@@ -30,7 +30,16 @@ class Classroom:
         self.capacity = capacity
         self.lab_room = lab_room
 
+'''
+Notes from Graham:
 
+Considering the time_slot thing, we should make the time slots 
+and days being taught specific to the course/class itself.
+i.e. class can only be taught between a certain hour at certain days of week.
+We can do this using a white list of days not including holidays or cancellations
+which we will account for. The question is how to organize this data.
+I'll make my own pull requests with my edits later today.
+'''
 class Schedule:
     def __init__(self, student, degree, program, courses, classrooms):
         self.student = student
