@@ -23,16 +23,16 @@
   * To specify class times, restrictions etc
   * Specify order, unavailable days, holidays, etc
 
-## Pseudocode?
+## Pseudocode? (IGNORE THIS IS OLD)
 * Open class file
-* Sort data into dictionaries
+* Sort data into dictionaries or classes (needs to be opened and sorted)
   * Programs
     * Program A
       * Student Count
     * Program B
     * 
-  * Classes
-    * Class A
+  * Courses
+    * Course A
       * Class Length (per meeting, e.g. 2hrs)
       * Total Class Length (e.g. 35 hours) (we should have the class length plus the length of one class when we use the data. Or let the user specify this
       * Requirements
@@ -58,7 +58,7 @@ Data we need to make before the CSV is given to us to determine class order and 
 * Schedule information
 
 
-## Editor Approach:
+## Editor Approach (IGNORE OLD):
 * Semester
   * Start and End Semester Dates
   * Holiday and Cancellation Dates
@@ -78,5 +78,3 @@ In short, there should be both macro and micro elements to be edited and specifi
 * Hourly Level
 * Within-Hour Level
   * Many concurrent classes
-
-
