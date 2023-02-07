@@ -61,6 +61,7 @@ Dec 26-31 (christmas)
 Reading Week Winter (4 days after Family Day)
 Reading Week Fall (4 days after Remembrance Day)
 '''
+
 # While I was proud of my time conversions, with the use of
 # the datetime library, we don't need to do these conversions
 # anymore :)
@@ -78,12 +79,11 @@ for date,name in holidays:
     # Remove the unobserved days of holidays.
     if " (Observed)" == name[-11:]:
         cancellations.pop(date)
-                
+
     if name == "Family Day" or name == "Remembrance Day":
         for i in range(1,5):
             cancellations[date+datetime.timedelta(days=i)] = "Reading Week"
-            
-            
+       
 year = 2023
 cancellations[datetime.date(year,9,30)] = "National Day for Truth and Reconciliation"
 
@@ -111,6 +111,5 @@ while currdate != enddate:
 
     currdate = currdate+datetime.timedelta(days=1)
 
-    
 #print(days)
 #print(len(days["Monday"]))
