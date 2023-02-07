@@ -11,6 +11,8 @@
 # other missing info and ask the user if they want to fill it in.
 # This will also make it easy to create and remove stuff.
 
+# We should consider using the pickle module from CMPT103
+
 programinfo = {
     "PCOM":{
         "Term":{
