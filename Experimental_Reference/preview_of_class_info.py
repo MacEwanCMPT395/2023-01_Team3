@@ -3,11 +3,13 @@
 # A file for Programs
 # A file for Courses
 # A file for populations
+# A file for available classrooms and their availability.
 
 # Then we can import it here, skip the dictionaries and
 # create the classes immediately.
 # This way we can also check for missing classes and
 # other missing info and ask the user if they want to fill it in.
+# This will also make it easy to create and remove stuff.
 
 programinfo = {
     "PCOM":{
