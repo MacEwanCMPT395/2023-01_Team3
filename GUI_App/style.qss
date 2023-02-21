@@ -1,0 +1,40 @@
+/*= Style for mainwindow START
+  ==================================================== */
+	#MainWindow {
+		background-color: #fff;
+	}
+/*= END
+  ==================================================== */
+
+
+  /*= Style for menu with icon and text START
+  ==================================================== */
+	/* style for widget */
+	#menu_widget {
+		background-color: #313a46;
+	}
+
+    /* style for QPushButton */
+	#menu_widget QPushButton {
+		border:none;
+		border-radius: 3px;
+		text-align: left;
+		padding: 8px 0 8px 15px;
+		color: #788596;
+	}
+
+	#menu_widget QPushButton:hover {
+		background-color: rgba( 86, 101, 115, 0.5);
+	}
+
+	#menu_widget QPushButton:checked {
+		color: #fff;
+	}
+
+    /* style for 'Scheduler' */
+    #title_label {
+        color: #D2D6EF;
+    }
+    
+/*= END
+  ==================================================== */
