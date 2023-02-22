@@ -155,7 +155,7 @@ class Ui_Form(object):
         mondays_count, wednesdays_count = self.count_mon_wed(date_start, date_end)
         tuesday_count, thursday_count = self.count_tue_thu(date_start,date_end)
 
-
+        # calculate if Sept 30 (day off) falls on a school day, if so subtract it from that day.
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
         sept_30 = self.get_sept30_day(int(year))
         if term == 'Fall':
@@ -165,12 +165,14 @@ class Ui_Form(object):
         # Mondays/wednesdays count are -1 to account for reading week
         core_hours_per_term = self.total_core_term_teaching_hours((mondays_count - 1) + (wednesdays_count -1))
 
+
         self.summary.setText(f'Term selected: {term}.\nTerm Start Date: {date_start}.\n' +
                              f'Term End Date: {date_end}\n\n'+
                              f'The number of Mondays: {mondays_count-1}, and Wednesdays: {wednesdays_count-1}\n'+
                              f'The number of Tuesdays: {tuesday_count-1}, and Thursdsays: {thursday_count-1}'+
                              f'\n\nBased on the number of Mondays and Wednesdays in the {term} {year} Term there are {core_hours_per_term} '+
-                             f'teaching hours dedicated to Core Programs Courses.')
+                             f'teaching hours dedicated to Core Programs Courses.' + 
+                             f'\n\nBased on the available classrooms and their sizes, there is a capacity for 244 students during one teachable block.')
         
 
     def retranslateUi(self, Form):

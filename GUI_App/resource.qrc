@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>Icons2/download-2-32.ico</file>
+    <file>Icons2/calendar.png</file>
+    <file>Icons2/account-logout-32.ico</file>
+    <file>Icons2/database-32.ico</file>
+    <file>Icons2/home-32.ico</file>
+    <file>Icons2/menu-4-32.ico</file>
+    <file>Icons2/tear-of-calendar-32.ico</file>
+  </qresource>
+</RCC>
