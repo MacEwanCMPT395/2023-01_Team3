@@ -13,6 +13,7 @@ class Schedule:
         self.program = program
         self.courses = courses
         self.classrooms = classrooms
+        # self.unsched_courses = []   #unscheduled_courses waiting to be scheduled
     
    
     def display_schedule(self, classroom):
@@ -34,11 +35,12 @@ class Schedule:
                 # loop through core courses
                 for key, values in self.degree.core_courses.items():
                     for course in values:
-                    # check if the course can be scheduled on the current day and classroom
                         if course.lecture_duration in [1.5, 2]: 
+                            # check if the course can be scheduled on the current day and classroom
                             if day == "Monday":
                                 schedule_on_day = self.check_availability(course, day, classroom)
                                 schedule_on_occurences = self.course_occurence(course, day, classroom)
+                                # is_scheduled = not self.is_course_scheduled(course, classroom)
                                 if schedule_on_day and schedule_on_occurences:
                                     # schedule the course on the current day and classroom
                                     self.schedule_course(course, day, classroom)
@@ -50,6 +52,7 @@ class Schedule:
                                 if course in classroom.schedule["Monday"]:
                                     schedule_on_day = self.check_availability(course, day, classroom)
                                     schedule_on_occurences = self.course_occurence(course, day, classroom)
+                                    # is_scheduled = not self.is_course_scheduled(course, classroom)
                                     if schedule_on_day and schedule_on_occurences:
                                         # schedule the course on the current day and classroom
                                         self.schedule_course(course, day, classroom)
@@ -103,8 +106,18 @@ class Schedule:
                                 self.schedule_course(course, day, classroom)
                             else:
                                 print(f"Cannot schedule {course.course_id} on {day}")
-        
 
+        
+    # def is_course_scheduled(self, course, classroom):
+    #     # loop through each day of the classroom schedule
+    #     for day, courses in classroom.schedule.items():
+    #         # loop through each scheduled course for the given day
+    #         for scheduled_course in courses:
+    #             # if the course is already scheduled to the classroom, return False
+    #             if course == scheduled_course:
+    #                 return False
+    #     # if the course is not already scheduled to the classroom, return True
+    #     return True
 
     '''
     check_availability: will verify if a course is allowed to be placed in a classroom's schedule
@@ -118,7 +131,7 @@ class Schedule:
             for scheduled_course in classroom.schedule[day]:
         
                 # Find the last course that was scheduled in the classroom's schedule
-                if scheduled_course.course_id == classroom.schedule[day][-1].course_id:
+                if scheduled_course == classroom.schedule[day][-1]:
         
                     # calculate the end time of the scheduled course
                     scheduled_course_end_time = scheduled_course.lecture_start_time + scheduled_course.lecture_duration
@@ -218,10 +231,16 @@ class Schedule:
                         print(f"Cannot schedule {course.course_id} on {day} as it overlaps with {scheduled_course.course_id}")
                         return False
                     
-                    # Check if the end time of the course exceeds the end time of the time slot for the given day
-                    elif course.lecture_end_time > classroom.time_slot[day]["end"] or course.lecture_end_time > classroom.time_slot_lab[day]["end"]:
-                        print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
-                        return False
+                    if classroom.lab_room == True:
+                        if course.lecture_end_time > classroom.time_slot_lab[day]["end"]:
+                            print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
+                            return False
+                    else:
+                        # Check if the end time of the course exceeds the end time of the time slot for the given day
+                        if course.lecture_end_time > classroom.time_slot[day]["end"]:
+                            print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
+                            return False
+
             
             # If the new course does not overlap with any other courses, add it to the schedule for the given day
             classroom.schedule[day].append((course))

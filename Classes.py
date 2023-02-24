@@ -92,8 +92,8 @@ class Classroom:
                 "Wednesday": {"start": 8, "end": 17}, \
                     "Thursday": {"start": 8, "end": 17},}
 
-        self.time_slot_lab = {"Monday": {"start": 17, "end": 20},\
-            "Tuesday": {"start": 17, "end": 20}, \
-                "Wednesday": {"start": 17, "end": 20}, \
-                    "Thursday": {"start": 17, "end": 20},}
+        self.time_slot_lab = {"Monday": {"start": 8, "end": 20},\
+            "Tuesday": {"start": 8, "end": 20}, \
+                "Wednesday": {"start": 8, "end": 20}, \
+                    "Thursday": {"start": 8, "end": 20},}
         self.schedule = {}
