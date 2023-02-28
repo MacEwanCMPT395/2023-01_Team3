@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog 
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog , QLineEdit
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
 
 import pandas as pd
@@ -22,11 +22,11 @@ class MainWindow(QMainWindow):
 
         self.df = None  # initialize the variable
 
-        self.ui.file_name_input.returnPressed.connect(self.browse_file)
+        self.ui.file_name_input.mousePressEvent = self.browse_file
         
 
     @pyqtSlot()
-    def browse_file(self):
+    def browse_file(self, event):
         file_name, _ = QFileDialog.getOpenFileName(self, "Select file", "", "CSV files (*.csv);;Excel files (*.xls *.xlsx)")
         if file_name:
             self.ui.file_name_input.setText(file_name)
