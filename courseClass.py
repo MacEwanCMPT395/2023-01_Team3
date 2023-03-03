@@ -5,6 +5,7 @@ Program Desc: Schedule core courses Monday/Wednesday, and program courses on Tue
 '''
 
 from Classes import *
+import pandas as pd
 
 class Schedule:
     def __init__(self, student, degree, program, courses, classrooms):
@@ -16,7 +17,7 @@ class Schedule:
         self.scheduled_courses = []
         # self.unsched_courses = []   #unscheduled_courses waiting to be scheduled
     
-   
+
     def display_schedule(self, classroom):
         print(f"\n{classroom.classroom_id}: ")
         for day in classroom.schedule:
@@ -285,3 +286,25 @@ class Schedule:
                 classroom.schedule[day][empty_slot_index] = course
                 print(f"Scheduled {course.course_id} on {day} at {course.lecture_start_time}")
                 return True
+            
+def read_csv(fileName):
+    # Function to read csv file and store in class structures for scheduler.
+    df = pd.read_csv(fileName)
+    courses = [] # update with created class objects as scanned
+    courseIDs = [] # list for program initialization after scanning whole csv
+    terms = []
+    #print(len(df))
+    for i in range(len(df)):
+        # df.values returns an array which is why I must surround it with brackets and then call for index 0 each time I append a courseID same goes for the courses creation
+        courseIDs.append((df.values[[i],[1]])[0])
+        terms.append((df.values[[i],[3]])[0])
+        courses.append(Course((df.values[[i],[1]])[0], 40, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], 0))
+        # Note 40 is the max capacity we dont have a field for this so I just chose 40 for now, and then 0 is the course_type which we also dont have a column for so I default set to 0
+    print(df)
+    print()
+    print(courseIDs)
+    print()
+    print(terms)
+    #print(courses)
+    #print(df.iloc[[i],[1]])
+    print(df.values[i][1])

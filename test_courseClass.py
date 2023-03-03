@@ -183,6 +183,14 @@ class TestStudentSchedule(unittest.TestCase):
         print("\n")
         print(f"===================================")
 
+    def test_read_csv(self):
+        # Please note I need to figure out how to change path so it's more universal but for now I use my own path on my PC
+        print(f"\n===================================")
+        print(f"\n=====Testing read_csv=====\n")
+        read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv")
+        print("\n")
+        print(f"===================================")
+
 
 if __name__ == '__main__':
     unittest.main()
