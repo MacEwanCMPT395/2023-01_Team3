@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file './Scheduler1.ui'
+# Form implementation generated from reading ui file 'd:\MacEwan\CMPT 395\Project\2023-01_Team3_VLAD\GUI_App\Scheduler1.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.1
 #
