@@ -14,13 +14,21 @@
 		background-color: #313a46;
 	}
 
+	#stackedWidget {
+		background-image: url("BG2.png");
+    	background-repeat: no-repeat;
+    	background-position: center center;
+    	background-size: cover;
+
+	}
+
     /* style for QPushButton */
 	#menu_widget QPushButton {
 		border:none;
 		border-radius: 3px;
 		text-align: left;
 		padding: 8px 0 8px 15px;
-		color: #788596;
+		color: #c0c9d2;
 	}
 
 	#menu_widget QPushButton:hover {
@@ -33,7 +41,7 @@
 
     /* style for 'Scheduler' */
     #title_label {
-        color: #D2D6EF;
+        color: #e0e1ea;
     }
     
 /*= END

@@ -1,7 +1,7 @@
 import sys
 
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, QComboBox
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
 
 import pandas as pd
@@ -18,10 +18,25 @@ class MainWindow(QMainWindow):
 
         self.ui.stackedWidget.setCurrentWidget(self.ui.page1)
 
+        ############ Buttons Clicked ############################
         self.ui.data_page_button.clicked.connect(self.showDataPage)
         self.ui.schedule_page_button.clicked.connect(self.showSchedulePage)
-
         self.ui.load_data_button.clicked.connect(self.load_data)
+        self.ui.room_533_page_btn.clicked.connect(self.show533Page)
+        self.ui.room_534_page_btn.clicked.connect(self.show534Page)
+        self.ui.room_560_page_btn.clicked.connect(self.show560Page)
+        self.ui.room_458_page_btn.clicked.connect(self.show458Page)
+        self.ui.room_562_page_btn.clicked.connect(self.show562Page)
+        self.ui.room_564_page_btn.clicked.connect(self.show564Page)
+        self.ui.room_320_page_btn.clicked.connect(self.show320Page)
+        self.ui.room_430_page_btn.clicked.connect(self.show533Page)
+        self.ui.room_532_lab_page_btn.clicked.connect(self.show532LabPage)
+
+        
+        self.ui.save_data_btn.clicked.connect(self.save_data)
+        
+
+        ############################################################
 
         self.df = None  # initialize the variable
 
@@ -67,9 +82,14 @@ class MainWindow(QMainWindow):
         if file_name:
             self.ui.file_name_input.setText(file_name)
 
+
+
+    ############################## Button Functions ###################################
+
     @pyqtSlot()
     def load_data(self):
         file_name = self.ui.file_name_input.text()
+
 
         if file_name:
             if file_name.endswith('.csv'):
@@ -79,6 +99,12 @@ class MainWindow(QMainWindow):
 
             print(self.df)  # print the loaded dataframe
             self.updateProgramsFields()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("Please enter a CSV file path")
+            msg.exec()
+
 
     @pyqtSlot()
     def showDataPage(self):
@@ -87,7 +113,44 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def showSchedulePage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page2)
-
+    
+    @pyqtSlot()
+    def show533Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page3)
+    
+    @pyqtSlot()
+    def show534Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page4)
+    
+    @pyqtSlot()
+    def show560Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page11)
+    
+    @pyqtSlot()
+    def show458Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page5)
+    
+    @pyqtSlot()
+    def show562Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page6)
+    
+    @pyqtSlot()
+    def show564Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page7)
+    
+    @pyqtSlot()
+    def show320Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page8)
+    
+    @pyqtSlot()
+    def show430Page(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page9)
+    
+    @pyqtSlot()
+    def show532LabPage(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page10)
+    
+    @pyqtSlot()
     def updateProgramsFields(self):
         # update QLineEdits for first term
         self.ui.p_comm_input_1.setText(str(self.df.loc[0, '1st Term Students']))
@@ -118,8 +181,114 @@ class MainWindow(QMainWindow):
         self.ui.fs_input_3.setText(str(self.df.loc[5, '3rd Term Students']))
         self.ui.dxd_input_3.setText(str(self.df.loc[6, '3rd Term Students']))
         self.ui.bookkeep_input_3.setText(str(self.df.loc[7, '3rd Term Students']))
+    
+    @pyqtSlot()
+    def input_check(self):
+    # list of all the Line Edits
+        line_edits = [
+            self.ui.p_comm_input_1,
+            self.ui.b_comm_input_1,
+            self.ui.pm_input_1,
+            self.ui.ba_input_1,
+            self.ui.glm_input_1,
+            self.ui.fs_input_1,
+            self.ui.dxd_input_1,
+            self.ui.bookkeep_input,
+            self.ui.p_comm_input_2,
+            self.ui.b_comm_input_2,
+            self.ui.pm_input_2,
+            self.ui.ba_input_2,
+            self.ui.glm_input_2,
+            self.ui.fs_input_2,
+            self.ui.dxd_input_2,
+            self.ui.bookkeep_input_2,
+            self.ui.p_comm_input_3,
+            self.ui.b_comm_input_3,
+            self.ui.pm_input_3,
+            self.ui.ba_input_3,
+            self.ui.glm_input_3,
+            self.ui.fs_input_3,
+            self.ui.dxd_input_3,
+            self.ui.bookkeep_input_3
+        ]
 
+        # iterate through all Line Edits and check if they contain valid input
+        for line_edit in line_edits:
+            text = line_edit.text()
+            if text != '':
+                try:
+                    num = int(text)
+                    if num < 0:
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Icon.Warning)
+                        msg.setText("Please input only numbers 0 or higher in the text fields")
+                        msg.exec()
+                        return False
+                except ValueError:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Icon.Warning)
+                    msg.setText("Please input only numbers 0 or higher in the text fields")
+                    msg.exec()
+                    return False
+        return True
 
+    @pyqtSlot()
+    def update_data(self):
+        # update first term
+        self.df.loc[0, '1st Term Students'] = int(self.ui.p_comm_input_1.text() or 0)
+        self.df.loc[1, '1st Term Students'] = int(self.ui.b_comm_input_1.text() or 0)
+        self.df.loc[2, '1st Term Students'] = int(self.ui.pm_input_1.text() or 0)
+        self.df.loc[3, '1st Term Students'] = int(self.ui.ba_input_1.text() or 0)
+        self.df.loc[4, '1st Term Students'] = int(self.ui.glm_input_1.text() or 0)
+        self.df.loc[5, '1st Term Students'] = int(self.ui.fs_input_1.text() or 0)
+        self.df.loc[6, '1st Term Students'] = int(self.ui.dxd_input_1.text() or 0)
+        self.df.loc[7, '1st Term Students'] = int(self.ui.bookkeep_input.text() or 0)
+
+        # update second term
+        self.df.loc[0, '2nd Term Students'] = int(self.ui.p_comm_input_2.text() or 0)
+        self.df.loc[1, '2nd Term Students'] = int(self.ui.b_comm_input_2.text() or 0)
+        self.df.loc[2, '2nd Term Students'] = int(self.ui.pm_input_2.text() or 0)
+        self.df.loc[3, '2nd Term Students'] = int(self.ui.ba_input_2.text() or 0)
+        self.df.loc[4, '2nd Term Students'] = int(self.ui.glm_input_2.text() or 0)
+        self.df.loc[5, '2nd Term Students'] = int(self.ui.fs_input_2.text() or 0)
+        self.df.loc[6, '2nd Term Students'] = int(self.ui.dxd_input_2.text() or 0)
+        self.df.loc[7, '2nd Term Students'] = int(self.ui.bookkeep_input_2.text() or 0)
+
+        # update third term
+        self.df.loc[0, '3rd Term Students'] = int(self.ui.p_comm_input_3.text() or 0)
+        self.df.loc[1, '3rd Term Students'] = int(self.ui.b_comm_input_3.text() or 0)
+        self.df.loc[2, '3rd Term Students'] = int(self.ui.pm_input_3.text() or 0)
+        self.df.loc[3, '3rd Term Students'] = int(self.ui.ba_input_3.text() or 0)
+        self.df.loc[4, '3rd Term Students'] = int(self.ui.glm_input_3.text() or 0)
+        self.df.loc[5, '3rd Term Students'] = int(self.ui.fs_input_3.text() or 0)
+        self.df.loc[6, '3rd Term Students'] = int(self.ui.dxd_input_3.text() or 0)
+        self.df.loc[7, '3rd Term Students'] = int(self.ui.bookkeep_input_3.text() or 0)
+
+        print(self.df)
+
+    @pyqtSlot()
+    def save_data(self):
+
+        # Get the currently selected index of the semester_select_combobox
+        selected_index = self.ui.semester_select_combobox.currentIndex()
+        #Check if the selected index is 0
+        if selected_index == 0:
+            # Display a warning message
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("Please Select a Semester!")
+            msg.setWindowTitle("Warning")
+            msg.exec()
+        else:
+            if self.input_check():
+                self.update_data()
+                # print(self.df[0])
+            else:
+                return
+
+    
+
+    
 """======================================================================================"""
 
 if __name__ == "__main__":
