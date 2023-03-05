@@ -2,6 +2,8 @@ import sys
 
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, QComboBox
+from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog 
+from PyQt6 import QtWidgets
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
 
 import pandas as pd
@@ -15,6 +17,8 @@ class MainWindow(QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.df = pd.DataFrame  # initialize the variable
 
         self.ui.stackedWidget.setCurrentWidget(self.ui.page1)
 
@@ -31,14 +35,22 @@ class MainWindow(QMainWindow):
         self.ui.room_320_page_btn.clicked.connect(self.show320Page)
         self.ui.room_430_page_btn.clicked.connect(self.show533Page)
         self.ui.room_532_lab_page_btn.clicked.connect(self.show532LabPage)
+        self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
 
-        
+        ################## Data Page Buttons Clicked ################
         self.ui.save_data_btn.clicked.connect(self.save_data)
         
 
+        ################## Rooms Page Buttons Clicked ###############
+
+        # connect the remove button to the remove_classroom function
+        self.ui.remove_room_btn.clicked.connect(self.remove_classroom)
+
+        # connect the add button to the add_room function
+        self.ui.add_room_btn.clicked.connect(self.add_room)
+
         ############################################################
 
-        self.df = None  # initialize the variable
 
         self.ui.file_name_input.mousePressEvent = self.browse_file
 
@@ -99,6 +111,7 @@ class MainWindow(QMainWindow):
 
             print(self.df)  # print the loaded dataframe
             self.updateProgramsFields()
+            self.update_rooms()
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
@@ -149,6 +162,10 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def show532LabPage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page10)
+    
+    @pyqtSlot()
+    def showRoomsPage(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page12)
     
     @pyqtSlot()
     def updateProgramsFields(self):
@@ -286,7 +303,49 @@ class MainWindow(QMainWindow):
             else:
                 return
 
+######################### Rooms updates ###############################################
+    @pyqtSlot()
+    def update_rooms(self): 
+        self.ui.rooms_combobox.clear()
+        classrooms = self.df.loc[9:, 'Programs'].dropna().tolist()
+        self.ui.rooms_combobox.addItems(classrooms)
+
+    @pyqtSlot()
+    def remove_classroom(self):
+        # get the currently selected classroom number
+        selected_classroom = self.ui.rooms_combobox.currentText()
+
+        # remove the row(s) corresponding to the selected classroom number from the dataframe
+        self.df.drop(self.df[self.df['Programs'] == selected_classroom].index, inplace=True)
+
+        # update the combobox to reflect the removed classroom number
+        self.update_rooms()
+        print(self.df)
     
+    @pyqtSlot()
+    def add_room(self):
+        
+        # display modal to get input from user
+        room, ok_pressed = QInputDialog.getText(self, "Add Room", "Room Number:")
+        if ok_pressed:
+            # Check if room number already exists in the dataframe
+            if room in self.df['Programs'].values:
+                msg = QMessageBox()
+                msg.setWindowTitle("Warning")
+                msg.setText(f"Room number '{room}' already exists!")
+                msg.exec()
+            else:
+                capacity, ok_pressed = QInputDialog.getInt(self, "Add Room", "Capacity:")
+                if ok_pressed and capacity > 0:
+                    # create a new dataframe with the new room information
+                    new_room = pd.DataFrame({'Programs': [room], '1st Term Students': [capacity]})
+
+                    # concatenate the new dataframe with the existing dataframe
+                    self.df = pd.concat([self.df, new_room], ignore_index=True)
+
+                    # update the combobox to reflect the added room
+                    self.update_rooms()
+                    print(self.df)
 
     
 """======================================================================================"""
