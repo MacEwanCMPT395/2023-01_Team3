@@ -38,7 +38,7 @@ class TestStudentSchedule(unittest.TestCase):
         print(f"===================================")
 
         schedule.term_schedule(classrooms, term)
-        schedule.display_classroom(term[0], classrooms[0])
+        # schedule.display_classroom(term[0], classrooms[0])
 
 
     def test_term_schedule(self):
@@ -69,7 +69,7 @@ class TestStudentSchedule(unittest.TestCase):
         print(f"===================================")
 
         schedule.term_schedule(classrooms, term)
-        # schedule.display_term(term)
+        schedule.display_term(term)
 
 
     def test_check_availability(self):

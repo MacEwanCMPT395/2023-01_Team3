@@ -27,6 +27,17 @@ class Course:
         self.course_type = course_type
         # self.sections = []
 
+    '''
+    copy: make identical copy of courses so each course has a distinct start and end time.
+    '''
+    def copy(self, courses):
+        copy_courses = []
+        for id, crs in courses.items():
+            for course in crs:
+                copy_courses.append(Course(course.course_id, course.department, course.pre_req, course.max_capacity, course.term, course.transcript_hours, course.lecture_duration, course.course_type))
+        return copy_courses
+
+
     # class Section:
     #     def __init__(self):
     #         self.section_id = f"{Course.course_id}-{Course.term}-{1 + len(Course.sections)}"
@@ -126,12 +137,12 @@ class Program:
                                         Course("CMSK 0152", "FS", "CMSK 0151", 70, 1, 16, 2, 1),
                                         Course("CMSK 0157", "FS", None, 70, 1, 16, 2, 1),
                                         Course("CMSK 0154", "FS", None, 70, 1, 16, 2, 1),
+                                        Course("PCOM 0160", "FS", None, 70, 3, 50, 3, 1),
                                         Course("CMSK 0153", "FS", None, 70, 2, 18, 2, 1),
                                         Course("CMSK 0200", "FS", None, 70, 2, 16, 2, 1),
                                         Course("CMSK 0201", "FS", "CMSK 0200", 70, 2, 18, 2, 1),
                                         Course("CMSK 0203", "FS", None, 70, 2, 16, 2, 1),
-                                        Course("CMSK 0202", "FS", None, 70, 2, 18, 2, 1),
-                                        Course("PCOM 0160", "FS", None, 70, 3, 50, 3, 1)],
+                                        Course("CMSK 0202", "FS", None, 70, 2, 18, 2, 1)],
 
 
                                 "BK" : [Course("ACCT 0201", "BK", None, 70, 1, 18, 1.5, 0),
@@ -184,12 +195,16 @@ class Term:
     assign_unsched: if a course cannot be scheduled, it will be appended to a departments(key) unscheduled courses list(values)
     '''
     def assign_unsched(self, course):
-        if course.department in self.unsched_courses:
+        if course.department in self.unsched_courses and course not in self.unsched_courses[course.department]:
             for dep, courses in self.unsched_courses.items():
                 if dep == course.department:
                     self.unsched_courses[dep].append(course)
-        else:
-            self.unsched_courses[course.department] = [()]
+        elif course.department not in self.unsched_courses:
+            self.unsched_courses[course.department] = []
+
+    # def display_au(self):
+    #     for id, sched in self.unsched_courses.items():
+    #         print(id, sched)
 
     '''
     new_course_time: once we determine the scheduled_course that needs to be replaced, we will find a course that satisfies the time constraints(conditions: no overlap) and swap courses
