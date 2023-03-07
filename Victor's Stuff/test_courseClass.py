@@ -9,15 +9,47 @@ from courseClass import *
 
 class TestStudentSchedule(unittest.TestCase):
 
+
+    def test_display_classroom(self):
+        student = Student(1, "John Doe", "BCOM", "PM", 1)
+        degree = Degree()
+        program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
+        classrooms = [Classroom("11-532", 30, 1),
+                        Classroom("11-533", 36, 0), 
+                        Classroom("11-534", 36, 0),
+                        Classroom("11-560", 24, 0), 
+                        Classroom("11-562", 24, 0),
+                        Classroom("11-564", 24, 0),
+                        Classroom("11-458", 40, 0),
+                        Classroom("11-430", 30, 0),
+                        Classroom("11-320", 30, 0)]
+        term = [Term("Term 1", 1), 
+                Term("Term 2", 2),
+                Term("Term 3", 3)]
+        schedule = Schedule(student, degree, program, courses, classrooms, term)
+
+        print(f"\n===================================")
+        print(f"\n=====Testing display_classroom=====\n")
+        print(f"===================================")
+
+        schedule.term_schedule(classrooms, term)
+        schedule.display_classroom(term[0], classrooms[0])
+
+
     def test_term_schedule(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", 36, 1, 15, 1.5, 0), 
-                    Course("SUPR 0751", "PCOM", 36, 1, 7, 1.5, 0), 
-                    Course("PRDV 0201", "PCOM", 20, 1, 21, 1.5, 0),
-                    Course("PRDV 0202", "PCOM", 20, 1, 14, 1.5, 0),
-                    Course("FODDER 101", "PCOM", 40, 1, 40, 3, 0)]
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
         classrooms = [Classroom("11-532", 30, 1),
                         Classroom("11-533", 36, 0), 
                         Classroom("11-534", 36, 0),
@@ -37,18 +69,18 @@ class TestStudentSchedule(unittest.TestCase):
         print(f"===================================")
 
         schedule.term_schedule(classrooms, term)
-        schedule.display_term(term)
+        # schedule.display_term(term)
 
 
     def test_check_availability(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", 36, 1, 15, 1.5, 0), 
-                    Course("SUPR 0751", "PCOM", 36, 1, 7, 1.5, 0), 
-                    Course("PRDV 0201", "PCOM", 20, 1, 21, 1.5, 0),
-                    Course("PRDV 0202", "PCOM", 20, 1, 14, 1.5, 0),
-                    Course("FODDER 101", "PCOM", 40, 1, 40, 3, 0)]
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
         classrooms = [Classroom("11-533", 36, 0), 
                         Classroom("11-534", 36, 0),
                         Classroom("11-560", 24, 0), 
@@ -84,11 +116,11 @@ class TestStudentSchedule(unittest.TestCase):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", 36, 1, 15, 1.5, 0), 
-                    Course("SUPR 0751", "PCOM", 36, 1, 7, 1.5, 0), 
-                    Course("PRDV 0201", "PCOM", 20, 1, 21, 1.5, 0),
-                    Course("PRDV 0202", "PCOM", 20, 1, 14, 1.5, 0),
-                    Course("FODDER 101", "PCOM", 40, 1, 40, 3, 0)]
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
         classrooms = [Classroom("11-533", 36, 0), 
                         Classroom("11-534", 36, 0),
                         Classroom("11-560", 24, 0), 
@@ -120,11 +152,11 @@ class TestStudentSchedule(unittest.TestCase):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", 36, 1, 15, 1.5, 0), 
-                    Course("SUPR 0751", "PCOM", 36, 1, 7, 1.5, 0), 
-                    Course("PRDV 0201", "PCOM", 20, 1, 21, 1.5, 0),
-                    Course("PRDV 0202", "PCOM", 20, 1, 14, 1.5, 0),
-                    Course("FODDER 101", "PCOM", 40, 1, 0, 3, 0)]
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 0, 3, 0)]
         classrooms = [Classroom("11-533", 36, 0), 
                         Classroom("11-534", 36, 0),
                         Classroom("11-560", 24, 0), 
@@ -139,12 +171,12 @@ class TestStudentSchedule(unittest.TestCase):
                 Term("Term 3", 3)]
         
         schedule = Schedule(student, degree, program, courses, classrooms, terms)
-        terms[0].unsched_courses = {"PCOM" : [Course("PCOM !!!!", "PCOM", 36, 1, 15, 2, 0), 
-                                            Course("SUPR ****", "PCOM", 36, 1, 7, 2, 0), 
-                                            Course("PRDV @@@@", "PCOM", 20, 1, 21, 2, 0)],
+        terms[0].unsched_courses = {"PCOM" : [Course("PCOM !!!!", "PCOM", None, 36, 1, 15, 2, 0), 
+                                            Course("SUPR ****", "PCOM", None, 36, 1, 7, 2, 0), 
+                                            Course("PRDV @@@@", "PCOM", None, 20, 1, 21, 2, 0)],
                                     
-                                    "BCOM" : [Course("PRDV ####", "PCOM", 20, 1, 14, 1.5, 0),
-                                            Course("FODDER $$$$", "PCOM", 40, 1, 40, 3, 0)]}
+                                    "BCOM" : [Course("PRDV ####", "PCOM", None, 20, 1, 14, 1.5, 0),
+                                            Course("FODDER $$$$", "PCOM", None, 40, 1, 40, 3, 0)]}
         
         print(f"\n===================================")
         print(f"\n=====Testing replace_course=====\n")
@@ -164,12 +196,12 @@ class TestStudentSchedule(unittest.TestCase):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", 36, 1, 15, 1.5, 0), 
-                    Course("SUPR 0751", "PCOM", 36, 1, 7, 1.5, 0), 
-                    Course("PRDV 0201", "PCOM", 20, 1, 21, 1.5, 0),
-                    Course("PRDV 0202", "PCOM", 20, 1, 14, 1.5, 0),
-                    Course("FODDER 101", "PCOM", 40, 1, 40, 3, 0),
-                    Course("STUFF 202", "PCOM", 40, 1, 0, 1.5, 0)]
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0),
+                    Course("STUFF 202", "PCOM", None, 40, 1, 0, 1.5, 0)]
         classrooms = [Classroom("11-533", 36, 0), 
                         Classroom("11-534", 36, 0),
                         Classroom("11-560", 24, 0), 
@@ -183,12 +215,12 @@ class TestStudentSchedule(unittest.TestCase):
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
         schedule = Schedule(student, degree, program, courses, classrooms, terms)
-        terms[0].unsched_courses = {"PCOM" : [Course("PCOM !!!!", "PCOM", 36, 1, 15, 1.5, 0), 
-                                            Course("SUPR ****", "PCOM", 36, 1, 7, 1.5, 0), 
-                                            Course("PRDV @@@@", "PCOM", 20, 1, 21, 1.5, 0)],
+        terms[0].unsched_courses = {"PCOM" : [Course("PCOM !!!!", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                                            Course("SUPR ****", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                                            Course("PRDV @@@@", "PCOM", None, 20, 1, 21, 1.5, 0)],
                             
-                                    "BCOM" : [Course("PRDV ####", "PCOM", 20, 1, 14, 1.5, 0),
-                                            Course("FODDER $$$$", "PCOM", 40, 1, 40, 3, 0)]}
+                                    "BCOM" : [Course("PRDV ####", "PCOM", None, 20, 1, 14, 1.5, 0),
+                                            Course("FODDER $$$$", "PCOM", None, 40, 1, 40, 3, 0)]}
 
         print(f"\n===================================")
         print(f"\n=====Testing fill_empty_spot=====\n")

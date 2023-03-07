@@ -16,6 +16,14 @@ class Schedule:
         self.term = term
     
    
+    def display_classroom(self, term, classroom):
+        for classrooms in term.term_sched[term.term_id]:
+            for clsrm in classrooms:
+                if clsrm.classroom_id == classroom.classroom_id:
+                    self.display_schedule(clsrm)
+        
+
+
     def display_schedule(self, classroom):
         print(f"\n\t{classroom.classroom_id}: ")
         for day in classroom.schedule:
@@ -90,7 +98,7 @@ class Schedule:
                     # check if course has already been scheduled and that course and classroom types are the same i.e. lab room = lab course
                     if course.course_id not in term.scheduled_courses and classroom.class_type == course.course_type:
 
-                        if course.lecture_duration in [1.5, 2]:
+                        if course.lecture_duration in [1.5, 2] and course.pre_req == None:
                             if day == "Monday":
                                 # check if the course can be scheduled on the current day and classroom
                                 schedule_on_day = self.check_availability(course, day, classroom)
@@ -140,7 +148,7 @@ class Schedule:
 
                     if course.course_id not in term.scheduled_courses and classroom.class_type == course.course_type:
 
-                        if course.lecture_duration in [1.5, 2]:
+                        if course.lecture_duration in [1.5, 2] and course.pre_req == None:
                             if day == "Tuesday":
                                 # check if the course can be scheduled on the current day and classroom
                                 schedule_on_day = self.check_availability(course, day, classroom)
@@ -296,21 +304,43 @@ class Schedule:
                         #get index of scheduled course
                         ind = classroom.schedule[day].index(scheduled_course)
 
-                
+                        self.prereq_check(ind, scheduled_course, term, classroom, day)
 
-                        if scheduled_course.department in term.unsched_courses:
-                            # for dep, courses in term.unsched_courses.items():
-                                for course in term.unsched_courses[scheduled_course.department]:
-                                    # if yes, compare lecture duration between old and new course and see if they can be swapped
-                                    term.new_course_time(classroom, scheduled_course, term.unsched_courses[course.department], course, day, ind)
-                                    return
-                                    
+
+
+
+    def prereq_check(self, ind, scheduled_course, term, classroom, day):
+        
+            #if we have unscheduled courses belonging to sam edepartment as scheduled_course
+            if scheduled_course.department in term.unsched_courses:
+                # for dep, courses in term.unsched_courses.items():
+                    for course in term.unsched_courses[scheduled_course.department]:
+                        if course.pre_req !=  None:
+                            #check if course is not already scheduled and scheduled_course.course_id == course.pre_req
+                            if course not in term.scheduled_courses and scheduled_course.course_id == course.pre_req:
+                                # if yes, compare lecture duration between old and new course and see if they can be swapped
+                                term.new_course_time(classroom, scheduled_course, term.unsched_courses[course.department], course, day, ind)
+                                return
                         else:
-                            for dep, courses in term.unsched_courses.items():
-                                for course in courses:
-                                    term.new_course_time(classroom, scheduled_course, courses, course, day, ind)
-                                    return
-
+                            if course not in term.scheduled_courses:
+                                # if yes, compare lecture duration between old and new course and see if they can be swapped
+                                term.new_course_time(classroom, scheduled_course, term.unsched_courses[course.department], course, day, ind)
+                                return
+                            
+            #else, take unsecheduled course from any department
+            else:
+                for dep, courses in term.unsched_courses.items():
+                    for course in courses:
+                        if course.pre_req !=  None:
+                            #check if course is not already scheduled and scheduled_course.course_id == course.pre_req
+                            if course not in term.scheduled_courses and scheduled_course.course_id == course.pre_req:
+                                term.new_course_time(classroom, scheduled_course, courses, course, day, ind)
+                                return
+                        else:
+                            if course not in term.scheduled_courses:
+                                term.new_course_time(classroom, scheduled_course, courses, course, day, ind)
+                                return
+                        
                             
 
     '''
