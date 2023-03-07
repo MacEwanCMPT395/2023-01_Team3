@@ -1,10 +1,12 @@
 import sys
 
+from courseClass import *
+
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, QComboBox
 from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog 
-from PyQt6 import QtWidgets
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
+
 
 import pandas as pd
 
@@ -40,7 +42,7 @@ class MainWindow(QMainWindow):
         ################## Data Page Buttons Clicked ################
         self.ui.save_data_btn.clicked.connect(self.save_data)
         
-
+        
         ################## Rooms Page Buttons Clicked ###############
 
         # connect the remove button to the remove_classroom function
@@ -100,8 +102,8 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def load_data(self):
+        
         file_name = self.ui.file_name_input.text()
-
 
         if file_name:
             if file_name.endswith('.csv'):
@@ -118,6 +120,27 @@ class MainWindow(QMainWindow):
             msg.setText("Please enter a CSV file path")
             msg.exec()
 
+        [Classroom("11-532", 30, 1),
+                        Classroom("11-533", 36, 0), 
+                        Classroom("11-534", 36, 0),
+                        Classroom("11-560", 24, 0), 
+                        Classroom("11-562", 24, 0),
+                        Classroom("11-564", 24, 0),
+                        Classroom("11-458", 40, 0),
+                        Classroom("11-430", 30, 0),
+                        Classroom("11-320", 30, 0)]
+        
+        self.edit_room_text(self.ui.text_533, self.classroom_schedule(0))
+        self.edit_room_text(self.ui.text_534, self.classroom_schedule(1))
+        self.edit_room_text(self.ui.text_560, self.classroom_schedule(2))
+        self.edit_room_text(self.ui.text_562, self.classroom_schedule(3))
+        self.edit_room_text(self.ui.text_564, self.classroom_schedule(4))
+        self.edit_room_text(self.ui.text_458, self.classroom_schedule(5))
+        self.edit_room_text(self.ui.text_430, self.classroom_schedule(6))
+        self.edit_room_text(self.ui.text_320, self.classroom_schedule(7))
+
+        
+        
 
     @pyqtSlot()
     def showDataPage(self):
@@ -324,7 +347,7 @@ class MainWindow(QMainWindow):
     
     @pyqtSlot()
     def add_room(self):
-        
+
         # display modal to get input from user
         room, ok_pressed = QInputDialog.getText(self, "Add Room", "Room Number:")
         if ok_pressed:
@@ -347,7 +370,53 @@ class MainWindow(QMainWindow):
                     self.update_rooms()
                     print(self.df)
 
+
+    ################################ Populating the Classroom Tables ##################
+    def classroom_schedule(self, index):
+        student = Student(1, "John Doe", "BCOM", "PM", 1)
+        degree = Degree()
+        program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
+                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
+                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
+        classrooms = [Classroom("11-532", 30, 1),
+                        Classroom("11-533", 36, 0), 
+                        Classroom("11-534", 36, 0),
+                        Classroom("11-560", 24, 0), 
+                        Classroom("11-562", 24, 0),
+                        Classroom("11-564", 24, 0),
+                        Classroom("11-458", 40, 0),
+                        Classroom("11-430", 30, 0),
+                        Classroom("11-320", 30, 0)]
+        term = [Term("Term 1", 1), 
+                Term("Term 2", 2),
+                Term("Term 3", 3)]
+        schedule = Schedule(student, degree, program, courses, classrooms, term)
+
+
+        schedule.term_schedule(classrooms, term)
+        schedule.display_classroom(term[0], classrooms[index])
+        return schedule.return_classroom(term[0], classrooms[index])
+        
     
+    sched = classroom_schedule(1, 1)
+    print("Type: ",type(sched))
+    print("the shchedule:",classroom_schedule(1,1))
+    
+    def edit_room_text(self, room_textbox, text):
+        # Get the current text in the text edit
+        current_text = room_textbox.toPlainText()
+        # Append the new text to the current text
+        new_text = current_text + text
+        # Set the new text in the text edit
+        room_textbox.setPlainText(new_text)
+    
+    #############################################################################################
+    
+
+
 """======================================================================================"""
 
 if __name__ == "__main__":

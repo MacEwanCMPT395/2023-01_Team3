@@ -318,7 +318,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>11</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="page1">
          <widget class="QLabel" name="label">
@@ -1095,13 +1095,13 @@
            <string>Room 11 - 533 (Capacity 36)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_533">
+         <widget class="QTextEdit" name="text_533">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1128,13 +1128,13 @@
            <string>Room 11 - 534 (Capacity 36)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_534">
+         <widget class="QTextEdit" name="text_534">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1161,13 +1161,13 @@
            <string>Room 11 - 560 (Capacity 24)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_560">
+         <widget class="QTextEdit" name="text_560">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1194,13 +1194,13 @@
            <string>Room 11 - 458 (Capacity 40)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_458">
+         <widget class="QTextEdit" name="text_458">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1227,13 +1227,13 @@
            <string>Room 11 - 562 (Capacity 24)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_562">
+         <widget class="QTextEdit" name="text_562">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1260,13 +1260,13 @@
            <string>Room 11 - 564 (Capacity 24)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_564">
+         <widget class="QTextEdit" name="text_564">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1293,13 +1293,13 @@
            <string>Room 11 - 320 (Capacity 30)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_320">
+         <widget class="QTextEdit" name="text_320">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1326,13 +1326,13 @@
            <string>Room 11 - 430 (Capacity 30)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_430">
+         <widget class="QTextEdit" name="text_430">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
@@ -1343,7 +1343,7 @@
            <rect>
             <x>30</x>
             <y>20</y>
-            <width>361</width>
+            <width>421</width>
             <height>51</height>
            </rect>
           </property>
@@ -1359,13 +1359,13 @@
            <string>Room 11 - 532 Lab (Capacity 30)</string>
           </property>
          </widget>
-         <widget class="QTableView" name="table_532lab">
+         <widget class="QTextEdit" name="text_532">
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>30</x>
             <y>90</y>
             <width>811</width>
-            <height>221</height>
+            <height>481</height>
            </rect>
           </property>
          </widget>
