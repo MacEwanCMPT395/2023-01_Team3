@@ -1,0 +1,221 @@
+'''
+Author: Victor Tadros
+CMPT 395 X03L - Team: 3
+Purpose: Build classes for students, degree, program, course, and classroom
+'''
+
+class Student:
+    def __init__(self, student_id, name, degree, program, term):
+        self.student_id = student_id
+        self.name = name
+        self.degree = degree
+        self.program = program
+        self.term = term
+
+
+class Course:
+    def __init__(self, course_id, department, max_capacity, term, transcript_hours, lecture_duration, course_type):# need_lab_room, online):
+        self.course_id = course_id
+        self.department = department
+        self.max_capacity = max_capacity
+        self.term = term
+        self.transcript_hours = transcript_hours
+        self.lecture_duration = lecture_duration
+        self.lecture_start_time = 8
+        self.lecture_end_time = 9
+        self.course_type = course_type
+        # self.need_lab_room = need_lab_room
+        # self.online = online
+        # self.sections = []
+
+    # class Section:
+    #     def __init__(self):
+    #         self.section_id = f"{Course.course_id}-{Course.term}-{1 + len(Course.sections)}"
+    #         self.lecture_start_time = 8
+    #         self.lecture_end_time = 9
+    #         self.lecture_duration = self.__class__.lecture_duration
+            
+
+    # def add_section(self):
+    #     section = Course.Section()
+    #     self.sections.append(section)
+
+
+class Degree:
+    def __init__(self):
+        self.degree_id = ["PCOM", "BCOM"]
+        self.core_courses = {
+                "PCOM": [Course("PCOM 0101", "PCOM", 70, 1, 35, 1.5, 0),
+                        Course("PCOM 0105", "PCOM", 70, 1, 35, 1.5, 0),
+                        Course("PCOM 0107", "PCOM", 70, 1, 18, 3, 1),
+                        Course("CMSK 0233", "PCOM", 70, 1, 7, 1.5, 1), 
+                        Course("CMSK 0235", "PCOM", 70, 1, 6, 1.5, 1),
+                        Course("PCOM 0102", "PCOM", 70, 2, 35, 1.5, 0),
+                        Course("PCOM 0201", "PCOM", 70, 2, 35, 1.5, 0),
+                        Course("PCOM 0108", "PCOM", 70, 2, 18, 1.5, 1), 
+                        Course("PCOM 0202", "PCOM", 70, 3, 33, 1.5, 0),
+                        Course("PCOM 0103", "PCOM", 70, 3, 35, 1.5, 0)
+                        #PCOM 0109 runs in a classroom and lab?
+                        ], 
+                "BCOM": [Course("PCOM 0203", "BCOM", 70, 1, 15, 1.5, 0),
+                        Course("SUPR 0751", "BCOM", 70, 1, 7, 2, 0),
+                        Course("PCOM 0204", "BCOM", 70, 1, 35, 1.5, 0),
+                        Course("CMSK 0237", "BCOM", 70, 1, 12, 1.5, 2),
+                        Course("SUPR 0837", "BCOM", 70, 1, 7, 2, 0),
+                        Course("SUPR 0841", "BCOM", 70, 1, 35, 2, 0),
+                        Course("SUPR 0821", "BCOM", 70, 2, 7, 2, 0),
+                        Course("SUPR 0822", "BCOM", 70, 2, 7, 2, 0),
+                        Course("SUPR 0718", "BCOM", 70, 2, 7, 2, 0),
+                        Course("SUPR 0836", "BCOM", 70, 2, 7, 2, 0),
+                        Course("AVDM 0199", "BCOM", 70, 2, 3, 1.5, 2),
+                        Course("PCOM 0106", "BCOM", 70, 2, 35, 2, 0), #schedule for 17 sessions
+                        Course("PCOM 0205", "BCOM", 70, 3, 30, 3, 0),
+                        Course("PCOM TBD", "BCOM", 70, 3, 21, 1.5, 0),
+                        Course("PCOM 0207", "BCOM", 70, 3, 6, 2, 0),
+                        Course("SUPR 0863", "BCOM", 70, 3, 7, 2, 0),
+                        Course("PCOM 0206", "BCOM", 70, 3, 6, 3, 0),
+                        Course("AVDM 0260", "BCOM", 70, 3, 6, 1.5, 2) #schedule after all classes are done, end of the term
+                        ]}
+
+
+class Program:
+    def __init__(self, max_capacity, courses):
+        self.program_id = ["PM", "BA", "GLM", "FS", "DXD", "BK"]
+        self.program_courses = {"PM" : [Course("PRDV 0201", "PM", 70, 1, 21, 1.5, 0),
+                                        Course("PRDV 0202", "PM", 70, 1, 14, 1.5, 0),
+                                        Course("PRDV 0203", "PM", 70, 1, 21, 1.5, 0),
+                                        Course("PRDV 0204", "PM", 70, 2, 14, 1.5, 0),
+                                        Course("PRDV 0205", "PM", 70, 2, 21, 1.5, 0),
+                                        Course("PCOM 0103", "PM", 70, 2, 21, 1.5, 0),
+                                        Course("PRDV 0206", "PM", 70, 2, 14, 1.5, 0),
+                                        Course("PRDV 0207", "PM", 70, 3, 14, 1.5, 0),
+                                        Course("PRDV 0131", "PM", 70, 3, 39, 1.5, 0)],
+
+                                "BA" : [Course("PRDV 0640", "BA", 70, 1, 21, 1.5, 0),
+                                        Course("PRDV 0652", "BA", 70, 1, 14, 1.5, 0),
+                                        Course("PRDV 0653", "BA", 70, 1, 21, 1.5, 0),
+                                        Course("PRDV 0642", "BA", 70, 1, 14, 1.5, 0),
+                                        Course("PRDV 0644", "BA", 70, 2, 21, 1.5, 0),
+                                        Course("PRDV 0648", "BA", 70, 2, 14, 1.5, 0),
+                                        Course("PCOM 0140", "BA", 70, 2, 35, 1.5, 0),
+                                        Course("PRDV 0646", "BA", 70, 3, 14, 1.5, 0),
+                                        Course("PRDV 0141", "BA", 70, 3, 39, 1.5, 0)],
+                                        
+                                "GLM" : [Course("SCMT 0501", "GLM", 70, 1, 21, 1.5, 0),
+                                        Course("SCMT 0502", "GLM", 70, 1, 21, 1.5, 0),
+                                        Course("PRDV 0304", "GLM", 70, 1, 15, 1.5, 0),
+                                        Course("SCMT 0503", "GLM", 70, 2, 15, 1.5, 0),
+                                        Course("SCMT 0504", "GLM", 70, 2, 21, 1.5, 0),
+                                        Course("SCMT 0505", "GLM", 70, 3, 21, 1.5, 0),
+                                        Course("PCOM 0151", "GLM", 70, 3, 39, 1.5, 0)],
+                                
+
+                                "DXD" : [Course("AVDM 0165", "DXD", 70, 1, 18, 1.5, 1),
+                                         Course("DXDI 0101", "DXD", 70, 1, 24, 1.5, 1),
+                                         Course("DXDI 0102", "DXD", 70, 1, 24, 1.5, 1),
+                                         Course("AVDM 0170", "DXD", 70, 2, 18, 1.5, 1),
+                                         Course("AVDM 0138", "DXD", 70, 2, 18, 1.5, 1),
+                                         Course("DXDI 0103", "DXD", 70, 2, 24, 1.5, 1),
+                                         Course("DXDI 0104", "DXD", 70, 2, 24, 1.5, 1),
+                                         Course("AVDM 0238", "DXD", 70, 3, 18, 1.5, 1),
+                                         Course("AVDM 0270", "DXD", 70, 3, 18, 1.5, 1),
+                                         Course("DXDI 9901", "DXD", 70, 3, 45, 1.5, 1)],
+
+
+                                "FS" : [Course("CMSK 0150", "FS", 70, 1, 16, 2, 1),
+                                        Course("CMSK 0151", "FS", 70, 1, 16, 2, 1),
+                                        Course("CMSK 0152", "FS", 70, 1, 16, 2, 1),
+                                        Course("CMSK 0157", "FS", 70, 1, 16, 2, 1),
+                                        Course("CMSK 0154", "FS", 70, 1, 16, 2, 1),
+                                        Course("CMSK 0153", "FS", 70, 2, 18, 2, 1),
+                                        Course("CMSK 0200", "FS", 70, 2, 16, 2, 1),
+                                        Course("CMSK 0201", "FS", 70, 2, 18, 2, 1),
+                                        Course("CMSK 0203", "FS", 70, 2, 16, 2, 1),
+                                        Course("CMSK 0202", "FS", 70, 2, 18, 2, 1),
+                                        Course("PCOM 0160", "FS", 70, 3, 50, 3, 1)],
+
+
+                                "BK" : [Course("ACCT 0201", "BK", 70, 1, 18, 1.5, 0),
+                                        Course("ACCT 0202", "BK", 70, 1, 12, 1.5, 0),
+                                        Course("ACCT 0203", "BK", 70, 1, 12, 1.5, 0),
+                                        Course("ACCT 0206", "BK", 70, 2, 12, 1.5, 0),
+                                        Course("ACCT 0210", "BK", 70, 2, 28, 1.5, 1),
+                                        Course("ACCT 0211", "BK", 70, 2, 28, 1.5, 1),
+                                        Course("ACCT 0208", "BK", 70, 3, 21, 1.5, 1),
+                                        Course("ACCT 9901", "BK", 70, 3, 33, 1.5, 1)
+                                        ]}
+        
+        self.max_capacity = max_capacity
+        self.courses = courses
+
+
+class Classroom:
+    def __init__(self, classroom_id, capacity, class_type):
+        self.classroom_id = classroom_id
+        self.capacity = capacity
+        self.class_type = class_type
+        self.time_slot = {"Monday": {"start": 8, "end": 17},\
+            "Tuesday": {"start": 8, "end": 17}, \
+                "Wednesday": {"start": 8, "end": 17}, \
+                    "Thursday": {"start": 8, "end": 17},}
+
+        self.time_slot_lab = {"Monday": {"start": 8, "end": 20},\
+            "Tuesday": {"start": 8, "end": 20}, \
+                "Wednesday": {"start": 8, "end": 20}, \
+                    "Thursday": {"start": 8, "end": 20},}
+        self.schedule = {}
+
+    '''
+    copy: make identical copy of classrooms so each classroom has a distinct scheduled per term.
+    '''
+    def copy(self):
+        return Classroom(self.classroom_id, self.capacity, self.class_type)
+
+class Term:
+    def __init__(self, term_id, term_value):
+        self.term_id = term_id
+        self.term_value = term_value
+        self.term_sched = {}
+        self.unsched_courses = {}   #unscheduled_courses waiting to be scheduled        
+        self.term_core_course = []
+        self.term_prog_course = []
+        self.scheduled_courses = []
+
+    '''
+    assign_unsched: if a course cannot be scheduled, it will be appended to a departments(key) unscheduled courses list(values)
+    '''
+    def assign_unsched(self, course):
+        if course.department in self.unsched_courses:
+            for dep, courses in self.unsched_courses.items():
+                if dep == course.department:
+                    self.unsched_courses[dep].append(course)
+        else:
+            self.unsched_courses[course.department] = [()]
+
+    '''
+    new_course_time: once we determine the scheduled_course that needs to be replaced, we will find a course that satisfies the time constraints(conditions: no overlap) and swap courses
+                     if we cannot find a course that satisfies the time constraints, we will place a None value in its place in case we do find one that does.
+    '''
+    def new_course_time(self, classroom, scheduled_course, courses, course, day, ind):
+        
+        if scheduled_course.lecture_duration == course.lecture_duration:
+            course.lecture_start_time = scheduled_course.lecture_start_time
+            course.lecture_end_time = scheduled_course.lecture_end_time
+            print(f"{scheduled_course.course_id} is swapped with {course.course_id}")
+            classroom.schedule[day][ind] = course
+            courses.remove(course)
+            return
+        
+        elif scheduled_course.lecture_duration > course.lecture_duration: 
+            course.lecture_start_time = scheduled_course.lecture_start_time
+            course.lecture_end_time = course.lecture_start_time + course.lecture_duration
+            print(f"{scheduled_course.course_id} is swapped with {course.course_id}")
+            classroom.schedule[day][ind] = course
+            courses.remove(course)
+            return
+        
+        # if they cannot be swapped, replace old course with None
+        else:
+            classroom.schedule[day][ind] = None
+            print(f"{scheduled_course.course_id} has been removed from schedule")
+
