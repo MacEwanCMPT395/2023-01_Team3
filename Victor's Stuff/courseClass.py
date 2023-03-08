@@ -51,28 +51,30 @@ class Schedule:
             
             term.classrooms = [classroom.copy() for classroom in classrooms]  # create a copy of classrooms for each term
 
+            #create copies of all courses for each term (for distinct times)
+            term.core_courses = Course.copy(self, self.degree.core_courses)
+            term.program_courses = Course.copy(self, self.program.program_courses)
+
             #loop through core courses
-            for key, values in self.degree.core_courses.items():
-                for course in values:
+            for core in term.core_courses:
 
                     #organize courses to respective terms
-                    if term.term_value == 1 and course.term == 1:
-                        term.term_core_course.append(course)
-                    elif term.term_value == 2 and course.term != 3:
-                        term.term_core_course.append(course)
-                    elif term.term_value == 3 and course.term != 1:
-                        term.term_core_course.append(course)
+                    if term.term_value == 1 and core.term == 1:
+                        term.term_core_course.append(core)
+                    elif term.term_value == 2 and core.term != 3:
+                        term.term_core_course.append(core)
+                    elif term.term_value == 3 and core.term != 1:
+                        term.term_core_course.append(core)
 
-            for key, values in self.program.program_courses.items():
-                for course in values:
+            for prog in term.program_courses:
 
                     #organize courses to respective terms
-                    if term.term_value == 1 and course.term == 1:
-                        term.term_prog_course.append(course)
-                    elif term.term_value == 2 and course.term != 3:
-                        term.term_prog_course.append(course)
-                    elif term.term_value == 3 and course.term != 1:
-                        term.term_prog_course.append(course)
+                    if term.term_value == 1 and prog.term == 1:
+                        term.term_prog_course.append(prog)
+                    elif term.term_value == 2 and prog.term != 3:
+                        term.term_prog_course.append(prog)
+                    elif term.term_value == 3 and prog.term != 1:
+                        term.term_prog_course.append(prog)
 
             self.schedule_core_courses(term.term_core_course, term.classrooms, term)
             self.schedule_program_courses(term.term_prog_course, term.classrooms, term)
@@ -177,7 +179,8 @@ class Schedule:
                             else:
                                 term.assign_unsched(course)
                                 # term.unsched_courses.append(course)
-
+        
+        # term.display_au()
         term.term_sched[term.term_id] = [(classrooms)]
 
     '''
@@ -207,7 +210,7 @@ class Schedule:
                     
                     # Check if the given day exists in the classroom's time slot
                         
-                    elif classroom.class_type == 0:
+                    if classroom.class_type == 0:
                         if day in classroom.time_slot:
                             # Check if the start time is within the time slot
                             if course_start_time >= classroom.time_slot[day]["start"] and course_end_time <= classroom.time_slot[day]["end"]:
@@ -215,13 +218,16 @@ class Schedule:
                         
                     elif classroom.class_type == 1:
                         if day in classroom.time_slot_lab:
-                            # if course in self.program.program_courses["FS"]:
-                            #     if course_start_time >= 5 and course_end_time <= classroom.time_slot_lab[day]["end"]:
+                            # if course.department == "FS" and day in ["Tuesday", "Thursday"]:
+                            #     if course_start_time >= 17 and course_end_time <= classroom.time_slot_lab[day]["end"]:
                             #         return True
-                            # else:
+                            if course.department != "FS" and day in ["Tuesday", "Thursday"]:
                                 # Check if the start time is within the lab time slot
-                            if course_start_time >= classroom.time_slot_lab[day]["start"] and course_end_time <= classroom.time_slot_lab[day]["end"]:#classroom.time_slot_lab[day]["end"]:
-                                return True
+                                if course_start_time >= classroom.time_slot_lab[day]["start"] and course_end_time <= 17:#classroom.time_slot_lab[day]["end"]:
+                                    return True
+                            else:
+                                if course_start_time >= classroom.time_slot_lab[day]["start"] and course_end_time <= classroom.time_slot_lab[day]["end"]:
+                                    return True
     
                     # If the day is not in the time slot or the start time is not within the time slot, return False
                     return False
