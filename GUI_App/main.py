@@ -2,8 +2,9 @@ import sys
 
 from courseClass import *
 
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, QComboBox
+from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, \
+    QComboBox, QSizePolicy, QHeaderView
 from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog 
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
 
@@ -11,6 +12,10 @@ from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
 import pandas as pd
 
 from Scheduler1 import Ui_MainWindow
+from courseClass import *
+
+import random
+
 
 
 class MainWindow(QMainWindow):
@@ -58,11 +63,25 @@ class MainWindow(QMainWindow):
 
         # Create table view
         self.table_view = QTableView(self.ui.page2)
-        self.table_view.setGeometry(10, 10, 700, 500)
+        self.table_view.setGeometry(50, 10, 700, 500)
         self.table_model = QStandardItemModel()
         self.table_view.setModel(self.table_model)
 
+        # Set the size policy of the table view
+        self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
         self.table_fields()
+
+        # Set the stretch factor for each column
+        header = self.table_view.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+
+
+        #----------------- list of lists of text field values------------------
+        self.new_list = []
 
     def table_fields(self):
         # create table with rows from 8:00am to 10pm incrementing by 30 minutes
@@ -82,12 +101,30 @@ class MainWindow(QMainWindow):
         self.table_model.setHorizontalHeaderLabels(columns)
         self.table_model.setVerticalHeaderLabels(row_labels)
 
-        ## testing of setting data
-        for i, row in enumerate(rows):
-            for j, col in enumerate(columns):
-                item = QStandardItem(row[j])
+        # iterate through each row and column of the table model and set dummy text
+        for row in range(len(rows)):
+            for col in range(len(columns)):
+                # generate a random integer between 0 and 99
+                num = random.randint(0, 99)
+                # set the text and alignment for the cell
+                item = QStandardItem(str(num))
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.table_model.setItem(i, j, item)
+                # set the background color based on the value of the integer
+                if num < 33:
+                    item.setBackground(QColor("#FF0000"))  # red
+                elif num < 66:
+                    item.setBackground(QColor("#FFFF00"))  # yellow
+                else:
+                    item.setBackground(QColor("#00FF00"))  # green
+                # set the item in the table model
+                self.table_model.setItem(row, col, item)
+
+        ## testing of setting data
+        # for i, row in enumerate(rows):
+        #     for j, col in enumerate(columns):
+        #         item = QStandardItem(row[j])
+        #         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        #         self.table_model.setItem(i, j, item)
 
     @pyqtSlot()
     def browse_file(self, event):
@@ -326,6 +363,46 @@ class MainWindow(QMainWindow):
             else:
                 return
 
+    @pyqtSlot()
+    def save_input(self):
+        # Need variable/textinput for max students
+        # Clear any data from old list
+        self.new_list.clear()
+        line_edits = [
+            self.ui.p_comm_input_1,
+            self.ui.b_comm_input_1,
+            self.ui.pm_input_1,
+            self.ui.ba_input_1,
+            self.ui.glm_input_1,
+            self.ui.fs_input_1,
+            self.ui.dxd_input_1,
+            self.ui.bookkeep_input,
+            self.ui.p_comm_input_2,
+            self.ui.b_comm_input_2,
+            self.ui.pm_input_2,
+            self.ui.ba_input_2,
+            self.ui.glm_input_2,
+            self.ui.fs_input_2,
+            self.ui.dxd_input_2,
+            self.ui.bookkeep_input_2,
+            self.ui.p_comm_input_3,
+            self.ui.b_comm_input_3,
+            self.ui.pm_input_3,
+            self.ui.ba_input_3,
+            self.ui.glm_input_3,
+            self.ui.fs_input_3,
+            self.ui.dxd_input_3,
+            self.ui.bookkeep_input_3
+        ]
+
+        # iterate through all Line Edits
+        for i in range(0, len(line_edits), 8):
+            temp_list = [line_edits[i + j].text() for j in range(8)]
+            self.new_list.append(temp_list)
+        print(self.new_list)
+            #program = Program()
+        #return self.new_list
+
 ######################### Rooms updates ###############################################
     @pyqtSlot()
     def update_rooms(self): 
@@ -348,7 +425,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def add_room(self):
 
-        # display modal to get input from user
+        # display model to get input from user
         room, ok_pressed = QInputDialog.getText(self, "Add Room", "Room Number:")
         if ok_pressed:
             # Check if room number already exists in the dataframe
