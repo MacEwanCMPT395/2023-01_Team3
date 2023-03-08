@@ -19,7 +19,7 @@ class Program:
 
 class Course:
     def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
-                 lecture_start_time = 8, lecture_end_time = 17, grace = 1):
+                 lecture_start_time = 8, lecture_end_time = 17, cap = 0):
 
         self.course_id = course_id
         self.name = name
@@ -35,7 +35,7 @@ class Course:
         self.lecture_duration = lecture_duration
         self.lecture_start_time = lecture_start_time
         self.lecture_end_time = lecture_end_time
-        self.grace = grace
+        self.cap = cap
 
     def __repr__(self):
         return str(self.course_id + ": " + self.name)
@@ -52,10 +52,10 @@ class Classroom:
 
     def __repr__(self):
         lab = (self.lab_room) and "Lab" or "Lecture"
-        return str(self.classroom_id + ": " + lab + ": " + str(self.capacity))
+        return str("\n"+self.classroom_id + " - " + lab + " - " + str(self.capacity))
 
 def add_course( program,course_id="None", name="", term = 1, class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
-                lecture_start_time = 8, lecture_end_time = 17, grace = 1):
+                lecture_start_time = 8, lecture_end_time = 17, cap = 0):
         
         courses = program.courses
         for item in courses:
@@ -64,7 +64,7 @@ def add_course( program,course_id="None", name="", term = 1, class_type=1, preq=
                 return None
 
         course = Course(course_id, name, class_type, preq, transcript_hours, lecture_duration,
-                        lecture_start_time, lecture_end_time, grace)
+                        lecture_start_time, lecture_end_time, cap)
         
         program.courses.append(course_id)
         program.courselist[term-1].append(course)
