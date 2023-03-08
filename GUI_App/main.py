@@ -79,12 +79,11 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
 
-
         #----------------- list of lists of text field values------------------
         self.new_list = []
 
     def table_fields(self):
-        # create table with rows from 8:00am to 10pm incrementing by 30 minutes
+        # Create table with rows from 8:00am to 10pm incrementing by 30 minutes
         rows = []
         row_labels = []
         current_time = pd.Timestamp("08:00:00")
@@ -93,33 +92,90 @@ class MainWindow(QMainWindow):
             row_labels.append(current_time.strftime("%I:%M %p"))
             current_time += pd.Timedelta(minutes=30)
 
-        # create table with columns from Monday to Thursday
+        # Create table with columns from Monday to Thursday
         columns = ["Monday", "Tuesday", "Wednesday", "Thursday"]
 
-        # set the table cols and rows
+        # Set the table cols and rows
         self.table_model.clear()
         self.table_model.setHorizontalHeaderLabels(columns)
         self.table_model.setVerticalHeaderLabels(row_labels)
 
-        # iterate through each row and column of the table model and set dummy text
+        # Keep track of course codes and colors
+        course_color = {}
+
+        # Iterate through each row and column of the table model and set dummy text
         for row in range(len(rows)):
             for col in range(len(columns)):
-                # generate a random integer between 0 and 99
-                num = random.randint(0, 99)
-                # set the text and alignment for the cell
-                item = QStandardItem(str(num))
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # set the background color based on the value of the integer
-                if num < 33:
-                    item.setBackground(QColor("#FF0000"))  # red
-                elif num < 66:
-                    item.setBackground(QColor("#FFFF00"))  # yellow
+                # Randomly decide if this cell will be empty or filled with a course
+                # Adjust the probability as desired
+                if random.random() < 0.4:
+                    # Randomly select a course code to fill this cell
+                    course_codes = ["PCOM 0101", "PCOM 0102", "PCOM 0103", "PCOM 0105", "PCOM 0107", "PCOM 0108",
+                                    "PCOM 0201", "PCOM 0202", "CMSK 0233", "CMSK 0235"]
+                    course = random.choice(course_codes)
+                    # Set the text and alignment for the cell
+                    item = QStandardItem(course)
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    # Set the background color for the cell
+                    if course in course_color:
+                        item.setBackground(QColor(course_color[course]))
+                    else:
+                        color = QColor.fromHsl(random.randint(0, 255), 255, 191)  # choose a random color
+                        course_color[course] = color.name()
+                        item.setBackground(color)
+                    # Set the item in the table model
+                    self.table_model.setItem(row, col, item)
                 else:
-                    item.setBackground(QColor("#00FF00"))  # green
-                # set the item in the table model
-                self.table_model.setItem(row, col, item)
+                    # Set the text and alignment for the cell
+                    item = QStandardItem("")
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    # Set the item in the table model
+                    self.table_model.setItem(row, col, item)
+        #------------------------------------------------------------ attempt3
 
-        ## testing of setting data
+        #------------------------------------------------------------ attempt2
+        # iterate through each row and column of the table model and set dummy text
+        # for row in range(len(rows)):
+        #     for col in range(len(columns)):
+        #         # randomly decide if this cell will be empty or filled with a course
+        #         if random.random() < 0.4:  # adjust the probability
+        #             # randomly select a course code to fill this cell
+        #             course_codes = ["PCOM 0101", "PCOM 0102", "PCOM 0103", "PCOM 0105", "PCOM 0107", "PCOM 0108",
+        #                             "PCOM 0201", "PCOM 0202", "CMSK 0233", "CMSK 0235"]
+        #             course = random.choice(course_codes)
+        #             # set the text and alignment for the cell
+        #             item = QStandardItem(course)
+        #             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        #             # set the item in the table model
+        #             self.table_model.setItem(row, col, item)
+        #         else:
+        #             # set the text and alignment for the cell
+        #             item = QStandardItem("")
+        #             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        #             # set the item in the table model
+        #             self.table_model.setItem(row, col, item)
+        #---------------------------------------------------------attempt2
+
+        #---------------------------------------------------------attempt1
+        # for row in range(len(rows)):
+        #     for col in range(len(columns)):
+        #         # generate a random integer between 0 and 99
+        #         num = random.randint(0, 99)
+        #         # set the text and alignment for the cell
+        #         item = QStandardItem(str(num))
+        #         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        #         # set the background color based on the value of the integer
+        #         if num < 33:
+        #             item.setBackground(QColor("#FF0000"))  # red
+        #         elif num < 66:
+        #             item.setBackground(QColor("#FFFF00"))  # yellow
+        #         else:
+        #             item.setBackground(QColor("#00FF00"))  # green
+        #         # set the item in the table model
+        #         self.table_model.setItem(row, col, item)
+        #----------------------------------------------------------attempt1
+
+        ## Testing of setting data
         # for i, row in enumerate(rows):
         #     for j, col in enumerate(columns):
         #         item = QStandardItem(row[j])
@@ -365,6 +421,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def save_input(self):
+        # Testing of data saving
         # Need variable/textinput for max students
         # Clear any data from old list
         self.new_list.clear()
