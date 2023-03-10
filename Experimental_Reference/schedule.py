@@ -184,7 +184,14 @@ class Schedule:
 
             # This block of code is confusing because atm lab_room is actually
             # classroom type. So we compare the class type to the classroom type.
-            # 
+            # Then, we assign the class type of the course to the class type
+            # of the classroom and populate the real_dates with the class type
+
+            # essentially, real_dates is taken from our REAL schedule and
+            # disregards the irrelevant classrooms.
+
+            # real_dates is taken from our real schedule. We do not write to real_dates. It is data
+            # to be read!!!
             real_dates = {}
             for i in range(3):
                 if (course.class_type == i+1):
@@ -196,16 +203,39 @@ class Schedule:
                             real_dates[classroom] = dates
 
                     break
-
+            
+            # grace = the number of extra classes to be scheduled. If we have room, add one.
             grace = 1
-            # https://stackoverflow.com/questions/57115951/rounding-a-math-calculation-up-without-math-ceil
+
+            # int divide
             total_classes = (course.transcript_hours) // duration
             total_classes = int((total_classes+grace <= len(dates)) and total_classes + grace or total_classes)
             #print(course.transcript_hours,duration)
-
+            
+            # times to schedule is possible times to schedule for ONE and only ONE course type.
             times_to_schedule = []
+
+            # dummy variable so far
             able_to_schedule = 0
 
+            # recall that real_dates is structured as follows:
+            # {
+            # Classroom ID[1]: {    date[1]:    [ [(start, end),course ID], [(start, end),course ID] ],
+            #                       date[n]:    [ [(start, end),course ID], [(start, end),course ID] ]
+            #               },
+            # Classroom ID[n]: {    date[1]:    [ [(start, end),course ID], [(start, end),course ID] ],
+            #                       date[n]:    [ [(start, end),course ID], [(start, end),course ID] ]
+            #               }
+            # }
+
+            # So, our loop does the following:
+            # loop through the classrooms and dates
+            # for each date and times pair, copy the times of each class that's running
+            # since we don't care about the class ID's, just the times that are blocked.
+
+            # Finally, find the FREE blocks of time using find_range_differences on the
+            # blocked times to create a list of free times we can schedule for a given day.
+            print("FUCK: ", real_dates)
             for classroom,dates in real_dates.items():
                 free_time = []
                 for day, times in dates.items():
