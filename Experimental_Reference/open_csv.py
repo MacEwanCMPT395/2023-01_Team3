@@ -1,5 +1,6 @@
 import csv
 import Classes as classes
+import pathlib
 
 # ---------------------------------------------------
 # -- Opening file and checking out the course stuff
@@ -7,8 +8,10 @@ import Classes as classes
 programs = []
 classrooms = []
 
+filename = str(pathlib.Path(__file__).parent.resolve())+"\\"
+filename += "CSV Files\\"
 # open the CSV file and create a bunch of Program objects.
-with open('populations.csv') as csvfile:
+with open(filename+"populations.csv") as csvfile:
     reader = csv.reader(csvfile)
     next(reader) # skip header
     for row in reader:
@@ -17,7 +20,7 @@ with open('populations.csv') as csvfile:
         programs.append(program)
 
 # open the CSV file and create a bunch of Course objects, as well as populating the Program list with said classes.
-with open('classes.csv') as csvfile:
+with open(filename+'classes.csv') as csvfile:
     reader = csv.reader(csvfile)
     next(reader) # skip header
     for row in reader:
@@ -29,7 +32,7 @@ with open('classes.csv') as csvfile:
                 break
 
 # open the CSV file and create a bunch of Course objects, as well as populating the Program list with said classes.
-with open('classrooms.csv') as csvfile:
+with open(filename+'classrooms.csv') as csvfile:
     reader = csv.reader(csvfile)
     next(reader) # skip header
     for row in reader:

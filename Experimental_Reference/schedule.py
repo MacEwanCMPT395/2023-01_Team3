@@ -58,7 +58,7 @@ class Schedule:
 
         # for now no need for friday and saturday, but can easily be added.
         self.schedule = {classroom:dict(days) for classroom in classrooms}
-        #print(new_schedule)
+        print(self.schedule)
 
         #print(self.classrooms)
 
@@ -76,6 +76,7 @@ class Schedule:
         print()
 
     def combine_dates(self, days):
+
         # This would work for mon, wed, fri classes.
         dict_combined = {}
 
@@ -87,7 +88,7 @@ class Schedule:
                         dict_combined[classroom][dates].append(times)
                     else:
                         dict_combined[classroom][dates] = times
-            
+
             # Sort our dictionary.
             keys_sort = list(dict_combined[classroom].keys())
             keys_sort.sort()
@@ -102,8 +103,7 @@ class Schedule:
     def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
              lecture_start_time = 8, lecture_end_time = 17, cap = 1):
     '''
-    
-    
+
     def find_range_differences(self, min_max, data_ranges):
         '''
         Use this function to find the times that are FREE.
@@ -156,7 +156,7 @@ class Schedule:
                     overlaps.append((overlap_start, overlap_end))
 
         return overlaps
-    
+
     def calculate_space(self,population,courses,classroom_dates):
         factor = len(courses)
         dateset = False
@@ -167,32 +167,41 @@ class Schedule:
         illegal_times = []
         times_to_schedule = []
 
+        # Find possible times one course at a time.
+        # We then divide these possible times into our cohort.
         for course in courses:
             duration = course.lecture_duration
 
             time_restraint = [course.lecture_start_time, course.lecture_end_time]
+
+            # Course cap will determine if we schedule backwards.
+            # Schedule backwards = schedule from halfway through the term or
+            # the absolute minimum start time (if there's too many hours, say,
+            # 20 hours, we will have to start earlier than halfway)
+            # Think: (min(half, abs minimum start time))
+            # We can calculate and compare the dates.
             cap = course.cap
 
+            # This block of code is confusing because atm lab_room is actually
+            # classroom type. So we compare the class type to the classroom type.
+            # 
             real_dates = {}
             for i in range(3):
                 if (course.class_type == i+1):
-                    
+
                     for classroom,dates in classroom_dates.items():
-                        
+
                         if classroom.lab_room == i:
-                            
+
                             real_dates[classroom] = dates
 
                     break
-                    
-            
+
             grace = 1
             # https://stackoverflow.com/questions/57115951/rounding-a-math-calculation-up-without-math-ceil
             total_classes = (course.transcript_hours) // duration
             total_classes = int((total_classes+grace <= len(dates)) and total_classes + grace or total_classes)
             #print(course.transcript_hours,duration)
-            #print(course,"fag",total_classes)
-
 
             times_to_schedule = []
             able_to_schedule = 0
@@ -204,10 +213,11 @@ class Schedule:
                     # doing element[0] should copy just the time ranges.
                     times_sched = [element[0] for element in times]
                     free_time.append([day,self.find_range_differences(time_restraint,times_sched)])
-                
+
                 new_time = []
                 #print(new_time)
 
+                # We find the first occurance of the required days in a row that can be scheduled.
                 diff_in_classes = len(dates)-total_classes
                 for i in range(diff_in_classes):
 
@@ -223,14 +233,14 @@ class Schedule:
                         able_to_schedule = 1
 
                         break
-            
+
             print(times_to_schedule)
             # Jesus fucking christ
             # Ok, need to add functionality to be able to check schedule (cross referencing
             # classroom times ofc) for the soonest n days in a row that the days can be scheduing
             # where n = total_classes (total number of lecture days).
             # This script, at the moment, checks every single day of the term.
-            
+
             # Do stuff here
 
     def schedule_all(self,highpop_first = 0):
@@ -248,6 +258,7 @@ class Schedule:
             for i in range(3): # 3 term sections
                 if (not program.core): break
 
+                # Combine mon-wed or tues-thurs into one group of dates
                 classroom_dates = self.combine_dates(days)
                 possible_times = self.calculate_space(program.populations[i],program.courselist[i],classroom_dates)
                 '''
@@ -267,8 +278,6 @@ class Schedule:
 
     def schedule_all_highpop_first():
         print()
-
-    
 
     #def add_course(self, ):
 
