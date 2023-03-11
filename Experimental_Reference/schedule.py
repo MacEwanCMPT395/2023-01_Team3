@@ -58,7 +58,6 @@ class Schedule:
 
         # for now no need for friday and saturday, but can easily be added.
         self.schedule = {classroom:dict(days) for classroom in classrooms}
-        print(self.schedule)
 
         #print(self.classrooms)
 
@@ -202,12 +201,13 @@ class Schedule:
 
                             real_dates[classroom] = dates
 
+                    numdays = len(dates)
+
                     break
             
             # grace = the number of extra classes to be scheduled. If we have room, add one.
             grace = 1
 
-            # int divide
             total_classes = (course.transcript_hours) // duration
             total_classes = int((total_classes+grace <= len(dates)) and total_classes + grace or total_classes)
             #print(course.transcript_hours,duration)
@@ -235,7 +235,7 @@ class Schedule:
 
             # Finally, find the FREE blocks of time using find_range_differences on the
             # blocked times to create a list of free times we can schedule for a given day.
-            print("FUCK: ", real_dates)
+
             for classroom,dates in real_dates.items():
                 free_time = []
                 for day, times in dates.items():
@@ -243,28 +243,34 @@ class Schedule:
                     # doing element[0] should copy just the time ranges.
                     times_sched = [element[0] for element in times]
                     free_time.append([day,self.find_range_differences(time_restraint,times_sched)])
-
+                
+                # we're still in the for loop. new_time is the 
                 new_time = []
-                #print(new_time)
 
-                # We find the first occurance of the required days in a row that can be scheduled.
+                # We find the first occurance of the required days in a row that can be scheduled. So, if a class runs for
+                # 35 hours and is 1.5 hours per lecture, find the first (35/1.5) days in a row.
                 diff_in_classes = len(dates)-total_classes
                 for i in range(diff_in_classes):
-
+                    
                     new_time = free_time[i][1]
 
+                    # This loop finds the overlaps of free times between different days
+                    # and puts them in new_time.
                     for j in range(i,i+total_classes):
-
+                        
+                       
                         new_time = self.find_range_overlaps(new_time,free_time[j+1][1])
                         # {i: dict_combined[classroom][i] for i in keys_sort}
 
+                    
                     if new_time:
-                        times_to_schedule.append([[[free_time[x][0]] for x in range(i,j)],classroom,new_time])
+                        # This loop gives the following: [Classroom, [list of free times], [date range]]
+                        times_to_schedule.append([classroom,new_time,[free_time[x][0] for x in range(i,j)]])
                         able_to_schedule = 1
-
+    
                         break
 
-            print(times_to_schedule)
+            #print("Shit:",times_to_schedule)
             # Jesus fucking christ
             # Ok, need to add functionality to be able to check schedule (cross referencing
             # classroom times ofc) for the soonest n days in a row that the days can be scheduing
