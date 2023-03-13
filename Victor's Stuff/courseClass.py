@@ -5,6 +5,8 @@ Program Desc: Schedule core courses Monday/Wednesday, and program courses on Tue
 '''
 
 from Classes import *
+import pandas as pd                 #pip install pandas
+import numpy as np
 
 class Schedule:
     def __init__(self, student, degree, program, courses, classrooms, term):
@@ -403,3 +405,19 @@ class Schedule:
         next_course = classroom.schedule[day][next_course_index]
 
         return empty_slot_index, prev_course, next_course
+    
+def read_csv(fileName):
+    # Function to read csv file and store in class structures for scheduler.
+    df = pd.read_csv(fileName)
+    df = df.replace(np.nan, None) 
+    courses = [] # update with created class objects as scanned
+    courseIDs = [] # list for program initialization after scanning whole csv
+
+    for i in range(len(df)):
+        # df.values returns an array which is why I must surround it with brackets and then call for index 0 each time I append a courseID same goes for the courses creation
+        courseIDs.append((df.values[[i],[1]])[0])
+        courses.append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        # Note 70 is the max capacity we dont have a field for this so I just chose 70 for now
+
+    return courses
+
