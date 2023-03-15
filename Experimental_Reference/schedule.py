@@ -3,7 +3,6 @@ from Time_Stuff import days
 
 import Classes as classes
 from open_csv import programs, classrooms
-import closest_sum
 
 '''
 print()
@@ -39,12 +38,77 @@ Day: {
         "Tuesday": { List of days }
 }
 '''
+def takeSecond(elem):
+    return elem[1]
+
+def get_factors(room_hrs_times, class_length):
+
+    return_data = []
+    for item in room_hrs_times:
+        classroom, slots, dates = item
+        slot_factor = 0
+
+        for time_ranges in slots:
+            slot_factor += int((time_ranges[1] - time_ranges[0]) // class_length)
+        for i in range(slot_factor):
+            return_data.append(classroom)
+    return return_data
+
+def sum_population(combination):
+    total = 0
+    for classroom in combination:
+        total += classroom.capacity -1
+
+    return total
+
+def closest_sum(room_hrs_times, target, class_length,extra_classes = []):
+    classes_mod = (len(extra_classes) % len(room_hrs_times))
+
+    rooms_hrs_time_variable = room_hrs_times + extra_classes
+
+    timeslot_factors = get_factors(rooms_hrs_time_variable, class_length)
+    combinations = []
+
+    for i in range(len(timeslot_factors)):
+        for j in range(i, len(timeslot_factors)):
+            combinations.append(timeslot_factors[i:j+1])
+    
+    closest = None
+    closest_diff = None
+
+    for combination in combinations:
+        diff = sum_population(combination) - target
+
+        # skip loop if we can't reach our target
+        if (diff < 0):
+            continue
+
+        if (closest_diff is None or diff <= (closest_diff + 3)):
+            if (diff == closest_diff):
+                if len(combination) < len(closest):
+                    closest = combination
+                    closest_diff = diff
+            else:
+                closest = combination
+                closest_diff = diff
+
+    if (closest == None):
+
+        tempclassroom = list(room_hrs_times[classes_mod])
+        cap = tempclassroom[0].capacity
+        lab = tempclassroom[0].lab_room
+        tempclassroomclass = classes.Classroom("GHOST",cap,lab)
+        tempclassroom[0] = tempclassroomclass
+        extra_classes.append(tempclassroom)
+
+        return closest_sum(room_hrs_times, target, class_length, extra_classes)
+
+    return closest,closest_diff, (extra_classes and 1 or 0)
 
 class Schedule:
-    def __init__(self, programs, classrooms,space = 2):
+    def __init__(self, programs, classrooms):
         self.programs = programs
         self.classrooms = classrooms
-        self._space = 2 # space for the classroom capacity
 
         # insert online classroom
         
@@ -78,7 +142,7 @@ class Schedule:
 
         # This would work for mon, wed, fri classes.
         dict_combined = {}
-
+        num_classes_in_semester = 0
         for classroom in (self.classrooms):
             dict_combined[classroom] = {}
             for dow in days: #dow = day of week
@@ -88,6 +152,8 @@ class Schedule:
                     else:
                         dict_combined[classroom][dates] = times
 
+                    num_classes_in_semester+=1
+
             # Sort our dictionary.
             keys_sort = list(dict_combined[classroom].keys())
             keys_sort.sort()
@@ -96,7 +162,7 @@ class Schedule:
 
             dict_combined[classroom] = sorted_dict
 
-        return dict_combined
+        return num_classes_in_semester,dict_combined
 
     '''
     def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
@@ -128,8 +194,8 @@ class Schedule:
                 # If there is no overlap, add the entire data range to the differences list
                 differences.append((data_range[0], data_range[1]))
         return differences or [min_max]
-    
-    def find_range_overlaps(self, range_set1, range_set2):
+
+    def find_range_overlaps(self, range_set1, range_set2, min_diff):
         '''
         We use this to find overlapping times. We will call this repeatedly
         to find times throughout a semseter that are free, by calling the result
@@ -152,11 +218,107 @@ class Schedule:
                     # Find the overlapping part and add it to the overlaps list
                     overlap_start = max(range1[0], range2[0])
                     overlap_end = min(range1[1], range2[1])
-                    overlaps.append((overlap_start, overlap_end))
+
+                    if min_diff <= (overlap_end-overlap_start):
+                        overlaps.append((overlap_start, overlap_end))
 
         return overlaps
 
-    def calculate_space(self,population,courses,classroom_dates):
+    def find_valid_classrooms(self,course,classes_w_dates):
+        # This block of code is confusing because atm lab_room is actually
+        # classroom type. So we compare the class type to the classroom type.
+        # Then, we assign the class type of the course to the class type
+        # of the classroom and populate the real_dates with the class type
+
+        # essentially, real_dates is taken from our REAL schedule and
+        # disregards the irrelevant classrooms.
+
+        # real_dates is taken from our real schedule. We do not write to real_dates. It is data
+        # to be read!!!
+
+        real_dates = {}
+        for i in range(3):
+            if (course.class_type == i+1):
+
+                for classroom,dates in classes_w_dates.items():
+                    if classroom.lab_room == i:
+                        real_dates[classroom] = dates
+                break
+
+        return real_dates
+
+    def find_schedule_single_class(self, real_dates, time_restraint, total_classes, lecture_length, population):
+
+        # recall that real_dates is structured as follows:
+            # {
+            # Classroom ID[1]: {    date[1]:    [ [(start, end),course ID], [(start, end),course ID] ],
+            #                       date[n]:    [ [(start, end),course ID], [(start, end),course ID] ]
+            #               },
+            # Classroom ID[n]: {    date[1]:    [ [(start, end),course ID], [(start, end),course ID] ],
+            #                       date[n]:    [ [(start, end),course ID], [(start, end),course ID] ]
+            #               }
+            # }
+
+            # So, our loop does the following:
+            # loop through the classrooms and dates
+            # for each date and times pair, copy the times of each class that's running
+            # since we don't care about the class ID's, just the times that are blocked.
+
+            # Finally, find the FREE blocks of time using find_range_differences on the
+            # blocked times to create a list of free times we can schedule for a given day.
+
+            # times to schedule is possible times to schedule for valid classrooms for ONE and only ONE course.
+            # This finds the overlap that is consistent with a given hour range so the class can be
+            # scheduled at the same time every day.
+
+        times_to_schedule = []
+
+        # dummy variable so far
+        able_to_schedule = 0
+
+        for classroom, dates in real_dates.items():
+            free_time = []
+            for day, times in dates.items():
+                # Should create a list of lists or something of that nature. [[time range], class/cohort]
+                # doing element[0] should copy just the time ranges.
+                times_sched = [element[0] for element in times]
+                free_time.append([day, self.find_range_differences(time_restraint, times_sched)])
+
+            # we're still in the for loop. new_time is the
+            new_time = []
+
+            # We find the first occurance of the required days in a row that can be scheduled. So, if a class runs for
+            # 35 hours and is 1.5 hours per lecture, find the first (35/1.5) days in a row.
+            diff_in_classes = len(dates) - total_classes
+            for i in range(diff_in_classes or 1):
+
+                new_time = free_time[i][1]
+
+                # This loop finds the overlaps of free times between different days
+                # and puts them in new_time.
+                jrange = min(total_classes+1, len(free_time) - 1)
+                maxj = 0
+                for j in range(i, i + jrange):
+
+                    new_time = self.find_range_overlaps(new_time, free_time[j + 1][1], lecture_length)
+                    maxj = j
+                    # {i: dict_combined[classroom][i] for i in keys_sort}
+
+                if new_time:
+                    # This loop gives the following: [Classroom, [list of free times], [date range]]
+                    times_to_schedule.append([classroom, new_time, [free_time[x][0] for x in range(i, maxj)]])
+                    able_to_schedule = 1
+
+                    break
+        
+        class_distribution = closest_sum(times_to_schedule, population, lecture_length)
+        print(class_distribution,sep="BITCH\n",end="WHORES\n")
+        return times_to_schedule
+
+    def calculate_space(self,courses,population,classroom_dates):
+        
+        num_classes_in_semester, classes_w_dates = classroom_dates
+
         factor = len(courses)
         dateset = False
 
@@ -180,123 +342,56 @@ class Schedule:
             # Think: (min(half, abs minimum start time))
             # We can calculate and compare the dates.
             cap = course.cap
-
-            # This block of code is confusing because atm lab_room is actually
-            # classroom type. So we compare the class type to the classroom type.
-            # Then, we assign the class type of the course to the class type
-            # of the classroom and populate the real_dates with the class type
-
-            # essentially, real_dates is taken from our REAL schedule and
-            # disregards the irrelevant classrooms.
-
-            # real_dates is taken from our real schedule. We do not write to real_dates. It is data
-            # to be read!!!
-            real_dates = {}
-            for i in range(3):
-                if (course.class_type == i+1):
-
-                    for classroom,dates in classroom_dates.items():
-
-                        if classroom.lab_room == i:
-
-                            real_dates[classroom] = dates
-
-                    numdays = len(dates)
-
-                    break
+            
+            
+            real_dates = self.find_valid_classrooms(course,classes_w_dates)
             
             # grace = the number of extra classes to be scheduled. If we have room, add one.
             grace = 1
 
             total_classes = (course.transcript_hours) // duration
-            total_classes = int((total_classes+grace <= len(dates)) and total_classes + grace or total_classes)
-            #print(course.transcript_hours,duration)
+            if (total_classes > num_classes_in_semester):
+                print("too many hours for date range")
+
+            total_classes = int((total_classes+grace <= num_classes_in_semester) and total_classes + grace or total_classes)
             
-            # times to schedule is possible times to schedule for ONE and only ONE course type.
-            times_to_schedule = []
+            times_to_schedule = self.find_schedule_single_class(real_dates, time_restraint, total_classes, course.lecture_duration,population)
 
-            # dummy variable so far
-            able_to_schedule = 0
-
-            # recall that real_dates is structured as follows:
-            # {
-            # Classroom ID[1]: {    date[1]:    [ [(start, end),course ID], [(start, end),course ID] ],
-            #                       date[n]:    [ [(start, end),course ID], [(start, end),course ID] ]
-            #               },
-            # Classroom ID[n]: {    date[1]:    [ [(start, end),course ID], [(start, end),course ID] ],
-            #                       date[n]:    [ [(start, end),course ID], [(start, end),course ID] ]
-            #               }
-            # }
-
-            # So, our loop does the following:
-            # loop through the classrooms and dates
-            # for each date and times pair, copy the times of each class that's running
-            # since we don't care about the class ID's, just the times that are blocked.
-
-            # Finally, find the FREE blocks of time using find_range_differences on the
-            # blocked times to create a list of free times we can schedule for a given day.
-
-            for classroom,dates in real_dates.items():
-                free_time = []
-                for day, times in dates.items():
-                    # Should create a list of lists or something of that nature. [[time range], class/cohort]
-                    # doing element[0] should copy just the time ranges.
-                    times_sched = [element[0] for element in times]
-                    free_time.append([day,self.find_range_differences(time_restraint,times_sched)])
-                
-                # we're still in the for loop. new_time is the 
-                new_time = []
-
-                # We find the first occurance of the required days in a row that can be scheduled. So, if a class runs for
-                # 35 hours and is 1.5 hours per lecture, find the first (35/1.5) days in a row.
-                diff_in_classes = len(dates)-total_classes
-                for i in range(diff_in_classes):
-                    
-                    new_time = free_time[i][1]
-
-                    # This loop finds the overlaps of free times between different days
-                    # and puts them in new_time.
-                    for j in range(i,i+total_classes):
-                        
-                       
-                        new_time = self.find_range_overlaps(new_time,free_time[j+1][1])
-                        # {i: dict_combined[classroom][i] for i in keys_sort}
-
-                    
-                    if new_time:
-                        # This loop gives the following: [Classroom, [list of free times], [date range]]
-                        times_to_schedule.append([classroom,new_time,[free_time[x][0] for x in range(i,j)]])
-                        able_to_schedule = 1
-    
-                        break
-
-            #print("Shit:",times_to_schedule)
-            # Jesus fucking christ
-            # Ok, need to add functionality to be able to check schedule (cross referencing
-            # classroom times ofc) for the soonest n days in a row that the days can be scheduing
-            # where n = total_classes (total number of lecture days).
-            # This script, at the moment, checks every single day of the term.
-
-            # Do stuff here
+            #ideal_times = ideal_class_distribution()
 
     def schedule_all(self,highpop_first = 0):
         leftover_cohorts = []
         all_cohorts = []
         days = []
+        
+        cohorts_populations = []
+        programs = self.programs
 
         for program in programs:
-            #print(program.core)
-            if (program.core == 1):
+            for i in range(3): # 3 term sections
+                cohorts_populations.append((program.courselist[i],program.populations[i],program.core))
+
+        cohorts_populations.sort(key=takeSecond)
+
+        for cohort in cohorts_populations:
+            courses, population, core = cohort
+
+            if (not core): continue
+
+            if (core == 1):
                 days = ["Monday", "Wednesday"]
             else:
                 days = ["Tuesday", "Thursday"]
 
-            for i in range(3): # 3 term sections
-                if (not program.core): break
+            # Combine mon-wed or tues-thurs into one group of dates
+            classroom_dates = self.combine_dates(days)
+            possible_times = self.calculate_space(courses,population,classroom_dates)
 
-                # Combine mon-wed or tues-thurs into one group of dates
-                classroom_dates = self.combine_dates(days)
-                possible_times = self.calculate_space(program.populations[i],program.courselist[i],classroom_dates)
+
+            for i in range(3): # 3 term sections
+
+                # This is just here because we have no data for non-core classes yet
+                
                 '''
                 for courses in program.courselist[i]:
                     
@@ -310,7 +405,8 @@ class Schedule:
                         limitations.append([time, time+course.lecture_duration])
                 '''
 
-        print()
+
+        return
 
     def schedule_all_highpop_first():
         print()

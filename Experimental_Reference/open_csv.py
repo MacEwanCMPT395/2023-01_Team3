@@ -16,7 +16,7 @@ with open(filename+"populations.csv") as csvfile:
     next(reader) # skip header
     for row in reader:
         program, core, t1pop, t2pop, t3pop = row
-        program = classes.Program(program,int(core),[t1pop, t2pop, t3pop],[[],[],[]])
+        program = classes.Program(program,int(core),[int(t1pop), int(t2pop), int(t3pop)],[[],[],[]])
         programs.append(program)
 
 # open the CSV file and create a bunch of Course objects, as well as populating the Program list with said classes.

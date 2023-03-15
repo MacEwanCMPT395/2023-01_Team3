@@ -44,7 +44,7 @@ class Course:
 # -- Classroom class we will populate into a list later.
 # ---------------------------------------------------
 class Classroom:
-    def __init__(self, classroom_id, capacity, lab_room=0):
+    def __init__(self, classroom_id, capacity=0, lab_room=0):
         self.classroom_id = classroom_id
         self.capacity = capacity
         self.lab_room = lab_room
