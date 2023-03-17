@@ -1,109 +1,87 @@
 # days is a list of teachable days.
 from Time_Stuff import days
+print(days)
 
 import Classes as classes
 from open_csv import programs, classrooms
 
-'''
-print()
-print(programs,"\n")
-print(classrooms,"\n")
-
-for i,j in days.items():
-    print(i,j,"\n")
-
-print(days["Monday"])
-'''
-
-
-'''
-Program Info:
-
-def __init__(self, program_id="", core=1, populations=[0,0,0],courselist=[[],[],[]]):
-
-Course Info:
-
-def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
-             lecture_start_time = 8, lecture_end_time = 17, grace = 1):
-
-Classroom info:
-
-def __init__(self, classroom_id, capacity, lab_room=0):
-
-Days Info:
-
-# Monday through friday.
-Day: {
-        "Monday": { List of days }
-        "Tuesday": { List of days }
-}
-'''
 def takeSecond(elem):
     return elem[1]
-
-def get_factors(room_hrs_times, class_length):
-
-    return_data = []
-    for item in room_hrs_times:
-        classroom, slots, dates = item
-        slot_factor = 0
-
-        for time_ranges in slots:
-            slot_factor += int((time_ranges[1] - time_ranges[0]) // class_length)
-        for i in range(slot_factor):
-            return_data.append(classroom)
-    return return_data
 
 def sum_population(combination):
     total = 0
     for classroom in combination:
         total += classroom.capacity -1
+        
+def possible_times(room_hrs_times, class_length):
 
-    return total
-
-def closest_sum(room_hrs_times, target, class_length,extra_classes = []):
-    classes_mod = (len(extra_classes) % len(room_hrs_times))
-
-    rooms_hrs_time_variable = room_hrs_times + extra_classes
-
-    timeslot_factors = get_factors(rooms_hrs_time_variable, class_length)
-    combinations = []
-
-    for i in range(len(timeslot_factors)):
-        for j in range(i, len(timeslot_factors)):
-            combinations.append(timeslot_factors[i:j+1])
+    return_data = []
+    time_starts = {}
+    for item in room_hrs_times:
+        classroom, slots, dates = item
+        
+        time_starts[classroom] = []
+        slot_factor = 0
+        
+        for time_ranges in slots:
+            start_time = time_ranges[0]
+            end_time = time_ranges[1]
+            
+            while (end_time - class_length) >= start_time:
+                time_starts[classroom].append(end_time - class_length)
+                end_time -= class_length
+                slot_factor += 1
+            
+        for i in range(slot_factor):
+            return_data.append(classroom)
+            #print(time_starts)
+    return return_data,time_starts
     
-    closest = None
-    closest_diff = None
+def closest_sum(room_hrs_times, target,class_length, extra_classes = []):
+    target+= 2
+    classrooms,time_starts = possible_times(room_hrs_times,class_length)
 
-    for combination in combinations:
-        diff = sum_population(combination) - target
+    n = len(classrooms)
+    dp = [[0] * (target + max([c.capacity for c in classrooms]) + 1) for _ in range(n + 1)]
 
-        # skip loop if we can't reach our target
-        if (diff < 0):
-            continue
+    for i in range(1, n + 1):
+        for w in range(len(dp[0])):
+            dp[i][w] = dp[i - 1][w]
+            if classrooms[i - 1].capacity <= w:
+                dp[i][w] = max(dp[i][w], dp[i - 1][w - classrooms[i - 1].capacity] + classrooms[i - 1].capacity)
 
-        if (closest_diff is None or diff <= (closest_diff + 3)):
-            if (diff == closest_diff):
-                if len(combination) < len(closest):
-                    closest = combination
-                    closest_diff = diff
-            else:
-                closest = combination
-                closest_diff = diff
+    target_weight = target + 1
+    while dp[n][target_weight] == 0 and target_weight < len(dp[0]) - 1:
+        target_weight += 1
 
-    if (closest == None):
+    items = []
+    i = n
+    while i > 0 and target_weight > 0:
+        if dp[i][target_weight] != dp[i - 1][target_weight]:
+            items.append(classrooms[i - 1])
+            target_weight -= classrooms[i - 1].capacity
+        i -= 1
+    
+    total_weight = sum(obj.capacity for obj in items)
+    weight_diff = total_weight - target
+    
+    return_result = []
+    for classroom in items:
+        for c_room, times in time_starts.items():
+            if c_room == classroom:
+                return_result.append((classroom,time_starts[classroom].pop(0)))
+    
+    total_weight2 = total_weight
+    weight_diff2 = weight_diff
+    
+    required_classes = return_result + extra_classes
+    if (weight_diff < 0):
+        total_weight2, required_classes, weight_diff2 = closest_sum(room_hrs_times, -weight_diff,class_length,required_classes)[1]
 
-        tempclassroom = list(room_hrs_times[classes_mod])
-        cap = tempclassroom[0].capacity
-        lab = tempclassroom[0].lab_room
-        tempclassroomclass = classes.Classroom("GHOST",cap,lab)
-        tempclassroom[0] = tempclassroomclass
-        extra_classes.append(tempclassroom)
-
-        return closest_sum(room_hrs_times, target, class_length, extra_classes)
-
-    return closest,closest_diff, (extra_classes and 1 or 0)
+    #print(total_weight,total_weight2)
+    
+    return (total_weight, return_result, weight_diff),(total_weight2, required_classes, weight_diff2)
+        
 
 class Schedule:
     def __init__(self, programs, classrooms):
@@ -114,6 +92,9 @@ class Schedule:
         
         self.classrooms.append(classes.Classroom("Virtual",-1,2))
 
+        self.classrooms.append(classes.Classroom("GHOST_Lecture",-1,2))
+        self.classrooms.append(classes.Classroom("GHOST_Lab",-1,2))
+        
         self._schedule = {"Monday":[],
                          "Tuesday":[],
                          "Wednesday":[],
@@ -123,7 +104,7 @@ class Schedule:
         # for now no need for friday and saturday, but can easily be added.
         self.schedule = {classroom:dict(days) for classroom in classrooms}
 
-        #print(self.classrooms)
+        #print(self.schedule)
 
     def check_availability(self,course,days):
         for weekday in days:
@@ -246,7 +227,28 @@ class Schedule:
                 break
 
         return real_dates
+    
+    def create_ghost_class(self):
+        print("TODO")
+        
 
+    def create_ghost_classes(self, c1, c2):
+        
+        l1 = len(c1)
+        l2 = len(c2)
+        print(c1)
+        # easily remove dupes by list comprehension and adding to a set, convert back.
+        setofplaces = {x[0] for x in c1}
+        factor = l2 / l1
+        factor = (factor > int(factor)) and int(factor) or int(factor-1)
+        newlist = []
+        for i in list(setofplaces):
+            newlist += [i]*factor
+        print(newlist)
+        
+        new_class = self.create_ghost_class()
+        self.schedule
+        
     def find_schedule_single_class(self, real_dates, time_restraint, total_classes, lecture_length, population):
 
         # recall that real_dates is structured as follows:
@@ -311,8 +313,13 @@ class Schedule:
 
                     break
         
+        #print(times_to_schedule)
         class_distribution = closest_sum(times_to_schedule, population, lecture_length)
-        print(class_distribution,sep="BITCH\n",end="WHORES\n")
+        c1,c2 = class_distribution
+        
+        if (c1[0] != c2[0]):
+            self.create_ghost_classes(c1[1],c2[1])
+        
         return times_to_schedule
 
     def calculate_space(self,courses,population,classroom_dates):
@@ -357,6 +364,7 @@ class Schedule:
             
             times_to_schedule = self.find_schedule_single_class(real_dates, time_restraint, total_classes, course.lecture_duration,population)
 
+            #print(times_to_schedule)
             #ideal_times = ideal_class_distribution()
 
     def schedule_all(self,highpop_first = 0):
@@ -373,8 +381,8 @@ class Schedule:
 
         cohorts_populations.sort(key=takeSecond)
 
-        for cohort in cohorts_populations:
-            courses, population, core = cohort
+        for termclasses in cohorts_populations:
+            courses, population, core = termclasses
 
             if (not core): continue
 

@@ -12,14 +12,14 @@ class Program:
         self.courselist = courselist
 
         self.courses = []
-
+        
     def __repr__(self):
         string = self.program_id
         return str("[" + string + ": " + ", ".join(str(i) for i in self.courses) + "]")
 
 class Course:
     def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
-                 lecture_start_time = 8, lecture_end_time = 17, cap = 0):
+                 lecture_start_time = 8, lecture_end_time = 17, cap = 0, department = ""):
 
         self.course_id = course_id
         self.name = name
@@ -29,7 +29,7 @@ class Course:
         # 2 = Lab
         # 3 = Online
         self.class_type = class_type
-
+        self.department = department
         self.preq = preq
         self.transcript_hours = transcript_hours
         self.lecture_duration = lecture_duration
@@ -55,7 +55,7 @@ class Classroom:
         return str("\n"+self.classroom_id + " - " + lab + " - " + str(self.capacity))
 
 def add_course( program,course_id="None", name="", term = 1, class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
-                lecture_start_time = 8, lecture_end_time = 17, cap = 0):
+                lecture_start_time = 8, lecture_end_time = 17, cap = 0, department = ""):
         
         courses = program.courses
         for item in courses:
@@ -64,7 +64,7 @@ def add_course( program,course_id="None", name="", term = 1, class_type=1, preq=
                 return None
 
         course = Course(course_id, name, class_type, preq, transcript_hours, lecture_duration,
-                        lecture_start_time, lecture_end_time, cap)
+                        lecture_start_time, lecture_end_time, cap, department)
         
         program.courses.append(course_id)
         program.courselist[term-1].append(course)
