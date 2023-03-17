@@ -411,13 +411,44 @@ def read_csv(fileName):
     df = pd.read_csv(fileName)
     df = df.replace(np.nan, None) 
     courses = [] # update with created class objects as scanned
-    courseIDs = [] # list for program initialization after scanning whole csv
+    #courseIDs = [] # list for program initialization after scanning whole csv
+    degree = Degree()
+    program = Program(150, '') # '' is only so initialization doesn't fail will fill courses after reading csv
+    degree.core_courses["PCOM"] = [] # resetting hard coded values
+    degree.core_courses["PCOM"] = [] # resetting hard coded values
 
     for i in range(len(df)):
         # df.values returns an array which is why I must surround it with brackets and then call for index 0 each time I append a courseID same goes for the courses creation
-        courseIDs.append((df.values[[i],[1]])[0])
+        #courseIDs.append((df.values[[i],[1]])[0])
+        #print((df.values[[i],[0]])[0])
+        if (df.values[[i],[0]])[0] == 'PCOM':
+            degree.core_courses["PCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'BCOM':
+            degree.core_courses["BCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'PM':
+            program.program_courses["PM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'BA':
+            program.program_courses["BA"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'GLM':
+            program.program_courses["GLM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'FS':
+            program.program_courses["FS"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'DXD':
+            program.program_courses["DXD"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        if (df.values[[i],[0]])[0] == 'BK':
+            program.program_courses["BK"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
         courses.append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
         # Note 70 is the max capacity we dont have a field for this so I just chose 70 for now
-
-    return courses
+    program.courses = courses
+    for i in range(len(degree.core_courses["PCOM"])):
+        print(degree.core_courses["PCOM"][i].course_id)
+    return courses, program
 
