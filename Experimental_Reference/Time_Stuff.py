@@ -12,27 +12,22 @@ In a CSV this would look like:
 Name, month, day
 The year will be automatically determined in the actual program.
 '''
-holidays = Canada(subdiv = "AB",expand = False,years = 2023).items()
+year = 2023
+holidays = Canada(subdiv = "AB",expand = False,years = year).items()
 
 # Add holidays into our list of cancellations
-cancellations = dict(holidays)
-
-'''
-for date,name in holidays:
-    print(date,name)
-'''
+cancellations = {}
 
 for date,name in holidays:
     
-    # Remove the "observed" days of holidays.
-    if " (Observed)" == name[-11:]:
-        cancellations.pop(date)
+    # Remove the "unobserved" days of statutory holidays
+    if date.weekday() < 5:
+        cancellations[date] = name
 
     if name == "Family Day" or name == "Remembrance Day":
         for i in range(1,5):
             cancellations[date+datetime.timedelta(days=i)] = "Reading Week"
-       
-year = 2023
+
 # Create a loop for this. we can maybe create another CSV file for this.
 cancellations[datetime.date(year,9,30)] = "National Day for Truth and Reconciliation"
 
@@ -45,13 +40,13 @@ for date,name in cancellations.items():
 # do or don't want before creating a dictionary for every
 # day of the week.
 days = {
-    "Monday":[],
-    "Tuesday":[],
-    "Wednesday":[],
-    "Thursday":[],
-    "Friday":[],
-    "Saturday":[],
-    "Sunday":[],
+    "Monday":{},
+    "Tuesday":{},
+    "Wednesday":{},
+    "Thursday":{},
+    "Friday":{},
+    "Saturday":{},
+    "Sunday":{},
 }
 
 # Semester start and end determined by the user.
@@ -64,8 +59,7 @@ enddate = datetime.date(2023,4,4)
 currdate = start
 while currdate != enddate:
     if not (currdate in cancellations):
-        days[currdate.strftime("%A")].append(
-            {currdate:[]})
+        days[currdate.strftime("%A")][currdate] = []
         
 
     currdate = currdate+datetime.timedelta(days=1)
