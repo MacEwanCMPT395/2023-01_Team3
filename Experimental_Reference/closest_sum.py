@@ -44,7 +44,9 @@ There are only a few limitations which we will work out when we expand this proj
         b) automatically request more classrooms to satisfy this algorithm
 '''
 
-def all_count_divisible_by_num(lst1, lst2,num):
+from Classes import Classroom as classroom
+'''
+def even_repetition_count(lst1, lst2,num):
     
     for value in lst2:
         if ((lst1.count(value) % num) != 0):
@@ -52,39 +54,45 @@ def all_count_divisible_by_num(lst1, lst2,num):
             return False
         
     return True
+'''
 
-def closest_sum(numbers, target,factor=1):
-    target *= factor
+def closest_sum(course, numbers, target):
+
     numbers = sorted(numbers)
+    factors = list(set(numbers))
     combinations = []
+
     for i in range(len(numbers)):
         for j in range(i, len(numbers)):
             combinations.append(numbers[i:j+1])
+    
     closest = None
     closest_diff = None
+
     for combination in combinations:
-        if all_count_divisible_by_num(combination,[40,36,30,24],factor):
-            diff = sum(combination) - target
+        diff = sum(combination) - target
 
-            # skip loop if we can't reach our target
-            if (diff < 0):
-                continue
+        # skip loop if we can't reach our target
+        if (diff < 0):
+            continue
 
-            if (closest_diff is None or diff <= closest_diff):
-                if (diff == closest_diff):
-                    if len(combination) < len(closest):
-                        closest = combination
-                        closest_diff = diff
-                else:
+        if (closest_diff is None or diff <= closest_diff):
+            if (diff == closest_diff):
+                if len(combination) < len(closest):
                     closest = combination
                     closest_diff = diff
+            else:
+                closest = combination
+                closest_diff = diff
 
     return closest,closest_diff
 
 # We would change these values to reflect the same except minus 2 or 3 each.
 # So 38, 34, 34, 28, if our capacity target was 2.
-numbers = [40,36,36,30,30,24,24,24]*9
-target = 210
-factor = 2
-result = closest_sum(numbers, target,factor)
-print(result)
+# numbers = [40,36,36,30,30,24,24,24]*9
+
+numbers = [38,34,34,28,28,22,22,22]*9
+target = 200
+factor = 0 # 4 classes in the term
+#result = closest_sum(numbers, target,factor)
+#print(result)
