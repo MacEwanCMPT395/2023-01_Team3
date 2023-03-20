@@ -1,3 +1,4 @@
+import datetime
 import sys
 
 from courseClass import *
@@ -5,9 +6,8 @@ from courseClass import *
 from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, \
     QComboBox, QSizePolicy, QHeaderView
-from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog 
+from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
-
 
 import pandas as pd
 
@@ -15,7 +15,6 @@ from Scheduler1 import Ui_MainWindow
 from courseClass import *
 
 import random
-
 
 
 class MainWindow(QMainWindow):
@@ -46,8 +45,7 @@ class MainWindow(QMainWindow):
 
         ################## Data Page Buttons Clicked ################
         self.ui.save_data_btn.clicked.connect(self.save_data)
-        
-        
+
         ################## Rooms Page Buttons Clicked ###############
 
         # connect the remove button to the remove_classroom function
@@ -58,17 +56,48 @@ class MainWindow(QMainWindow):
 
         ############################################################
 
-
         self.ui.file_name_input.mousePressEvent = self.browse_file
 
         # Create table view
         self.table_view = QTableView(self.ui.page2)
-        self.table_view.setGeometry(50, 10, 700, 500)
+        self.table_view.setGeometry(100, 70, 700, 500)
         self.table_model = QStandardItemModel()
         self.table_view.setModel(self.table_model)
 
         # Set the size policy of the table view
         self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        # Add a dropdown for selecting the week
+        self.week_combo_box = QComboBox(self.ui.page2)
+        self.week_combo_box.setGeometry(100, 40, 100, 30)
+
+        # Classrooms for dropdown
+        room = ["Class 11-533", "Class 11-534", "Class 11-560", "Class 11-562", "Class 11-564", "Class 11-458", "Class 11-430",
+                "Class 11-320", "Class 11-532"]
+
+        # Add options to the dropdown for each week
+        for i in range(len(room)):
+            self.week_combo_box.addItem(f"{room[i]}")
+
+
+        # Set schedule default as week 1
+        self.week = 1
+
+        # Add buttons for changing week
+        self.week_label = QLabel("Week 1", self)
+        self.week_label.setGeometry(400, 580, 100, 20)
+        self.week_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.left_button = QPushButton("<", self)
+        self.left_button.setGeometry(350, 580, 40, 20)
+        self.left_button.clicked.connect(self.decrement_week)
+        self.left_button.clicked.connect(self.refresh_table)
+
+        self.right_button = QPushButton(">", self)
+        self.right_button.setGeometry(500, 580, 40, 20)
+        self.right_button.clicked.connect(self.increment_week)
+        self.right_button.clicked.connect(self.refresh_table)
+
 
         self.table_fields()
 
@@ -79,8 +108,18 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
 
-        #----------------- list of lists of text field values------------------
+        # ----------------- list of lists of text field values------------------
         self.new_list = []
+
+    def refresh_table(self):
+        # Clear the current table view and repopulate it
+        self.table_model.clear()
+        self.table_fields()
+        header = self.table_view.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
 
     def table_fields(self):
         # Create table with rows from 8:00am to 10pm incrementing by 30 minutes
@@ -100,28 +139,57 @@ class MainWindow(QMainWindow):
         self.table_model.setHorizontalHeaderLabels(columns)
         self.table_model.setVerticalHeaderLabels(row_labels)
 
-        # Keep track of course codes and colors
+        # Keep track of colors and testing dictionary
         course_color = {}
-
+        classroom_11_533 = {
+            "Week 1": {
+                "Course 1": {"start_time": "08:00", "end_time": "09:30", "days": ["Mon", "Wed"]},
+                "Course 2": {"start_time": "10:00", "end_time": "11:30", "days": ["Tue", "Thu"]},
+                "Course 3": {"start_time": "12:00", "end_time": "13:30", "days": ["Mon", "Wed"]},
+                "Course 4": {"start_time": "14:00", "end_time": "15:30", "days": ["Tue", "Thu"]},
+                "Course 5": {"start_time": "16:00", "end_time": "17:30", "days": ["Mon", "Wed"]},
+                "Course 6": {"start_time": "18:00", "end_time": "19:30", "days": ["Tue", "Thu"]},
+            },
+            "Week 2": {
+                "Course a": {"start_time": "08:30", "end_time": "10:00", "days": ["Mon", "Wed"]},
+                "Course b": {"start_time": "11:00", "end_time": "12:30", "days": ["Tue", "Thu"]},
+                "Course c": {"start_time": "13:00", "end_time": "14:30", "days": ["Mon", "Wed"]},
+                "Course d": {"start_time": "15:00", "end_time": "16:30", "days": ["Tue", "Thu"]},
+                "Course e": {"start_time": "17:00", "end_time": "18:30", "days": ["Mon", "Wed"]},
+                "Course f": {"start_time": "19:00", "end_time": "20:30", "days": ["Tue", "Thu"]},
+            }
+        }
         # Iterate through each row and column of the table model and set dummy text
         for row in range(len(rows)):
             for col in range(len(columns)):
-                # Randomly decide if this cell will be empty or filled with a course
-                # Adjust the probability as desired
-                if random.random() < 0.4:
-                    # Randomly select a course code to fill this cell
-                    course_codes = ["PCOM 0101", "PCOM 0102", "PCOM 0103", "PCOM 0105", "PCOM 0107", "PCOM 0108",
-                                    "PCOM 0201", "PCOM 0202", "CMSK 0233", "CMSK 0235"]
-                    course = random.choice(course_codes)
+                # Check if this cell is within the start and end time of any course in classroom_11_533 on this day
+                course_in_cell = None
+                for course_name, course_data in classroom_11_533[self.week_label.text()].items():
+                    start_time = datetime.datetime.strptime(course_data["start_time"], '%H:%M').time()
+                    end_time = datetime.datetime.strptime(course_data["end_time"], '%H:%M').time()
+                    if columns[col].startswith(course_data["days"][0]) and \
+                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
+                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
+                        course_in_cell = course_name
+                        break
+                for course_name, course_data in classroom_11_533[self.week_label.text()].items():
+                    start_time = datetime.datetime.strptime(course_data["start_time"], '%H:%M').time()
+                    end_time = datetime.datetime.strptime(course_data["end_time"], '%H:%M').time()
+                    if columns[col].startswith(course_data["days"][1]) and \
+                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
+                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
+                        course_in_cell = course_name
+                        break
+                if course_in_cell:
                     # Set the text and alignment for the cell
-                    item = QStandardItem(course)
+                    item = QStandardItem(course_in_cell)
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     # Set the background color for the cell
-                    if course in course_color:
-                        item.setBackground(QColor(course_color[course]))
+                    if course_in_cell in course_color:
+                        item.setBackground(QColor(course_color[course_in_cell]))
                     else:
-                        color = QColor.fromHsl(random.randint(0, 255), 255, 191)  # choose a random color
-                        course_color[course] = color.name()
+                        color = QColor.fromHsl(random.randint(0, 255), 255, 191)
+                        course_color[course_in_cell] = color.name()
                         item.setBackground(color)
                     # Set the item in the table model
                     self.table_model.setItem(row, col, item)
@@ -131,56 +199,16 @@ class MainWindow(QMainWindow):
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     # Set the item in the table model
                     self.table_model.setItem(row, col, item)
-        #------------------------------------------------------------ attempt3
 
-        #------------------------------------------------------------ attempt2
-        # iterate through each row and column of the table model and set dummy text
-        # for row in range(len(rows)):
-        #     for col in range(len(columns)):
-        #         # randomly decide if this cell will be empty or filled with a course
-        #         if random.random() < 0.4:  # adjust the probability
-        #             # randomly select a course code to fill this cell
-        #             course_codes = ["PCOM 0101", "PCOM 0102", "PCOM 0103", "PCOM 0105", "PCOM 0107", "PCOM 0108",
-        #                             "PCOM 0201", "PCOM 0202", "CMSK 0233", "CMSK 0235"]
-        #             course = random.choice(course_codes)
-        #             # set the text and alignment for the cell
-        #             item = QStandardItem(course)
-        #             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        #             # set the item in the table model
-        #             self.table_model.setItem(row, col, item)
-        #         else:
-        #             # set the text and alignment for the cell
-        #             item = QStandardItem("")
-        #             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        #             # set the item in the table model
-        #             self.table_model.setItem(row, col, item)
-        #---------------------------------------------------------attempt2
+    def increment_week(self):
+        if self.week < 13:
+            self.week += 1
+            self.week_label.setText(f"Week {self.week}")
 
-        #---------------------------------------------------------attempt1
-        # for row in range(len(rows)):
-        #     for col in range(len(columns)):
-        #         # generate a random integer between 0 and 99
-        #         num = random.randint(0, 99)
-        #         # set the text and alignment for the cell
-        #         item = QStandardItem(str(num))
-        #         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        #         # set the background color based on the value of the integer
-        #         if num < 33:
-        #             item.setBackground(QColor("#FF0000"))  # red
-        #         elif num < 66:
-        #             item.setBackground(QColor("#FFFF00"))  # yellow
-        #         else:
-        #             item.setBackground(QColor("#00FF00"))  # green
-        #         # set the item in the table model
-        #         self.table_model.setItem(row, col, item)
-        #----------------------------------------------------------attempt1
-
-        ## Testing of setting data
-        # for i, row in enumerate(rows):
-        #     for j, col in enumerate(columns):
-        #         item = QStandardItem(row[j])
-        #         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        #         self.table_model.setItem(i, j, item)
+    def decrement_week(self):
+        if self.week > 1:
+            self.week -= 1
+            self.week_label.setText(f"Week {self.week}")
 
     @pyqtSlot()
     def browse_file(self, event):
@@ -189,13 +217,11 @@ class MainWindow(QMainWindow):
         if file_name:
             self.ui.file_name_input.setText(file_name)
 
-
-
     ############################## Button Functions ###################################
 
     @pyqtSlot()
     def load_data(self):
-        
+
         file_name = self.ui.file_name_input.text()
 
         if file_name:
@@ -214,15 +240,15 @@ class MainWindow(QMainWindow):
             msg.exec()
 
         [Classroom("11-532", 30, 1),
-                        Classroom("11-533", 36, 0), 
-                        Classroom("11-534", 36, 0),
-                        Classroom("11-560", 24, 0), 
-                        Classroom("11-562", 24, 0),
-                        Classroom("11-564", 24, 0),
-                        Classroom("11-458", 40, 0),
-                        Classroom("11-430", 30, 0),
-                        Classroom("11-320", 30, 0)]
-        
+         Classroom("11-533", 36, 0),
+         Classroom("11-534", 36, 0),
+         Classroom("11-560", 24, 0),
+         Classroom("11-562", 24, 0),
+         Classroom("11-564", 24, 0),
+         Classroom("11-458", 40, 0),
+         Classroom("11-430", 30, 0),
+         Classroom("11-320", 30, 0)]
+
         self.edit_room_text(self.ui.text_533, self.classroom_schedule(0))
         self.edit_room_text(self.ui.text_534, self.classroom_schedule(1))
         self.edit_room_text(self.ui.text_560, self.classroom_schedule(2))
@@ -232,9 +258,6 @@ class MainWindow(QMainWindow):
         self.edit_room_text(self.ui.text_430, self.classroom_schedule(6))
         self.edit_room_text(self.ui.text_320, self.classroom_schedule(7))
 
-        
-        
-
     @pyqtSlot()
     def showDataPage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page1)
@@ -242,47 +265,47 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def showSchedulePage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page2)
-    
+
     @pyqtSlot()
     def show533Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page3)
-    
+
     @pyqtSlot()
     def show534Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page4)
-    
+
     @pyqtSlot()
     def show560Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page11)
-    
+
     @pyqtSlot()
     def show458Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page5)
-    
+
     @pyqtSlot()
     def show562Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page6)
-    
+
     @pyqtSlot()
     def show564Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page7)
-    
+
     @pyqtSlot()
     def show320Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page8)
-    
+
     @pyqtSlot()
     def show430Page(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page9)
-    
+
     @pyqtSlot()
     def show532LabPage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page10)
-    
+
     @pyqtSlot()
     def showRoomsPage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page12)
-    
+
     @pyqtSlot()
     def updateProgramsFields(self):
         # update QLineEdits for first term
@@ -314,10 +337,10 @@ class MainWindow(QMainWindow):
         self.ui.fs_input_3.setText(str(self.df.loc[5, '3rd Term Students']))
         self.ui.dxd_input_3.setText(str(self.df.loc[6, '3rd Term Students']))
         self.ui.bookkeep_input_3.setText(str(self.df.loc[7, '3rd Term Students']))
-    
+
     @pyqtSlot()
     def input_check(self):
-    # list of all the Line Edits
+        # list of all the Line Edits
         line_edits = [
             self.ui.p_comm_input_1,
             self.ui.b_comm_input_1,
@@ -404,7 +427,7 @@ class MainWindow(QMainWindow):
 
         # Get the currently selected index of the semester_select_combobox
         selected_index = self.ui.semester_select_combobox.currentIndex()
-        #Check if the selected index is 0
+        # Check if the selected index is 0
         if selected_index == 0:
             # Display a warning message
             msg = QMessageBox()
@@ -457,12 +480,12 @@ class MainWindow(QMainWindow):
             temp_list = [line_edits[i + j].text() for j in range(8)]
             self.new_list.append(temp_list)
         print(self.new_list)
-            #program = Program()
-        #return self.new_list
+        # program = Program()
+        # return self.new_list
 
-######################### Rooms updates ###############################################
+    ######################### Rooms updates ###############################################
     @pyqtSlot()
-    def update_rooms(self): 
+    def update_rooms(self):
         self.ui.rooms_combobox.clear()
         classrooms = self.df.loc[9:, 'Programs'].dropna().tolist()
         self.ui.rooms_combobox.addItems(classrooms)
@@ -478,7 +501,7 @@ class MainWindow(QMainWindow):
         # update the combobox to reflect the removed classroom number
         self.update_rooms()
         print(self.df)
-    
+
     @pyqtSlot()
     def add_room(self):
 
@@ -504,41 +527,38 @@ class MainWindow(QMainWindow):
                     self.update_rooms()
                     print(self.df)
 
-
     ################################ Populating the Classroom Tables ##################
     def classroom_schedule(self, index):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
-                    Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
-                    Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
-                    Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
-                    Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
+        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0),
+                   Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0),
+                   Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
+                   Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
+                   Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
         classrooms = [Classroom("11-532", 30, 1),
-                        Classroom("11-533", 36, 0), 
-                        Classroom("11-534", 36, 0),
-                        Classroom("11-560", 24, 0), 
-                        Classroom("11-562", 24, 0),
-                        Classroom("11-564", 24, 0),
-                        Classroom("11-458", 40, 0),
-                        Classroom("11-430", 30, 0),
-                        Classroom("11-320", 30, 0)]
-        term = [Term("Term 1", 1), 
+                      Classroom("11-533", 36, 0),
+                      Classroom("11-534", 36, 0),
+                      Classroom("11-560", 24, 0),
+                      Classroom("11-562", 24, 0),
+                      Classroom("11-564", 24, 0),
+                      Classroom("11-458", 40, 0),
+                      Classroom("11-430", 30, 0),
+                      Classroom("11-320", 30, 0)]
+        term = [Term("Term 1", 1),
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
         schedule = Schedule(student, degree, program, courses, classrooms, term)
 
-
         schedule.term_schedule(classrooms, term)
         schedule.display_classroom(term[0], classrooms[index])
         return schedule.return_classroom(term[0], classrooms[index])
-        
-    
+
     sched = classroom_schedule(1, 1)
-    print("Type: ",type(sched))
-    print("the shchedule:",classroom_schedule(1,1))
-    
+    print("Type: ", type(sched))
+    print("the shchedule:", classroom_schedule(1, 1))
+
     def edit_room_text(self, room_textbox, text):
         # Get the current text in the text edit
         current_text = room_textbox.toPlainText()
@@ -546,9 +566,8 @@ class MainWindow(QMainWindow):
         new_text = current_text + text
         # Set the new text in the text edit
         room_textbox.setPlainText(new_text)
-    
+
     #############################################################################################
-    
 
 
 """======================================================================================"""
