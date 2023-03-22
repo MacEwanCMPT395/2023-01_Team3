@@ -253,14 +253,24 @@ class TestStudentSchedule(unittest.TestCase):
         # print(f"===================================")
 
     def test_read_csv(self):
+        finalDegree = Degree()
+        finalProgram = Program(150, '')
+        finalDegree.core_courses["PCOM"] = [] 
+        finalDegree.core_courses["BCOM"] = [] 
+        finalProgram.program_courses["PM"] = []
+        finalProgram.program_courses["BA"] = []
+        finalProgram.program_courses["GLM"] = []
+        finalProgram.program_courses["DXD"] = []
+        finalProgram.program_courses["BK"] = []
         print(f"\n===================================")
         print(f"\n=====Testing read_csv=====\n")
         # Please note I need to figure out how to change path so it's more universal but for now I use my own path on my PC
         # For this test to work please put in the path to the csv to read
-        courses, program = read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv")
-        for i in range(len(courses)):
-                print(courses[i].course_id)
-        print("\n")
+        read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv", finalDegree, finalProgram)
+        #degree, program = read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv")
+        for i in range(len(finalDegree.core_courses["PCOM"])):
+                print(finalDegree.core_courses["PCOM"][i].course_id)
+                #print("\n")
         print(f"===================================")
 
 
