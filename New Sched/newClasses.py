@@ -8,30 +8,21 @@ class Student:
 
 
 class Course:
-    def __init__(self, course_id, department, pre_req, max_capacity, term, transcript_hours, lecture_duration, course_type):
+    def __init__(self, course_id="None", name="", course_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
+                 term = None, lecture_start_time = 8, lecture_end_time = 17, cap = 0, department = ""):
         self.course_id = course_id
+        self.name = name
         self.department = department
-        self.pre_req = pre_req
-        self.max_capacity = max_capacity
+        self.pre_req = preq
+        self.cap = cap
         self.term = term
         self.transcript_hours = transcript_hours
         self.lecture_duration = lecture_duration
-        self.lecture_start_time = 16
-        self.lecture_end_time = 17
+        self.lecture_start_time = lecture_start_time
+        self.lecture_end_time = lecture_end_time
         self.course_type = course_type
         # self.count = 0
         # self.sections = []
-
-    '''
-    copy: make identical copy of courses so each course has a distinct start and end time.
-    '''
-    def copy(self, courses):
-        copy_courses = []
-        for id, crs in courses.items():
-            for course in crs:
-                copy_courses.append(Course(course.course_id, course.department, course.pre_req, course.max_capacity, course.term, course.transcript_hours, course.lecture_duration, course.course_type))
-        return copy_courses
-
 
     # class Section:
     #     def __init__(self):
@@ -45,6 +36,21 @@ class Course:
     #     section = Course.Section()
     #     self.sections.append(section)
 
+    '''
+    copy: make identical copy of courses so each course has a distinct start and end time.
+    '''
+    def copy(self, courses):
+        copy_courses = []
+        for id, crs in courses.items():
+            for course in crs:
+                copy_courses.append(Course(course.course_id, course.department, course.pre_req, course.max_capacity, course.term, course.transcript_hours, course.lecture_duration, course.course_type))
+        return copy_courses
+    
+    def __repr__(self):
+        return str(self.course_id + ": " + self.name)
+
+
+
 
 class Program:
     def __init__(self, program_id = "", courses = [], core = 1, populations = [0,0,0]):
@@ -53,6 +59,9 @@ class Program:
         self.core = core
         self.populations = populations #population of program for each term
 
+    def copy(self):
+        return Program(self.program_id, self.courses, self.core, self.populations)
+
     def __repr__(self):
         string = self.program_id
         return str("[" + string + ": " + ", ".join(str(i) for i in self.courses) + "]")
@@ -60,7 +69,7 @@ class Program:
 
 
 class Classroom:
-    def __init__(self, classroom_id, capacity, class_type):
+    def __init__(self, classroom_id, capacity = 0, class_type = 0):
         self.classroom_id = classroom_id
         self.capacity = capacity
         self.class_type = class_type
@@ -80,6 +89,12 @@ class Classroom:
     '''
     def copy(self):
         return Classroom(self.classroom_id, self.capacity, self.class_type)
+    
+    
+    def __repr__(self):
+        lab = (self.lab_room) and "Lab" or "Lecture"
+        return str("\n"+self.classroom_id + " - " + lab + " - " + str(self.capacity))
+
     
 
 
