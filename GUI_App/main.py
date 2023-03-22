@@ -32,7 +32,16 @@ class MainWindow(QMainWindow):
         self.df_programs = pd.DataFrame
         self.df_students = self.create_programs()
 
-
+        ########## Initialize Degree and Program ############
+        self.degree = Degree()
+        self.program = Program(150, '')
+        self.degree.core_courses["PCOM"] = [] 
+        self.degree.core_courses["BCOM"] = [] 
+        self.program.program_courses["PM"] = []
+        self.program.program_courses["BA"] = []
+        self.program.program_courses["GLM"] = []
+        self.program.program_courses["DXD"] = []
+        self.program.program_courses["BK"] = []
 
         self.ui.stackedWidget.setCurrentWidget(self.ui.page12)
 
@@ -41,6 +50,7 @@ class MainWindow(QMainWindow):
         self.ui.schedule_page_button.clicked.connect(self.showSchedulePage)
         self.ui.load_data_button.clicked.connect(self.load_student_data)
         self.ui.load_data_button_room.clicked.connect(self.load_room_data)
+        self.ui.load_data_button_program.clicked.connect(lambda: read_csv(self.ui.file_name_input_program.text(), self.degree, self.program))
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
         self.ui.room_560_page_btn.clicked.connect(self.show560Page)
@@ -66,7 +76,7 @@ class MainWindow(QMainWindow):
         ############################################################
 
         self.ui.file_name_input.mousePressEvent = self.browse_student_file
-        self.ui.file_name_input_program.mousePressEvent = self.browse_room_file
+        self.ui.file_name_input_program.mousePressEvent = self.browse_program_file
         self.ui.file_name_input_room.mousePressEvent = self.browse_room_file
 
         # Create table view
@@ -639,6 +649,7 @@ class MainWindow(QMainWindow):
         return new_df
 
     ################################ Populating the Classroom Tables ##################
+    '''
     def classroom_schedule(self, index):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
@@ -665,10 +676,10 @@ class MainWindow(QMainWindow):
         schedule.term_schedule(classrooms, term)
         schedule.display_classroom(term[0], classrooms[index])
         return schedule.return_classroom(term[0], classrooms[index])
-
-    sched = classroom_schedule(1, 1)
-    print("Type: ", type(sched))
-    print("the shchedule:", classroom_schedule(1, 1))
+    '''
+    #sched = classroom_schedule(1, 1)
+    #print("Type: ", type(sched))
+    #print("the shchedule:", classroom_schedule(1, 1))
 
     def edit_room_text(self, room_textbox, text):
         # Get the current text in the text edit
