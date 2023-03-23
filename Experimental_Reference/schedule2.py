@@ -99,6 +99,7 @@ def closest_sum(room_hrs_times, target,class_length, extra_classes = [],incremen
 
 
     return real_schedule,ghost_required
+    print()
 
 class Schedule:
     def __init__(self, programs, classrooms):
