@@ -4,20 +4,21 @@ CMPT 395 X03L - Team: 3
 Program Desc: Schedule core courses Monday/Wednesday, and program courses on Tuesday/Thursday. Program will validate if a time slot is free to schedule new course
 '''
 
-from Classes import *
+from newClasses import *
 import pandas as pd                 #pip install pandas
 import numpy as np
 
 class Schedule:
-    def __init__(self, student, degree, program, courses, classrooms, term):
+    def __init__(self, student, program, courses, classrooms, term):
         self.student = student
-        self.degree = degree
         self.program = program
         self.courses = courses
         self.classrooms = classrooms
         self.term = term
-    
-   
+        
+    '''
+    displays a specific classroom in a specific term
+    '''
     def display_classroom(self, term, classroom):
         for classrooms in term.term_sched[term.term_id]:
             for clsrm in classrooms:
@@ -25,7 +26,9 @@ class Schedule:
                     self.display_schedule(clsrm)
         
 
-
+    '''
+    helper function for display term that displaays the schedule of each classroom
+    '''
     def display_schedule(self, classroom):
         print(f"\n\t{classroom.classroom_id}: ")
         for day in classroom.schedule:
@@ -34,7 +37,10 @@ class Schedule:
                 if course != None:
                     print(f"\t\t\t{course.course_id} starts at {course.lecture_start_time} and ends at {course.lecture_end_time}")
                 else: print(f"\t\t\tNull")
-
+    
+    '''
+    function displays unique schedule for each term and all their classroom schedules
+    '''
     def display_term(self, terms):
         for term in terms:
             for id, sched in term.term_sched.items():
@@ -44,143 +50,95 @@ class Schedule:
                         self.display_schedule(classroom)
 
     '''
-    term_schedule: filter out courses to their specific terms, and then pass the list of courses to schedule_core_courses and schedule_program_courses
+    term_schedule: filter out courses to their specific terms, and then pass the list of courses to schedule_program_courses
     '''
-    def term_schedule(self, classrooms, terms):
+    def term_schedule(self):
 
         #iterate through terms
-        for term in terms:
+        for term in self.term:
             
-            term.classrooms = [classroom.copy() for classroom in classrooms]  # create a copy of classrooms for each term
+            term.classrooms = [classroom.copy() for classroom in self.classrooms]  # create a copy of classrooms for each term
 
-            #create copies of all courses for each term (for distinct times)
-            term.core_courses = Course.copy(self, self.degree.core_courses)
-            term.program_courses = Course.copy(self, self.program.program_courses)
+            '''
+            How about instead of making copies of courses make copies of programs and edit program.courses so that we remove courses 
+            from it that doesnt belong in the course.
+            '''
 
-            #loop through core courses
-            for core in term.core_courses:
-
-                    #organize courses to respective terms
-                    if term.term_value == 1 and core.term == 1:
-                        term.term_core_course.append(core)
-                    elif term.term_value == 2 and core.term != 3:
-                        term.term_core_course.append(core)
-                    elif term.term_value == 3 and core.term != 1:
-                        term.term_core_course.append(core)
-
-            for prog in term.program_courses:
+            for progr in self.program:
+                c_progr = progr.copy()
+                for course in c_progr.courses:
 
                     #organize courses to respective terms
-                    if term.term_value == 1 and prog.term == 1:
-                        term.term_prog_course.append(prog)
-                    elif term.term_value == 2 and prog.term != 3:
-                        term.term_prog_course.append(prog)
-                    elif term.term_value == 3 and prog.term != 1:
-                        term.term_prog_course.append(prog)
+                    if term.term_value == 1 and course.term != 1:
+                        c_progr.courses.remove(course)
+                    elif term.term_value == 2 and course.term == 3:
+                        c_progr.courses.remove(course)
+                    elif term.term_value == 3 and course.term == 1:
+                        c_progr.courses.remove(course)
+                term.courses.append(c_progr)
 
-            self.schedule_core_courses(term.term_core_course, term.classrooms, term)
-            self.schedule_program_courses(term.term_prog_course, term.classrooms, term)
+            self.schedule_program_courses(term.courses, term.classrooms, term)
 
-
-
-    '''
-    schedule_core_courses: will assign courses to monday and wednesday (once or twice a week depending on lecture_duration)
-                           calls check_availability to see if a course can be scheduled within the general timeslot of a classroom with no conflicts
-                           calls schedule_courses to assign the courses to a classroom.
-    '''
-    def schedule_core_courses(self, courses, classrooms, term):
-
-        # loop through all classrooms in the instance
-        for classroom in classrooms:
-    
-            # loop through days "Monday" and "Wednesday"
-            for day in ["Monday", "Wednesday"]:
-    
-                # loop through core courses
-                for course in courses:
-                    
-                    # check if course has already been scheduled and that course and classroom types are the same i.e. lab room = lab course
-                    if course.course_id not in term.scheduled_courses and classroom.class_type == course.course_type:
-
-                        if course.lecture_duration in [1.5, 2]:
-                            if day == "Monday":
-                                # check if the course can be scheduled on the current day and classroom
-                                schedule_on_day = self.check_availability(course, day, classroom)
-                                if schedule_on_day and course.pre_req == None:
-                                    # schedule the course on the current day and classroom
-                                    self.schedule_course(course, day, classroom, term)
-                                else:
-                                    term.assign_unsched(course)
-                                
-                            elif day == "Wednesday":
-                                # check if it was scheduled on Monday
-                                if course in classroom.schedule["Monday"]:
-                                    schedule_on_day = self.check_availability(course, day, classroom)
-                                    if schedule_on_day:
-                                        # schedule the course on the current day and classroom
-                                        self.schedule_course(course, day, classroom, term)
-                                        term.scheduled_courses.append(course.course_id)
-
-                        else:
-                            schedule_on_day = self.check_availability(course, day, classroom)
-                            if schedule_on_day and course.pre_req == None:
-                                # schedule the course on the current day and classroom
-                                self.schedule_course(course, day, classroom, term)
-                                term.scheduled_courses.append(course.course_id)
-                            else:
-                                term.assign_unsched(course)
-
-        term.term_sched[term.term_id] = [(classrooms)]
 
         
     '''
-    schedule_program_courses: will assign courses to tuesday and thusday (once or twice a week depending on lecture_duration) 
+    schedule_program_courses: will assign courses throughout the week (once or twice a week depending on lecture_duration) 
                               calls check_availability to see if a course can be scheduled within the general timeslot of a classroom with no conflicts
                               calls schedule_courses to assign the courses to a classroom.
                               
     '''
-    def schedule_program_courses(self, courses, classrooms, term):
+    def schedule_program_courses(self, programs, classrooms, term):
+        '''
+        Will remove classroom for loop as we need to target specific classrooms based on cap
+        will remove the parameter classroom for schedule_course most likely
+        '''
         # loop through all classrooms in the instance
         for classroom in classrooms:
-    
-            # loop through days "Tuesday" and "Thursday"
-            for day in ["Tuesday", "Thursday"]:
-    
-                # loop through program courses
-                for course in courses:
+                
+            for prog in programs:
+                if prog.core == 1:
+                    days = ["Monday", "Wednesday"]
+                else:
+                    days = ["Tuesday", "Thursday"]
+            
+                # loop through days
+                for day in days:
+        
+                    # loop through program courses
+                    for course in prog.courses:
 
-                    if course.course_id not in term.scheduled_courses and classroom.class_type == course.course_type:
+                        if course.course_id not in term.scheduled_courses and classroom.class_type == course.course_type:
 
-                        if course.lecture_duration in [1.5, 2] and course.pre_req == None:
-                            if day == "Tuesday":
-                                # check if the course can be scheduled on the current day and classroom
+                            if course.lecture_duration in [1.5, 2] and course.pre_req == None:
+                                if day == days[0]:
+                                    # check if the course can be scheduled on the current day and classroom
+                                    schedule_on_day = self.check_availability(course, day, classroom)
+                                    if schedule_on_day and course.pre_req == None:
+                                        # schedule the course on the current day and classroom
+                                        self.schedule_course(course, day, classroom, term)
+                                    else:
+                                        term.assign_unsched(course)
+                                        # term.unsched_courses.append(course)
+                                    
+                                elif day == days[1]:
+                                    # check if it was scheduled on Tuesday
+                                    if course in classroom.schedule[day[0]]:
+                                        schedule_on_day = self.check_availability(course, day, classroom)
+                                        if schedule_on_day:
+                                            # schedule the course on the current day and classroom
+                                            self.schedule_course(course, day, classroom, term)
+                                            term.scheduled_courses.append(course.course_id)
+
+                            else:
                                 schedule_on_day = self.check_availability(course, day, classroom)
                                 if schedule_on_day and course.pre_req == None:
                                     # schedule the course on the current day and classroom
                                     self.schedule_course(course, day, classroom, term)
+                                    term.scheduled_courses.append(course.course_id)
                                 else:
                                     term.assign_unsched(course)
                                     # term.unsched_courses.append(course)
-                                
-                            elif day == "Thursday":
-                                # check if it was scheduled on Tuesday
-                                if course in classroom.schedule["Tuesday"]:
-                                    schedule_on_day = self.check_availability(course, day, classroom)
-                                    if schedule_on_day:
-                                        # schedule the course on the current day and classroom
-                                        self.schedule_course(course, day, classroom, term)
-                                        term.scheduled_courses.append(course.course_id)
-
-                        else:
-                            schedule_on_day = self.check_availability(course, day, classroom)
-                            if schedule_on_day and course.pre_req == None:
-                                # schedule the course on the current day and classroom
-                                self.schedule_course(course, day, classroom, term)
-                                term.scheduled_courses.append(course.course_id)
-                            else:
-                                term.assign_unsched(course)
-                                # term.unsched_courses.append(course)
-        
+            
         # term.display_au()
         term.term_sched[term.term_id] = [(classrooms)]
 
@@ -188,6 +146,12 @@ class Schedule:
     '''
     check_availability: will verify if a course is allowed to be placed in a classroom's schedule
                         function will return boolean; True = valid / False = invalid
+
+                        Main job is to check if there is any timeconflicts within classroom schedule and classroom timeslot
+                        
+                        ***
+                        May change so that it will check if thime is outside courses desired time range
+                        ***
 
             [[0] ... CRS(strt = 16, end = 18), CRS(strt = 18, end = 20)] **start from index[-1]
     '''
@@ -214,13 +178,13 @@ class Schedule:
                     
                     # Check if the given day exists in the classroom's time slot
                         
-                    if classroom.class_type == 0:
+                    if classroom.class_type == 1:
                         if day in classroom.time_slot:
                             # Check if the start time is within the time slot
                             if course_start_time >= classroom.time_slot[day]["start"] and course_end_time <= classroom.time_slot[day]["end"]:
                                 return True
                         
-                    elif classroom.class_type == 1:
+                    elif classroom.class_type == 2:
                         if day in classroom.time_slot_lab:
                             # Check if the start time is within the lab time slot
                             if course_start_time >= classroom.time_slot_lab[day]["start"] and course_end_time <= classroom.time_slot_lab[day]["end"]:
@@ -239,6 +203,10 @@ class Schedule:
                     Else, error message will be displayed and function will return False
     '''
     def schedule_course(self, course, day, classroom, term):
+        '''
+        from the course we will probably have the sections with the classroom cpaacity and might need to search 
+        through classrooms to see if cap is satisfied
+        '''
         # Check if the given day already has any courses scheduled
         if day in classroom.schedule:
             
@@ -259,7 +227,7 @@ class Schedule:
                             course.lecture_start_time = course.lecture_end_time - course.lecture_duration
                         
                         # Check if course is online to allow time before and after.
-                        if course.course_type == 2 or scheduled_course.course_type == 2:
+                        if course.course_type == 3 or scheduled_course.course_type == 3:
                             # calculate the start/end time of new course
                             course.lecture_end_time = scheduled_course.lecture_start_time - .5
                             course.lecture_start_time = course.lecture_end_time - course.lecture_duration
@@ -310,7 +278,7 @@ class Schedule:
             print(f"Cannot schedule {course.course_id} on {day} as it overlaps with {scheduled_course.course_id}")
             return False
         
-        if classroom.class_type == 1:
+        if classroom.class_type == 2:
             if course.department != "FS":
                 if day in ["Tuesday", "Thursday"]:
                     # Check if the start time is within the lab time slot
@@ -573,50 +541,51 @@ class Schedule:
 
         return empty_slot_index, prev_course, next_course
     
-def read_csv(fileName, finalDegree, finalProgram):
-    # Function to read csv file and store in class structures for scheduler.
-    df = pd.read_csv(fileName)
-    df = df.replace(np.nan, None) 
-
-    for i in range(len(df)):
-
-        if (df.values[[i],[0]])[0] == 'PCOM':
-            finalDegree.core_courses["PCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'BCOM':
-            finalDegree.core_courses["BCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'PM':
-            finalProgram.program_courses["PM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'BA':
-            finalProgram.program_courses["BA"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'GLM':
-            finalProgram.program_courses["GLM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'FS':
-            finalProgram.program_courses["FS"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'DXD':
-            finalProgram.program_courses["DXD"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-        
-        elif (df.values[[i],[0]])[0] == 'BK':
-            finalProgram.program_courses["BK"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-
-        else: # new program
-            if  (df.values[[i],[0]])[0] in finalProgram.program_id:
-                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-            else:
-                finalProgram.program_id.append((df.values[[i],[0]])[0])
-                finalProgram.program_courses[(df.values[[i],[0]])[0]] = []
-                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
-
-
-        # Note 70 is the max capacity we dont have a field for this so I just chose 70 for now
-        # Note to self remove empty dictionaries if there are any. (Check Degree, Check Program)
-        # del dictionary["key"]
-        # and delete id then from the id list 
 
     
+# def read_csv(fileName):
+#     # Function to read csv file and store in class structures for scheduler.
+#     df = pd.read_csv(fileName)
+#     df = df.replace(np.nan, None) 
+#     courses = [] # update with created class objects as scanned
+#     #courseIDs = [] # list for program initialization after scanning whole csv
+#     degree = Degree()
+#     program = Program(150, '') # '' is only so initialization doesn't fail will fill courses after reading csv
+#     degree.core_courses["PCOM"] = [] # resetting hard coded values
+#     degree.core_courses["PCOM"] = [] # resetting hard coded values
+
+#     for i in range(len(df)):
+#         # df.values returns an array which is why I must surround it with brackets and then call for index 0 each time I append a courseID same goes for the courses creation
+#         #courseIDs.append((df.values[[i],[1]])[0])
+#         #print((df.values[[i],[0]])[0])
+#         if (df.values[[i],[0]])[0] == 'PCOM':
+#             degree.core_courses["PCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'BCOM':
+#             degree.core_courses["BCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'PM':
+#             program.program_courses["PM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'BA':
+#             program.program_courses["BA"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'GLM':
+#             program.program_courses["GLM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'FS':
+#             program.program_courses["FS"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'DXD':
+#             program.program_courses["DXD"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         if (df.values[[i],[0]])[0] == 'BK':
+#             program.program_courses["BK"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+#         courses.append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+#         # Note 70 is the max capacity we dont have a field for this so I just chose 70 for now
+#     program.courses = courses
+#     for i in range(len(degree.core_courses["PCOM"])):
+#         print(degree.core_courses["PCOM"][i].course_id)
+#     return courses, program
 

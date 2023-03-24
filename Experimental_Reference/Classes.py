@@ -28,6 +28,7 @@ class Course:
         # 1 = Lecture
         # 2 = Lab
         # 3 = Online
+        # 4 = Virtual (No Scheduling)
         self.class_type = class_type
         self.department = department
         self.preq = preq
@@ -37,6 +38,10 @@ class Course:
         self.lecture_end_time = lecture_end_time
         self.cap = cap
 
+        # This is the item I will use for prereq checks. This finds the last day this
+        # class was scheduled
+        self.last_day = None
+
     def __repr__(self):
         return str(self.course_id + ": " + self.name)
 
@@ -44,15 +49,22 @@ class Course:
 # -- Classroom class we will populate into a list later.
 # ---------------------------------------------------
 class Classroom:
-    def __init__(self, classroom_id, capacity=0, lab_room=0):
+    def __init__(self, classroom_id, capacity=0, c_type=0, ghost = 0):
         self.classroom_id = classroom_id
         self.capacity = capacity
-        self.lab_room = lab_room
+        self.c_type = c_type
         self.schedule = {}
 
+    def is_lab(self):
+        class_types = ["Lecture", "Lab", "Online", "Virtual"]
+        ctype = self.c_type
+        return class_types[ctype]
+
     def __repr__(self):
-        lab = (self.lab_room) and "Lab" or "Lecture"
+        lab = self.is_lab()
         return str("\n"+self.classroom_id + " - " + lab + " - " + str(self.capacity))
+    
+    
 
 def add_course( program,course_id="None", name="", term = 1, class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
                 lecture_start_time = 8, lecture_end_time = 17, cap = 0, department = ""):

@@ -32,7 +32,16 @@ class MainWindow(QMainWindow):
         self.df_programs = pd.DataFrame
         self.df_students = self.create_programs()
 
-
+        ########## Initialize Degree and Program ############
+        self.degree = Degree()
+        self.program = Program(150, '')
+        self.degree.core_courses["PCOM"] = [] 
+        self.degree.core_courses["BCOM"] = [] 
+        self.program.program_courses["PM"] = []
+        self.program.program_courses["BA"] = []
+        self.program.program_courses["GLM"] = []
+        self.program.program_courses["DXD"] = []
+        self.program.program_courses["BK"] = []
 
         self.ui.stackedWidget.setCurrentWidget(self.ui.page12)
 
@@ -41,6 +50,7 @@ class MainWindow(QMainWindow):
         self.ui.schedule_page_button.clicked.connect(self.showSchedulePage)
         self.ui.load_data_button.clicked.connect(self.load_student_data)
         self.ui.load_data_button_room.clicked.connect(self.load_room_data)
+        self.ui.load_data_button_program.clicked.connect(lambda: read_csv(self.ui.file_name_input_program.text(), self.degree, self.program))
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
         self.ui.room_560_page_btn.clicked.connect(self.show560Page)
@@ -66,7 +76,7 @@ class MainWindow(QMainWindow):
         ############################################################
 
         self.ui.file_name_input.mousePressEvent = self.browse_student_file
-        self.ui.file_name_input_program.mousePressEvent = self.browse_room_file
+        self.ui.file_name_input_program.mousePressEvent = self.browse_program_file
         self.ui.file_name_input_room.mousePressEvent = self.browse_room_file
 
         # Create table view
@@ -78,44 +88,31 @@ class MainWindow(QMainWindow):
         # Set the size policy of the table view
         self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-        # Add a dropdown for selecting the week
+        # Add a dropdown for selecting the term
+        self.term_combo_box = QComboBox(self.ui.page2)
+        self.term_combo_box.setGeometry(100, 40, 150, 30)
+        self.term_combo_box.addItem("Term 1")
+        self.term_combo_box.addItem("Term 2")
+        self.term_combo_box.addItem("Term 3")
+        # self.term_combo_box.currentIndexChanged.connect(self.refresh_table)
+
+        # Add a dropdown for selecting the class
         self.week_combo_box = QComboBox(self.ui.page2)
-        self.week_combo_box.setGeometry(100, 40, 150, 30)
-
-        # Classrooms for dropdown
-        # room = ["Class 11-533", "Class 11-534", "Class 11-560", "Class 11-562", "Class 11-564", "Class 11-458", "Class 11-430",
-        #         "Class 11-320", "Class 11-532"]
-
-        # Add options to the dropdown for each week
-
-
-        # for i in range(len(room)):
-        #     self.week_combo_box.addItem(f"{room[i]}")
-
+        self.week_combo_box.setGeometry(300, 40, 150, 30)
+        # self.week_combo_box.currentIndexChanged.connect(self.refresh_table)
 
         # Set schedule default as week 1
         self.week = 1
-
-        # Add buttons for changing week
-        # self.week_label = QLabel("Week 1", self)
-        # self.week_label.setGeometry(400, 580, 100, 20)
-        # self.week_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # self.left_button = QPushButton("<", self)
-        # self.left_button.setGeometry(350, 580, 40, 20)
-        # self.left_button.clicked.connect(self.decrement_week)
-        # self.left_button.clicked.connect(self.refresh_table)
-
-        # self.right_button = QPushButton(">", self)
-        # self.right_button.setGeometry(500, 580, 40, 20)
-        # self.right_button.clicked.connect(self.increment_week)
-        # self.right_button.clicked.connect(self.refresh_table)
 
         self.ui.previous_btn.clicked.connect(self.decrement_week)
         self.ui.previous_btn.clicked.connect(self.refresh_table)
         self.ui.next_button.clicked.connect(self.increment_week)
         self.ui.next_button.clicked.connect(self.refresh_table)
 
+        # TEst button for dispaying the tableview values
+        self.display_btn = QPushButton("Display", self)
+        self.display_btn.setGeometry(400, 580, 40, 20)
+        self.display_btn.clicked.connect(self.refresh_table)
 
         self.table_fields()
 
@@ -132,6 +129,8 @@ class MainWindow(QMainWindow):
     def refresh_table(self):
         # Clear the current table view and repopulate it
         self.table_model.clear()
+        print(self.term_combo_box.currentText())
+        print(self.week_combo_box.currentText())
         self.table_fields()
         header = self.table_view.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
@@ -159,64 +158,129 @@ class MainWindow(QMainWindow):
 
         # Keep track of colors and testing dictionary
         course_color = {}
-        classroom_11_533 = {
-            "Week 1": {
-                "Course 1": {"start_time": "08:00", "end_time": "09:30", "days": ["Mon", "Wed"]},
-                "Course 2": {"start_time": "10:00", "end_time": "11:30", "days": ["Tue", "Thu"]},
-                "Course 3": {"start_time": "12:00", "end_time": "13:30", "days": ["Mon", "Wed"]},
-                "Course 4": {"start_time": "14:00", "end_time": "15:30", "days": ["Tue", "Thu"]},
-                "Course 5": {"start_time": "16:00", "end_time": "17:30", "days": ["Mon", "Wed"]},
-                "Course 6": {"start_time": "18:00", "end_time": "19:30", "days": ["Tue", "Thu"]},
-            },
-            "Week 2": {
-                "Course a": {"start_time": "08:30", "end_time": "10:00", "days": ["Mon", "Wed"]},
-                "Course b": {"start_time": "11:00", "end_time": "12:30", "days": ["Tue", "Thu"]},
-                "Course c": {"start_time": "13:00", "end_time": "14:30", "days": ["Mon", "Wed"]},
-                "Course d": {"start_time": "15:00", "end_time": "16:30", "days": ["Tue", "Thu"]},
-                "Course e": {"start_time": "17:00", "end_time": "18:30", "days": ["Mon", "Wed"]},
-                "Course f": {"start_time": "19:00", "end_time": "20:30", "days": ["Tue", "Thu"]},
+        classes = {
+            "Term 1": {
+                "Week 1": {
+                    "11-534": {
+                        "monday": [
+                            {"course": "Math 534A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "Science 534A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "English 534A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ],
+                        "tuesday": [
+                            {"course": "History 534A", "start_time": "09:00 AM", "end_time": "10:30 AM"},
+                            {"course": "Math 534A", "start_time": "01:00 PM", "end_time": "02:30 PM"},
+                            {"course": "Science 534A", "start_time": "03:00 PM", "end_time": "04:30 PM"}
+                        ],
+                        "wednesday": [
+                            {"course": "English 534A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "History 534A", "start_time": "11:00 AM", "end_time": "12:30 PM"}
+                        ],
+                        "thursday": [
+                            {"course": "Math 534A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "Science 534A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ]
+                    },
+                    "11-560": {
+                        "monday": [
+                            {"course": "Math 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "Science 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "English 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ],
+                        "tuesday": [
+                            {"course": "History 560A", "start_time": "09:00 AM", "end_time": "10:30 AM"},
+                            {"course": "Math 560A", "start_time": "01:00 PM", "end_time": "02:30 PM"},
+                            {"course": "Science 560A", "start_time": "03:00 PM", "end_time": "04:30 PM"}
+                        ],
+                        "wednesday": [
+                            {"course": "English 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "History 560A", "start_time": "11:00 AM", "end_time": "12:30 PM"}
+                        ],
+                        "thursday": [
+                            {"course": "Math 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "Science 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ]
+                    }
+                },
+                "Week 2": {
+                    "11-534": {
+                        "monday": [
+                            {"course": "Math 534B", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "Science 534B", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "English 534B", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ],
+                        "tuesday": [
+                            {"course": "History 534B", "start_time": "09:00 AM", "end_time": "10:30 AM"},
+                            {"course": "Math 534B", "start_time": "01:00 PM", "end_time": "02:30 PM"},
+                            {"course": "Science 534B", "start_time": "03:00 PM", "end_time": "04:30 PM"}
+                        ],
+                        "wednesday": [
+                            {"course": "English 534B", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "History 534B", "start_time": "11:00 AM", "end_time": "12:30 PM"}
+                        ],
+                        "thursday": [
+                            {"course": "Math 534B", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "Science 534B", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ]
+                    },
+                    "11-560": {
+                        "monday": [
+                            {"course": "Math 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "Science 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "English 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ],
+                        "tuesday": [
+                            {"course": "History 560A", "start_time": "09:00 AM", "end_time": "10:30 AM"},
+                            {"course": "Math 560A", "start_time": "01:00 PM", "end_time": "02:30 PM"},
+                            {"course": "Science 560A", "start_time": "03:00 PM", "end_time": "04:30 PM"}
+                        ],
+                        "wednesday": [
+                            {"course": "English 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
+                            {"course": "History 560A", "start_time": "11:00 AM", "end_time": "12:30 PM"}
+                        ],
+                        "thursday": [
+                            {"course": "Math 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
+                            {"course": "Science 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
+                        ]
+                    }
+                }
             }
         }
+
         # Iterate through each row and column of the table model and set dummy text
         for row in range(len(rows)):
             for col in range(len(columns)):
-                # Check if this cell is within the start and end time of any course in classroom_11_533 on this day
+                # Check if this cell is within the start and end time of any course in week 1 on this day
                 course_in_cell = None
-                for course_name, course_data in classroom_11_533[self.ui.label_9.text()].items():
-                    start_time = datetime.datetime.strptime(course_data["start_time"], '%H:%M').time()
-                    end_time = datetime.datetime.strptime(course_data["end_time"], '%H:%M').time()
-                    if columns[col].startswith(course_data["days"][0]) and \
-                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
-                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
-                        course_in_cell = course_name
-                        break
-                for course_name, course_data in classroom_11_533[self.ui.label_9.text()].items():
-                    start_time = datetime.datetime.strptime(course_data["start_time"], '%H:%M').time()
-                    end_time = datetime.datetime.strptime(course_data["end_time"], '%H:%M').time()
-                    if columns[col].startswith(course_data["days"][1]) and \
-                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
-                            datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
-                        course_in_cell = course_name
-                        break
-                if course_in_cell:
-                    # Set the text and alignment for the cell
-                    item = QStandardItem(course_in_cell)
-                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    # Set the background color for the cell
-                    if course_in_cell in course_color:
-                        item.setBackground(QColor(course_color[course_in_cell]))
+                if self.term_combo_box.currentText() != '' and self.week_combo_box.currentText() != '':
+                    for course_data in classes[self.term_combo_box.currentText()][self.ui.label_9.text()][
+                        self.week_combo_box.currentText()][
+                        columns[col].lower()]:
+                        start_time = datetime.datetime.strptime(course_data["start_time"], '%I:%M %p').time()
+                        end_time = datetime.datetime.strptime(course_data["end_time"], '%I:%M %p').time()
+                        if datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
+                                datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
+                            course_in_cell = course_data["course"]
+                            break
+                    if course_in_cell:
+                        # Set the text and alignment for the cell
+                        item = QStandardItem(course_in_cell)
+                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                        # Set the background color for the cell
+                        if course_in_cell in course_color:
+                            item.setBackground(QColor(course_color[course_in_cell]))
+                        else:
+                            color = QColor.fromHsl(random.randint(0, 255), 255, 191)
+                            course_color[course_in_cell] = color.name()
+                            item.setBackground(color)
+                        # Set the item in the table model
+                        self.table_model.setItem(row, col, item)
                     else:
-                        color = QColor.fromHsl(random.randint(0, 255), 255, 191)
-                        course_color[course_in_cell] = color.name()
-                        item.setBackground(color)
-                    # Set the item in the table model
-                    self.table_model.setItem(row, col, item)
-                else:
-                    # Set the text and alignment for the cell
-                    item = QStandardItem("")
-                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    # Set the item in the table model
-                    self.table_model.setItem(row, col, item)
+                        # Set the text and alignment for the cell
+                        item = QStandardItem("")
+                        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                        # Set the item in the table model
+                        self.table_model.setItem(row, col, item)
 
     def increment_week(self):
         if self.week < 13:
@@ -639,6 +703,7 @@ class MainWindow(QMainWindow):
         return new_df
 
     ################################ Populating the Classroom Tables ##################
+    '''
     def classroom_schedule(self, index):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
         degree = Degree()
@@ -665,10 +730,10 @@ class MainWindow(QMainWindow):
         schedule.term_schedule(classrooms, term)
         schedule.display_classroom(term[0], classrooms[index])
         return schedule.return_classroom(term[0], classrooms[index])
-
-    sched = classroom_schedule(1, 1)
-    print("Type: ", type(sched))
-    print("the shchedule:", classroom_schedule(1, 1))
+    '''
+    #sched = classroom_schedule(1, 1)
+    #print("Type: ", type(sched))
+    #print("the shchedule:", classroom_schedule(1, 1))
 
     def edit_room_text(self, room_textbox, text):
         # Get the current text in the text edit

@@ -8,6 +8,8 @@ import pathlib
 programs = []
 classrooms = []
 
+extra_capacity = 2
+
 filename = str(pathlib.Path(__file__).parent.resolve())+"\\"
 filename += "CSV Files\\"
 # open the CSV file and create a bunch of Program objects.
@@ -37,7 +39,7 @@ with open(filename+'classrooms.csv') as csvfile:
     next(reader) # skip header
     for row in reader:
         name, classtype, capacity = row
-        classroom = classes.Classroom(name,int(capacity),int(classtype))
+        classroom = classes.Classroom(name,int(capacity)-extra_capacity,int(classtype))
         classrooms.append(classroom)
 '''
 for i in programs:
