@@ -42,7 +42,6 @@ def add_times(items,time_starts):
 
     return return_result
 
-
 def subset_sum_with_reconstruction(items, max_weight):
     n = len(items)
     dp = [[0 for _ in range(max_weight + 1)] for _ in range(n + 1)]
@@ -73,13 +72,13 @@ def subset_sum_with_reconstruction(items, max_weight):
     return subset
 
 def get_real_time(items, target):
-    
+
     maximum = max(item.capacity for item in items)
     for i in range(maximum):
         sum_classes = subset_sum_with_reconstruction(items, target+i)
         if sum_classes != None:
             return sum_classes
-        
+
     return None # wtf
 
 def closest_sum(room_hrs_times, target,class_length, extra_classes = [],increment = 0):
@@ -97,9 +96,7 @@ def closest_sum(room_hrs_times, target,class_length, extra_classes = [],incremen
         min_sum = get_real_time(classrooms,target)
         real_schedule = add_times(min_sum,time_starts)
 
-
     return real_schedule,ghost_required
-    print()
 
 class Schedule:
     def __init__(self, programs, classrooms):
@@ -107,12 +104,9 @@ class Schedule:
         self.classrooms = classrooms
 
         # insert online classroom
-        
-        self.classrooms.append(classes.Classroom("Virtual",-1,2))
+        # infinite capacity for online classrooms
+        self.classrooms.append(classes.Classroom("Online",999,2))
 
-        #self.classrooms.append(classes.Classroom("GHOST_Lecture",-1,2))
-        #self.classrooms.append(classes.Classroom("GHOST_Lab",-1,2))
-        
         self._schedule = {"Monday":[],
                          "Tuesday":[],
                          "Wednesday":[],
@@ -124,21 +118,8 @@ class Schedule:
         self.schedule = {classroom:dict(days) for classroom in classrooms}
         self.scheduled_classes = {}
         self.failed = []
-
-        #print(self.schedule)
-
-    def check_availability(self,course,days):
-        for weekday in days:
-            temp = self.schedule[weekday]
-            for day in temp:
-                for classrooms in day:
-                    print()
-
-    def insert_class(self,id,time,classroom,days):
-        print()
-
-    def earliest_time_for_class(self):
-        print()
+        self.courselist = []
+        self.virtual_courses = []
 
     def combine_dates(self, days):
 
@@ -165,11 +146,6 @@ class Schedule:
             dict_combined[classroom] = sorted_dict
 
         return num_classes_in_semester,dict_combined
-
-    '''
-    def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
-             lecture_start_time = 8, lecture_end_time = 17, cap = 1):
-    '''
 
     def find_range_differences(self, min_max, data_ranges):
         '''
@@ -239,17 +215,17 @@ class Schedule:
         # to be read!!!
 
         real_dates = {}
-        for i in range(3):
+        for i in range(4):
             if (course.class_type == i+1):
 
                 for classroom,dates in classes_w_dates.items():
-                    if classroom.lab_room == i:
+                    if classroom.c_type == i:
                         real_dates[classroom] = dates
                 break
 
         return real_dates
     
-    def capstone_remove(self, data, course_length):
+    def capstone_remove_dates(self, data, course_length):
         new_data = {}
         for outer_key in data:
             inner_dict = data[outer_key]
@@ -333,28 +309,72 @@ class Schedule:
                     break
 
         if not able_to_schedule:
-            return [],2
+            return [],[],2
 
         class_distribution, ghost = closest_sum(possible_times_to_schedule, population, lecture_length)
-        print("fucker fuck",schedule_dates)
-        return class_distribution,ghost
+        return class_distribution, schedule_dates, ghost
 
-
-    def insert_into_schedule(self, course, times_to_schedule,real_dates):
+    def schedule_section(self, course, times_to_schedule,schedule_dates):
 
         schedule = self.schedule
-        print(course)
-        print(times_to_schedule)
-        print(real_dates)
+        i=0
         for room,time in times_to_schedule:
-            for date, classes in schedule[room].items():
-                #print(room,date)
-                return None
+            i+=1 # i is the section number for the class!!!!
+            for day in schedule_dates:
+                for dow, classes in schedule[room].items():
+                    if day.strftime("%A") == dow:
+                        toadd = [(time, time+course.lecture_duration),course, i]
+                        schedule[room][dow][day].append(toadd)
+                        break
+                else:
+                    continue
+                break
+            else:
+                continue
 
+        course.last_day = schedule_dates[-1]
+
+    def capstone_remove_dates(self, data, course_length):
+        new_data = {}
+        for outer_key in data:
+            inner_dict = data[outer_key]
+            all_dates = list(inner_dict.keys())
+            semester_length = len(all_dates)
+            half_term = semester_length // 2
+            earliest_start = semester_length - course_length
+
+            start_index = min(half_term, earliest_start)
+            remaining_dates = all_dates[start_index:]
+            new_data[outer_key] = {date: inner_dict[date] for date in remaining_dates}
+
+        return new_data
+
+    def preq_remove_dates(self, data, course_length, course_to_schedule):
+        
+        latest_date_int = 0
+        for course in self.courselist:
+            if course.course_id == course_to_schedule.preq:
+                latest_date = course.last_day
+        
+        if not latest_date:
+            print("oh no")
+            return None
+
+        new_data = {}
+        for outer_key in data:
+            inner_dict = data[outer_key]
+            all_dates = list(inner_dict.keys())
+
+            latest_date_int = all_dates.index(latest_date)
+
+            remaining_dates = all_dates[latest_date_int:]
+            new_data[outer_key] = {date: inner_dict[date] for date in remaining_dates}
+
+        return new_data
+    
     def calculate_space(self,courses,population,classroom_dates):
         
         num_classes_in_semester, classes_w_dates = classroom_dates
-
         factor = len(courses)
         dateset = False
 
@@ -367,6 +387,11 @@ class Schedule:
         # Find possible times one course at a time.
         # We then divide these possible times into our cohort.
         for course in courses:
+                
+            if course.class_type == 4:
+                self.virtual_courses.append(course)
+                continue
+
             duration = course.lecture_duration
 
             time_restraint = [course.lecture_start_time, course.lecture_end_time]
@@ -379,8 +404,8 @@ class Schedule:
             # Is it possible to schedule this many hours in this date range?
             total_classes = (course.transcript_hours) // duration
             if (total_classes > num_classes_in_semester):
-                # too many hours for date range"
-                return [], 1
+                self.failed.append([course,1])
+                continue
 
             # Remake the total classes to add grace if we have room. total_classes is an int.
             total_classes = int((total_classes+grace <= num_classes_in_semester) and total_classes + grace or total_classes)
@@ -393,32 +418,29 @@ class Schedule:
             # We can calculate and compare the dates.
 
             if course.cap:
-                real_dates = self.capstone_remove(real_dates,total_classes)
+                real_dates = self.capstone_remove_dates(real_dates, total_classes)
 
             # This will be for prereq checking
             if course.preq:
-                print()
+                real_dates = self.preq_remove_dates(real_dates, total_classes, course)
 
             # failed reasons:   1 = Too many hours for the semester (case above)
             #                   2 = Cannot fit class into schedule
             #                   3 = Could not create enough cohorts due to physical class bottleneck
-            times_to_schedule,failed = self.find_schedule_single_class(real_dates, time_restraint, total_classes, course.lecture_duration,population)
-
+            times_to_schedule, schedule_dates, failed = self.find_schedule_single_class(real_dates, time_restraint, total_classes, course.lecture_duration,population)
+            print(course, times_to_schedule)
             if failed:
                 self.failed.append([course,failed])
 
             # Even if it failed, let's try to add to schedule anyways.
             if times_to_schedule:
-                self.insert_into_schedule(course, times_to_schedule, real_dates)
-
-
-            #ideal_times = ideal_class_distribution()
+                self.schedule_section(course, times_to_schedule, schedule_dates)
 
     def schedule_all(self,highpop_first = 0):
         leftover_cohorts = []
         all_cohorts = []
         days = []
-        
+
         cohorts_populations = []
         programs = self.programs
 
@@ -430,9 +452,9 @@ class Schedule:
 
         for termclasses in cohorts_populations:
             courses, population, core = termclasses
-
-            if (not core): continue
-
+            
+            self.courselist += courses
+            
             if (core == 1):
                 days = ["Monday", "Wednesday"]
             else:
@@ -441,35 +463,9 @@ class Schedule:
             # Combine mon-wed or tues-thurs into one group of dates using the real
             # scheduler.
             classroom_dates = self.combine_dates(days)
-            print(classroom_dates,"\n\n\n")
             possible_times = self.calculate_space(courses,population,classroom_dates)
 
-            for i in range(3): # 3 term sections
-
-                # This is just here because we have no data for non-core classes yet
-                
-                '''
-                for courses in program.courselist[i]:
-                    
-                    # We schedule cohorts for one term at a time.
-                    # these courses cannot run at the same time as each other PER cohort
-                    # so we loop, reducing the population each time?
-                    limitations = []
-                    for course in courses:
-                        time,classroom = self.check_availability(course,days)
-                        self.insert_class(course.course_id,time,classroom,days,limitations)
-                        limitations.append([time, time+course.lecture_duration])
-                '''
-
-
         return
-
-    def schedule_all_highpop_first():
-        print()
-
-    #def add_course(self, ):
-
-    #def check_availability(self, ):
 
 newschedule = Schedule(programs, classrooms)
 newschedule.schedule_all()
