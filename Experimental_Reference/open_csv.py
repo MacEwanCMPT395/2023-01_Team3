@@ -22,7 +22,7 @@ with open(filename+"populations.csv") as csvfile:
         programs.append(program)
 
 # open the CSV file and create a bunch of Course objects, as well as populating the Program list with said classes.
-with open(filename+'classes.csv') as csvfile:
+with open(filename+'classes2.csv') as csvfile:
     reader = csv.reader(csvfile)
     next(reader) # skip header
     for row in reader:
@@ -30,7 +30,7 @@ with open(filename+'classes.csv') as csvfile:
 
         for item in programs:
             if item.program_id == program:
-                classes.add_course(item, course_id, course_name, int(term), int(class_type), prerequisite, float(transcript_hours), float(duration), float(start), float(end), int(cap), program)
+                classes.add_course(item, course_id, course_name, int(term), int(class_type), prerequisite, float(transcript_hours), float(duration), float(start), float(end), int(cap))
                 break
 
 # open the CSV file and create a bunch of Course objects, as well as populating the Program list with said classes.
