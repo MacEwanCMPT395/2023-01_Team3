@@ -519,11 +519,17 @@ class Schedule:
         week_classes = {}
         for room, data in classes.items():
             counter = 1
+            old_monday = 0
             for i, class_date in enumerate(sorted(data.keys())):
 
                 class_times = data[class_date]
+                
                 if class_date.weekday() == 0 and i != 0:
-                    counter += 1
+                    if old_monday:
+                        counter += (class_date - old_monday).days // 7
+                    
+                    old_monday = class_date
+                    
 
                 week_name = "Week "+str(counter) 
 
@@ -533,10 +539,10 @@ class Schedule:
                 class_id = room.classroom_id
                 if class_id not in week_classes[week_name]:
                     week_classes[week_name][class_id] = {}
-                    week_classes[week_name][class_id]["monday"] = []
-                    week_classes[week_name][class_id]["tuesday"] = []
-                    week_classes[week_name][class_id]["wednesday"] = []
-                    week_classes[week_name][class_id]["thursday"] = []
+                    week_classes[week_name][class_id]["Monday"] = []
+                    week_classes[week_name][class_id]["Tuesday"] = []
+                    week_classes[week_name][class_id]["Wednesday"] = []
+                    week_classes[week_name][class_id]["Thursday"] = []
 
                 for class_time in class_times:
                     start_hour = int(class_time[0][0])
@@ -556,7 +562,7 @@ class Schedule:
                     start_time = datetime.time(hour=start_hour, minute=start_minute).strftime('%I:%M %p')
                     end_time = datetime.time(hour=end_hour, minute=end_minute).strftime('%I:%M %p')
                     course = class_time[1].course_id + " - AS" + "{:02d}".format(class_time[2])
-                    week_classes[week_name][class_id]["monday"].append({"course": course, "start_time": start_time, "end_time": end_time})
+                    week_classes[week_name][class_id][class_date.strftime("%A")].append({"course": course, "start_time": start_time, "end_time": end_time})
 
         return week_classes
 
