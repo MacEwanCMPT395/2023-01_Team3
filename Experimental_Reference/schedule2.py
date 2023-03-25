@@ -515,6 +515,7 @@ class Schedule:
 
         return
     # Generate Out Creates a BROKEN SCHEDULE
+
     def generate_out(self):
         classes = self.get_raw_schedule()
         week_classes = {}
@@ -550,6 +551,6 @@ class Schedule:
 newschedule = Schedule(programs, classrooms)
 newschedule.schedule_all()
 #newschedule.print_raw_schedule()
-print(newschedule.generate_out())
+#print(newschedule.generate_out())
 
 
