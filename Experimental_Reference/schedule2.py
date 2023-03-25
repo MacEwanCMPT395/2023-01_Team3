@@ -555,7 +555,7 @@ class Schedule:
 
                     start_time = datetime.time(hour=start_hour, minute=start_minute).strftime('%I:%M %p')
                     end_time = datetime.time(hour=end_hour, minute=end_minute).strftime('%I:%M %p')
-                    course = class_time[1]
+                    course = class_time[1].course_id + " - AS" + "{:02d}".format(class_time[2])
                     week_classes[week_name][class_id]["monday"].append({"course": course, "start_time": start_time, "end_time": end_time})
 
         return week_classes
