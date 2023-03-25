@@ -335,8 +335,7 @@ class Schedule:
 
                 # new_time in this loop references itself to find a required overlap in free time
                 for j in range(i, i + jrange):
-
-                    new_time = self.find_range_overlaps(new_time, free_time[j + 1][1], lecture_length)
+                    new_time = self.find_range_overlaps(new_time, free_time[min(j + 1, len(free_time)-1)][1], lecture_length)
                     maxj = j
                     # {i: dict_combined[classroom][i] for i in keys_sort}
 
@@ -350,9 +349,6 @@ class Schedule:
 
 
         if not able_to_schedule:
-            del(free_time)
-            del(possible_times_to_schedule)
-            del(schedule_dates)
             return [],[],2
     
         class_distribution, ghost = closest_sum(possible_times_to_schedule, population, lecture_length)
@@ -399,7 +395,7 @@ class Schedule:
                 latest_date = course.last_day
         
         if not latest_date:
-            print("oh no")
+            #print("oh no")
             return None
 
         new_data = {}
@@ -465,7 +461,9 @@ class Schedule:
 
             # This will be for prereq checking
             if course.preq:
-                real_dates = self.preq_remove_dates(real_dates, total_classes, course)
+                dates = self.preq_remove_dates(real_dates, total_classes, course)
+                if dates:
+                    real_dates = dates
 
             # failed reasons:   1 = Too many hours for the semester (case above)
             #                   2 = Cannot fit class into schedule
@@ -541,16 +539,29 @@ class Schedule:
                     week_classes[week_name][class_id]["thursday"] = []
 
                 for class_time in class_times:
-                    start_time = datetime.datetime.strptime(str(class_time[0][0]), '%H.%M').strftime('%I:%M %p')
-                    end_time = datetime.datetime.strptime(str(class_time[0][1]), '%H.%M').strftime('%I:%M %p')
+                    start_hour = int(class_time[0][0])
+                    start_minute = int((class_time[0][0] - start_hour) * 60)
+                    if start_minute == 30:  # handle :30 input
+                        start_minute_str = '30'
+                    else:
+                        start_minute_str = '00'
+
+                    end_hour = int(class_time[0][1])
+                    end_minute = int((class_time[0][1] - end_hour) * 60)
+                    if end_minute == 30:  # handle :30 input
+                        end_minute_str = '30'
+                    else:
+                        end_minute_str = '00'
+
+                    start_time = datetime.time(hour=start_hour, minute=start_minute).strftime('%I:%M %p')
+                    end_time = datetime.time(hour=end_hour, minute=end_minute).strftime('%I:%M %p')
                     course = class_time[1]
                     week_classes[week_name][class_id]["monday"].append({"course": course, "start_time": start_time, "end_time": end_time})
 
         return week_classes
 
-newschedule = Schedule(programs, classrooms)
-newschedule.schedule_all()
-#newschedule.print_raw_schedule()
-#print(newschedule.generate_out())
+#newschedule = Schedule(programs, classrooms)
+#newschedule.schedule_all()
+#pretty_print_nested_dict(newschedule.generate_out())
 
 
