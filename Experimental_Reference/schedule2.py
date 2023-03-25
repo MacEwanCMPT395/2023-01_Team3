@@ -1,6 +1,7 @@
 # days is a list of teachable days.
 import datetime
 from Time_Stuff import days
+import copy
 #print(days)
 
 import Classes as classes
@@ -133,11 +134,18 @@ class Schedule:
 
         # for now no need for friday and saturday, but can easily be added.
 
-        self.schedule = {classroom:dict(days) for classroom in classrooms}
+        self.schedule = {classroom:copy.deepcopy(days) for classroom in classrooms}
         self.scheduled_classes = {}
         self.failed = []
         self.courselist = []
         self.virtual_courses = []
+
+        self.raw_schedule = {}
+
+        #self.print_schedule()
+        
+    def get_raw_schedule(self):
+        return self.combine_dates(["Monday", "Tuesday", "Wednesday", "Thursday"])[1]
 
     def combine_dates(self, days):
 
@@ -149,14 +157,15 @@ class Schedule:
             for dow in days: #dow = day of week
                 for dates, times in self.schedule[classroom][dow].items():
                     if dates in dict_combined[classroom]:
-                        dict_combined[classroom][dates].append(times)
+                        dict_combined[classroom][copy.deepcopy(dates)].append(times)
                     else:
-                        dict_combined[classroom][dates] = times
+                        dict_combined[classroom][copy.deepcopy(dates)] = times
 
-                    num_classes_in_semester+=1
+                    
 
             # Sort our dictionary.
             keys_sort = list(dict_combined[classroom].keys())
+            num_classes_in_semester = len(keys_sort)
             keys_sort.sort()
 
             sorted_dict = {i: dict_combined[classroom][i] for i in keys_sort}
@@ -167,6 +176,7 @@ class Schedule:
     
     def print_schedule(self):
         pretty_print_nested_dict(self.schedule)
+        #print(self.schedule)
         return None
     
     def find_range_differences(self, min_max, data_ranges):
@@ -181,18 +191,16 @@ class Schedule:
         Output: [(8, 8.5), (11, 13), (15, 17)]
         '''
         differences = []
+        start = min_max[0]
+
         for data_range in data_ranges:
-            if (not data_range): continue
-            # Check if the data range overlaps with the range to compare against
-            if data_range[1] > min_max[0] and data_range[0] < min_max[1]:
-                # Find the non-overlapping parts of the range and add them to the differences list
-                if data_range[0] < min_max[0]:
-                    differences.append((data_range[0], min_max[0]))
-                if data_range[1] > min_max[1]:
-                    differences.append((min_max[1], data_range[1]))
-            else:
-                # If there is no overlap, add the entire data range to the differences list
-                differences.append((data_range[0], data_range[1]))
+            if start < data_range[0]:
+                differences.append((start, data_range[0]))
+            start = max(start, data_range[1])
+
+        if start < min_max[1]:
+            differences.append((start, min_max[1]))
+        
         return differences or [min_max]
 
     def find_range_overlaps(self, range_set1, range_set2, min_diff):
@@ -235,7 +243,7 @@ class Schedule:
 
         # real_dates is taken from our real schedule. We do not write to real_dates. It is data
         # to be read!!!
-
+        
         real_dates = {}
         for i in range(4):
             if (course.class_type == i+1):
@@ -243,8 +251,9 @@ class Schedule:
                 for classroom,dates in classes_w_dates.items():
                     if classroom.c_type == i:
                         real_dates[classroom] = dates
+                        
                 break
-
+        
         return real_dates
     
     def capstone_remove_dates(self, data, course_length):
@@ -262,7 +271,7 @@ class Schedule:
 
         return new_data
 
-    def find_schedule_single_class(self, real_dates, time_restraint, total_classes, lecture_length, population):
+    def find_schedule_single_class(self, real_dates, time_restraint, total_classes, lecture_length, population, illegal_times):
 
         # recall that real_dates is structured as follows:
         # {
@@ -292,13 +301,21 @@ class Schedule:
         able_to_schedule = 0
 
         for classroom, dates in real_dates.items():
-            free_time = []
 
+            #print(dates)
+            free_time = []
             for day, times in dates.items():
 
                 # Should create a list of lists or something of that nature. [[time range], class/cohort]
                 # doing element[0] should copy just the time ranges.
+
+
+
                 times_sched = [element[0] for element in times]
+
+                if illegal_times:
+                    times_sched = times_sched + illegal_times[0][0]
+                
                 free_time.append([day, self.find_range_differences(time_restraint, times_sched)])
 
             # we're still in the for loop. new_time is the time ranges for this 
@@ -331,30 +348,31 @@ class Schedule:
 
                     break
 
-        if not able_to_schedule:
-            return [],[],2
 
+        if not able_to_schedule:
+            del(free_time)
+            del(possible_times_to_schedule)
+            del(schedule_dates)
+            return [],[],2
+    
         class_distribution, ghost = closest_sum(possible_times_to_schedule, population, lecture_length)
-        return class_distribution, schedule_dates, ghost
+
+        return class_distribution, copy.deepcopy(schedule_dates), ghost
+    
+
         
 
     def schedule_section(self, course, times_to_schedule,schedule_dates):
-
+        
         schedule = self.schedule
         i=0
         for room,time in times_to_schedule:
+            
             i+=1 # i is the section number for the class!!!!
             for day in schedule_dates:
-                for dow, classes in schedule[room].items():
-                    if day.strftime("%A") == dow:
-                        toadd = [(time, time+course.lecture_duration),course, i]
-                        schedule[room][dow][day].append(toadd)
-                        break
-                else:
-                    continue
-                break
-            else:
-                continue
+                dow = day.strftime("%A")
+                toadd = [(time, time+course.lecture_duration),course, i]
+                schedule[room][copy.deepcopy(dow)][copy.deepcopy(day)].append(toadd)
 
         course.last_day = schedule_dates[-1]
 
@@ -399,6 +417,9 @@ class Schedule:
     def calculate_space(self,courses,population,classroom_dates):
         
         num_classes_in_semester, classes_w_dates = classroom_dates
+        #print(num_classes_in_semester)
+
+        #print(classes_w_dates)
         factor = len(courses)
         dateset = False
 
@@ -406,11 +427,10 @@ class Schedule:
         # Once one class is scheduled, the next 2 cannot
         # be scheduled at the same time
         illegal_times = []
-        times_to_schedule_all = []
 
         # Find possible times one course at a time.
         # We then divide these possible times into our cohort.
-        for course in courses:
+        for i, course in enumerate(courses):
                 
             if course.class_type == 4:
                 self.virtual_courses.append(course)
@@ -421,7 +441,6 @@ class Schedule:
             time_restraint = [course.lecture_start_time, course.lecture_end_time]
 
             real_dates = self.find_valid_classrooms(course, classes_w_dates)
-            
             # grace = the number of extra classes to be scheduled. If we have room, add one.
             grace = 1
 
@@ -451,16 +470,18 @@ class Schedule:
             # failed reasons:   1 = Too many hours for the semester (case above)
             #                   2 = Cannot fit class into schedule
             #                   3 = Could not create enough cohorts due to physical class bottleneck
-            times_to_schedule, schedule_dates, failed = self.find_schedule_single_class(real_dates, time_restraint, total_classes, course.lecture_duration,population)
-            print(times_to_schedule, "\n\n", schedule_dates,"\n")
+            times_to_schedule, schedule_dates, failed = self.find_schedule_single_class(real_dates, 
+                                                            time_restraint, total_classes, course.lecture_duration,population,
+                                                                                                                illegal_times)
+            #print(times_to_schedule, "\n\n", schedule_dates,"\n")
             if failed:
                 self.failed.append([course,failed])
 
             # Even if it failed, let's try to add to schedule anyways.
             if times_to_schedule:
                 self.schedule_section(course, times_to_schedule, schedule_dates)
-                
-            times_to_schedule_all.append(times_to_schedule)
+
+            illegal_times.append([list({(x[1], x[1] + course.lecture_duration) for x in times_to_schedule}), schedule_dates])
                 
             
 
@@ -477,7 +498,6 @@ class Schedule:
                 cohorts_populations.append((program.courselist[i],program.populations[i],program.core))
 
         cohorts_populations.sort(key=takeSecond)
-
         for termclasses in cohorts_populations:
             courses, population, core = termclasses
             
@@ -494,7 +514,42 @@ class Schedule:
             possible_times = self.calculate_space(courses,population,classroom_dates)
 
         return
+    # Generate Out Creates a BROKEN SCHEDULE
+    def generate_out(self):
+        classes = self.get_raw_schedule()
+        week_classes = {}
+        for room, data in classes.items():
+            counter = 1
+            for i, class_date in enumerate(sorted(data.keys())):
+
+                class_times = data[class_date]
+                if class_date.weekday() == 0 and i != 0:
+                    counter += 1
+
+                week_name = "Week "+str(counter)
+
+                if week_name not in week_classes:
+                    week_classes[week_name] = {}
+
+                class_id = room.classroom_id
+                if class_id not in week_classes[week_name]:
+                    week_classes[week_name][class_id] = {}
+                    week_classes[week_name][class_id]["monday"] = []
+                    week_classes[week_name][class_id]["tuesday"] = []
+                    week_classes[week_name][class_id]["wednesday"] = []
+                    week_classes[week_name][class_id]["thursday"] = []
+
+                for class_time in class_times:
+                    start_time = datetime.datetime.strptime(str(class_time[0][0]), '%H.%M').strftime('%I:%M %p')
+                    end_time = datetime.datetime.strptime(str(class_time[0][1]), '%H.%M').strftime('%I:%M %p')
+                    course = class_time[1]
+                    week_classes[week_name][class_id]["monday"].append({"course": course, "start_time": start_time, "end_time": end_time})
+
+        return week_classes
 
 newschedule = Schedule(programs, classrooms)
 newschedule.schedule_all()
-newschedule.print_schedule()
+#newschedule.print_raw_schedule()
+print(newschedule.generate_out())
+
+
