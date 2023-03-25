@@ -527,7 +527,7 @@ class Schedule:
                 if class_date.weekday() == 0 and i != 0:
                     counter += 1
 
-                week_name = "Week "+str(counter)
+                week_name = "Week "+str(counter) 
 
                 if week_name not in week_classes:
                     week_classes[week_name] = {}
