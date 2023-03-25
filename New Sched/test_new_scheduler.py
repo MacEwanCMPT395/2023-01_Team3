@@ -5,14 +5,14 @@ Purpose: Test methods from courseClass
 '''
 
 import unittest
-from courseClass import *
+from new_scheduler import *
 
 class TestStudentSchedule(unittest.TestCase):
 
 
     def test_display_classroom(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
+        # degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
         courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
                     Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
@@ -32,7 +32,7 @@ class TestStudentSchedule(unittest.TestCase):
         term = [Term("Term 1", 1), 
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, term)
+        schedule = Schedule(student, program, courses, classrooms, term)
 
         # print(f"\n===================================")
         # print(f"\n=====Testing display_classroom=====\n")
@@ -45,7 +45,6 @@ class TestStudentSchedule(unittest.TestCase):
 
     def test_term_schedule(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
         courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
                     Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
@@ -65,7 +64,7 @@ class TestStudentSchedule(unittest.TestCase):
         term = [Term("Term 1", 1), 
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, term)
+        schedule = Schedule(student, program, courses, classrooms, term)
 
         print(f"\n===================================")
         print(f"\n=====Testing term_schedule=====\n")
@@ -89,7 +88,6 @@ class TestStudentSchedule(unittest.TestCase):
 
     def test_check_availability(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
         courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
                     Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
@@ -108,7 +106,7 @@ class TestStudentSchedule(unittest.TestCase):
         term = [Term("Term 1", 1), 
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, term)
+        schedule = Schedule(student, program, courses, classrooms, term)
 
         print(f"\n===================================")
         print(f"\n=====Testing check_availability=====\n")
@@ -129,7 +127,6 @@ class TestStudentSchedule(unittest.TestCase):
 
     def test_schedule_course(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
         courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
                     Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
@@ -148,7 +145,7 @@ class TestStudentSchedule(unittest.TestCase):
         term = [Term("Term 1", 1), 
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, term)
+        schedule = Schedule(student, program, courses, classrooms, term)
 
         # print(f"\n===================================")
         # print(f"\n=====Testing schedule_course=====\n")
@@ -165,7 +162,6 @@ class TestStudentSchedule(unittest.TestCase):
 
     def test_replace_course(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
         courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
                     Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
@@ -185,7 +181,7 @@ class TestStudentSchedule(unittest.TestCase):
         term = [Term("Term 1", 1), 
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, term)
+        schedule = Schedule(student, program, courses, classrooms, term)
 
         # print(f"\n===================================")
         # print(f"\n=====Testing replace_course=====\n")
@@ -204,7 +200,6 @@ class TestStudentSchedule(unittest.TestCase):
 
     def test_fill_empty_spot(self):
         student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
         program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
         courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0), 
                     Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0), 
@@ -224,7 +219,7 @@ class TestStudentSchedule(unittest.TestCase):
         terms = [Term("Term 1", 1), 
                 Term("Term 2", 2),
                 Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, terms)
+        schedule = Schedule(student, program, courses, classrooms, terms)
         terms[0].unsched_courses = {"PCOM" : [Course("PCOM !!!!", "PCOM", None, 36, 1, 15, 1.5, 0), 
                                             Course("SUPR ****", "PCOM", None, 36, 1, 7, 1.5, 0), 
                                             Course("PRDV @@@@", "PCOM", None, 20, 1, 21, 1.5, 0)],
@@ -253,24 +248,14 @@ class TestStudentSchedule(unittest.TestCase):
         # print(f"===================================")
 
     def test_read_csv(self):
-        finalDegree = Degree()
-        finalProgram = Program(150, '')
-        finalDegree.core_courses["PCOM"] = [] 
-        finalDegree.core_courses["BCOM"] = [] 
-        finalProgram.program_courses["PM"] = []
-        finalProgram.program_courses["BA"] = []
-        finalProgram.program_courses["GLM"] = []
-        finalProgram.program_courses["DXD"] = []
-        finalProgram.program_courses["BK"] = []
         print(f"\n===================================")
         print(f"\n=====Testing read_csv=====\n")
         # Please note I need to figure out how to change path so it's more universal but for now I use my own path on my PC
         # For this test to work please put in the path to the csv to read
-        read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv", finalDegree, finalProgram)
-        #degree, program = read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv")
-        for i in range(len(finalDegree.core_courses["PCOM"])):
-                print(finalDegree.core_courses["PCOM"][i].course_id)
-                #print("\n")
+        courses, program = read_csv("C:\\Users\\SJsni\\Documents\\project395\\2023-01_Team3\\Experimental_Reference\\CSV Files\\classes.csv")
+        for i in range(len(courses)):
+                print(courses[i].course_id)
+        print("\n")
         print(f"===================================")
 
 

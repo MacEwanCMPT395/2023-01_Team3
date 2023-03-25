@@ -5,6 +5,8 @@ Program Desc: Schedule core courses Monday/Wednesday, and program courses on Tue
 '''
 
 from Classes import *
+import pandas as pd                 #pip install pandas
+import numpy as np
 
 class Schedule:
     def __init__(self, student, degree, program, courses, classrooms, term):
@@ -21,45 +23,17 @@ class Schedule:
             for clsrm in classrooms:
                 if clsrm.classroom_id == classroom.classroom_id:
                     self.display_schedule(clsrm)
-                
+        
+
 
     def display_schedule(self, classroom):
-        class_schedule = ""
-        class_schedule += f"\n\t{classroom.classroom_id}: "
+        print(f"\n\t{classroom.classroom_id}: ")
         for day in classroom.schedule:
-            class_schedule += f"\n\t\t{day}: "
+            print(f"\t\t{day}: ")
             for course in classroom.schedule[day]:
                 if course != None:
-                    class_schedule += f"\n\t\t\t{course.course_id} starts at {course.lecture_start_time} and ends at {course.lecture_end_time}"
-                else: 
-                    class_schedule += f"\n\t\t\tNull"
-        return class_schedule
-    
-    ##################### return the classes #####################
-
-    def return_classroom(self, term, classroom):
-        class_schedule = ""
-        for classrooms in term.term_sched[term.term_id]:
-            for clsrm in classrooms:
-                if clsrm.classroom_id == classroom.classroom_id:
-                    class_schedule += self.display_schedule(clsrm)
-        return class_schedule
-                
-
-    def return_schedule(self, classroom):
-        class_schedule = ""
-        class_schedule += f"\n\t{classroom.classroom_id}: \n"
-        for day in classroom.schedule:
-            class_schedule += f"\t\t{day}: \n"
-            for course in classroom.schedule[day]:
-                if course != None:
-                    class_schedule += f"\t\t\t{course.course_id} starts at {course.lecture_start_time} and ends at {course.lecture_end_time}\n"
-                else: 
-                    class_schedule += f"\t\t\tNull\n"
-        return class_schedule
-
-
-    #############################################################
+                    print(f"\t\t\t{course.course_id} starts at {course.lecture_start_time} and ends at {course.lecture_end_time}")
+                else: print(f"\t\t\tNull")
 
     def display_term(self, terms):
         for term in terms:
@@ -79,28 +53,30 @@ class Schedule:
             
             term.classrooms = [classroom.copy() for classroom in classrooms]  # create a copy of classrooms for each term
 
+            #create copies of all courses for each term (for distinct times)
+            term.core_courses = Course.copy(self, self.degree.core_courses)
+            term.program_courses = Course.copy(self, self.program.program_courses)
+
             #loop through core courses
-            for key, values in self.degree.core_courses.items():
-                for course in values:
+            for core in term.core_courses:
 
                     #organize courses to respective terms
-                    if term.term_value == 1 and course.term == 1:
-                        term.term_core_course.append(course)
-                    elif term.term_value == 2 and course.term != 3:
-                        term.term_core_course.append(course)
-                    elif term.term_value == 3 and course.term != 1:
-                        term.term_core_course.append(course)
+                    if term.term_value == 1 and core.term == 1:
+                        term.term_core_course.append(core)
+                    elif term.term_value == 2 and core.term != 3:
+                        term.term_core_course.append(core)
+                    elif term.term_value == 3 and core.term != 1:
+                        term.term_core_course.append(core)
 
-            for key, values in self.program.program_courses.items():
-                for course in values:
+            for prog in term.program_courses:
 
                     #organize courses to respective terms
-                    if term.term_value == 1 and course.term == 1:
-                        term.term_prog_course.append(course)
-                    elif term.term_value == 2 and course.term != 3:
-                        term.term_prog_course.append(course)
-                    elif term.term_value == 3 and course.term != 1:
-                        term.term_prog_course.append(course)
+                    if term.term_value == 1 and prog.term == 1:
+                        term.term_prog_course.append(prog)
+                    elif term.term_value == 2 and prog.term != 3:
+                        term.term_prog_course.append(prog)
+                    elif term.term_value == 3 and prog.term != 1:
+                        term.term_prog_course.append(prog)
 
             self.schedule_core_courses(term.term_core_course, term.classrooms, term)
             self.schedule_program_courses(term.term_prog_course, term.classrooms, term)
@@ -126,13 +102,13 @@ class Schedule:
                     # check if course has already been scheduled and that course and classroom types are the same i.e. lab room = lab course
                     if course.course_id not in term.scheduled_courses and classroom.class_type == course.course_type:
 
-                        if course.lecture_duration in [1.5, 2] and course.pre_req == None:
+                        if course.lecture_duration in [1.5, 2]:
                             if day == "Monday":
                                 # check if the course can be scheduled on the current day and classroom
                                 schedule_on_day = self.check_availability(course, day, classroom)
-                                if schedule_on_day:
+                                if schedule_on_day and course.pre_req == None:
                                     # schedule the course on the current day and classroom
-                                    self.schedule_course(course, day, classroom)
+                                    self.schedule_course(course, day, classroom, term)
                                 else:
                                     term.assign_unsched(course)
                                 
@@ -142,20 +118,19 @@ class Schedule:
                                     schedule_on_day = self.check_availability(course, day, classroom)
                                     if schedule_on_day:
                                         # schedule the course on the current day and classroom
-                                        self.schedule_course(course, day, classroom)
+                                        self.schedule_course(course, day, classroom, term)
                                         term.scheduled_courses.append(course.course_id)
 
                         else:
                             schedule_on_day = self.check_availability(course, day, classroom)
-                            if schedule_on_day:
+                            if schedule_on_day and course.pre_req == None:
                                 # schedule the course on the current day and classroom
-                                self.schedule_course(course, day, classroom)
+                                self.schedule_course(course, day, classroom, term)
                                 term.scheduled_courses.append(course.course_id)
                             else:
                                 term.assign_unsched(course)
 
         term.term_sched[term.term_id] = [(classrooms)]
-
 
         
     '''
@@ -180,9 +155,9 @@ class Schedule:
                             if day == "Tuesday":
                                 # check if the course can be scheduled on the current day and classroom
                                 schedule_on_day = self.check_availability(course, day, classroom)
-                                if schedule_on_day:
+                                if schedule_on_day and course.pre_req == None:
                                     # schedule the course on the current day and classroom
-                                    self.schedule_course(course, day, classroom)
+                                    self.schedule_course(course, day, classroom, term)
                                 else:
                                     term.assign_unsched(course)
                                     # term.unsched_courses.append(course)
@@ -193,24 +168,28 @@ class Schedule:
                                     schedule_on_day = self.check_availability(course, day, classroom)
                                     if schedule_on_day:
                                         # schedule the course on the current day and classroom
-                                        self.schedule_course(course, day, classroom)
+                                        self.schedule_course(course, day, classroom, term)
                                         term.scheduled_courses.append(course.course_id)
 
                         else:
                             schedule_on_day = self.check_availability(course, day, classroom)
-                            if schedule_on_day:
+                            if schedule_on_day and course.pre_req == None:
                                 # schedule the course on the current day and classroom
-                                self.schedule_course(course, day, classroom)
+                                self.schedule_course(course, day, classroom, term)
                                 term.scheduled_courses.append(course.course_id)
                             else:
                                 term.assign_unsched(course)
                                 # term.unsched_courses.append(course)
-
+        
+        # term.display_au()
         term.term_sched[term.term_id] = [(classrooms)]
+
 
     '''
     check_availability: will verify if a course is allowed to be placed in a classroom's schedule
                         function will return boolean; True = valid / False = invalid
+
+            [[0] ... CRS(strt = 16, end = 18), CRS(strt = 18, end = 20)] **start from index[-1]
     '''
     def check_availability(self, course, day, classroom):
         # Check if the given day already has any courses scheduled
@@ -220,22 +199,22 @@ class Schedule:
             for scheduled_course in classroom.schedule[day]:
         
                 # Find the last course that was scheduled in the classroom's schedule
-                if scheduled_course == classroom.schedule[day][-1]:
+                if scheduled_course == classroom.schedule[day][0]:
         
                     # calculate the end time of the scheduled course
-                    scheduled_course_end_time = scheduled_course.lecture_start_time + scheduled_course.lecture_duration
+                    scheduled_course_start_time = scheduled_course.lecture_end_time - scheduled_course.lecture_duration
         
                     # calculate the start/end time of new course
-                    course_start_time = scheduled_course_end_time
-                    course_end_time = course_start_time + course.lecture_duration
+                    course_end_time = scheduled_course_start_time
+                    course_start_time = course_end_time - course.lecture_duration
         
                     # Check if new course start time overlaps with scheduled course end time
-                    if course_start_time < scheduled_course_end_time:
+                    if course_end_time > scheduled_course_start_time:
                             return False
                     
                     # Check if the given day exists in the classroom's time slot
                         
-                    elif classroom.class_type == 0:
+                    if classroom.class_type == 0:
                         if day in classroom.time_slot:
                             # Check if the start time is within the time slot
                             if course_start_time >= classroom.time_slot[day]["start"] and course_end_time <= classroom.time_slot[day]["end"]:
@@ -243,19 +222,15 @@ class Schedule:
                         
                     elif classroom.class_type == 1:
                         if day in classroom.time_slot_lab:
-                            # if course in self.program.program_courses["FS"]:
-                            #     if course_start_time >= 5 and course_end_time <= classroom.time_slot_lab[day]["end"]:
-                            #         return True
-                            # else:
-                                # Check if the start time is within the lab time slot
-                            if course_start_time >= classroom.time_slot_lab[day]["start"] and course_end_time <= classroom.time_slot_lab[day]["end"]:#classroom.time_slot_lab[day]["end"]:
+                            # Check if the start time is within the lab time slot
+                            if course_start_time >= classroom.time_slot_lab[day]["start"] and course_end_time <= classroom.time_slot_lab[day]["end"]:
                                 return True
     
                     # If the day is not in the time slot or the start time is not within the time slot, return False
                     return False
         
         # If the day does not exist in the schedule or there is no overlap, return True
-        return True                       
+        return True               
      
 
     '''
@@ -263,7 +238,7 @@ class Schedule:
                     If valid, will be added to the end of the schedule. 
                     Else, error message will be displayed and function will return False
     '''
-    def schedule_course(self, course, day, classroom):
+    def schedule_course(self, course, day, classroom, term):
         # Check if the given day already has any courses scheduled
         if day in classroom.schedule:
             
@@ -271,27 +246,57 @@ class Schedule:
             for scheduled_course in classroom.schedule[day]:
             
                 # Find the last course that was scheduled in the classroom's schedule
-                if scheduled_course == classroom.schedule[day][-1]:
+                if scheduled_course == classroom.schedule[day][0]:
                     
-                    # Check if course is online to allow time before and after.
-                    if course.course_type == 2 or scheduled_course.course_type == 2:
+                    # check if course department is FS
+                    if course.department != "FS":
+                        # calculate the start/end time of new course, must be scheduled away from the end of day 
+                        if scheduled_course.lecture_start_time >= 16:
+                            course.lecture_end_time = 16
+                            course.lecture_start_time = course.lecture_end_time - course.lecture_duration
+                        else:
+                            course.lecture_end_time = scheduled_course.lecture_start_time
+                            course.lecture_start_time = course.lecture_end_time - course.lecture_duration
+                        
+                        # Check if course is online to allow time before and after.
+                        if course.course_type == 2 or scheduled_course.course_type == 2:
+                            # calculate the start/end time of new course
+                            course.lecture_end_time = scheduled_course.lecture_start_time - .5
+                            course.lecture_start_time = course.lecture_end_time - course.lecture_duration
+                    
+                    else:
                         # calculate the start/end time of new course
-                        course.lecture_start_time = scheduled_course.lecture_end_time + .5
-                        course.lecture_end_time = course.lecture_start_time + course.lecture_duration
-                    else:    
-                        # calculate the start/end time of new course
-                        course.lecture_start_time = scheduled_course.lecture_end_time
-                        course.lecture_end_time = course.lecture_start_time + course.lecture_duration
+                        course.lecture_end_time = scheduled_course.lecture_start_time
+                        course.lecture_start_time = course.lecture_end_time - course.lecture_duration
 
-                    time_sched = self.timeslot_sched(scheduled_course, course, classroom, day)
+                    time_sched = self.timeslot_sched(term, scheduled_course, course, classroom, day)
                     if time_sched == False: return False
-            
-            # If the new course does not overlap with any other courses, add it to the schedule for the given day
-            classroom.schedule[day].append((course))
+
+            '''
+            Once time_sched approves of course time, we will call track_times
+            After being added to term.track, we wil then verify using 
+            '''
+            # track = self.track_times(course, term)
+            # if track == True:
+                # If the new course does not overlap with any other courses, add it to the schedule for the given day
+            classroom.schedule[day].insert(0, (course))
         else:
-            # If no courses are scheduled for the given day, create a new entry in the schedule dictionary with the new course and classroom
-            course.lecture_end_time = course.lecture_start_time + course.lecture_duration
-            classroom.schedule[day] = [(course)]
+
+            if course.department != "FS":
+                # If no courses are scheduled for the given day, create a new entry in the schedule dictionary with the new course and classroom
+                course.lecture_start_time = course.lecture_end_time - course.lecture_duration
+                # track = self.track_times(course, term)
+                # if track == True:
+                classroom.schedule[day] = [(course)]
+            else: 
+                # If no courses are scheduled for the given day, create a new entry in the schedule dictionary with the new course and classroom
+                course.lecture_end_time = 20
+                course.lecture_start_time = course.lecture_end_time - course.lecture_duration
+                
+                # track = self.track_times(course, term)
+                # if track == True:
+                classroom.schedule[day] = [(course)]
+            
         return True
     
     
@@ -299,75 +304,216 @@ class Schedule:
     Helper function for schedule_course
     Checks if lecture start and end time depending on if the classroom is or is not a lab
     '''
-    def timeslot_sched(self, scheduled_course, course, classroom, day):
+    def timeslot_sched(self, term, scheduled_course, course, classroom, day):
         # Check if the start time or end time of the new course overlaps with the scheduled course
         if course.lecture_start_time < scheduled_course.lecture_end_time and course.lecture_end_time > scheduled_course.lecture_end_time:
             print(f"Cannot schedule {course.course_id} on {day} as it overlaps with {scheduled_course.course_id}")
             return False
         
         if classroom.class_type == 1:
-            if course.lecture_end_time > classroom.time_slot_lab[day]["end"]:
-                print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
-                return False
+            if course.department != "FS":
+                if day in ["Tuesday", "Thursday"]:
+                    # Check if the start time is within the lab time slot
+                    if course.lecture_end_time > 16:
+                        return False
+                else:
+                    if course.lecture_start_time < classroom.time_slot_lab[day]["start"]:
+                        print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
+                        return False
+            else:
+                # Schedule for "FS" department from 16 until time_slot["end"]
+                    if course.lecture_start_time < 16:
+                        if course.department not in term.unsched_courses:
+                            term.unsched_courses[course.department] = [course]
+                        else:
+                            term.unsched_courses[course.department].append(course)
+                        # print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
+                        return False
+        
         else:
             # Check if the end time of the course exceeds the end time of the time slot for the given day
-            if course.lecture_end_time > classroom.time_slot[day]["end"]:
+            if course.lecture_start_time < classroom.time_slot[day]["start"]:
                 print(f"Cannot schedule {course.course_id} on {day} as the end time exceeds the time slot end")
                 return False
             
 
     '''
+    Ok, so we need to be able to limit the number of courses from each department scheduled in a term at once.
+    If we dont then courses belonging to the same department will run at the same time. Making it impossible for students to attend both classes.
+    We need to keep track of the terms that include more than one specific courses (Ex. CMSK 101 (term 1), CMSK 103 (term 2)). SO not only do we need to consider the time, 
+    but also the term since term 1 students will take courses for term 1 and term 2 students will take courses for term 2. (Not need for Term 1)
+
+    The way I though about going about this is to create a dictionary in class Term that will keep track of the start and end times of each course belonging to the same department.
+    It would be a something like this: 
+                                        {"PCOM" : [[17, 15.5], 
+                                                   [15.5, 14],
+                                                    ...],
+                                         "BCOM" : [[17, 15],
+                                                   [15, 13.5],
+                                                   ...],
+                                          ...          
+                                        }
+
+    we would also have a condition in play that will track the term specific courses so that we dont limit the courses being scheduled at once
+    (Eg. Only have term 1 courses scheduled and not term 2 courses)
+    OR
+    we could include the term of each course in the dictionary that trackes the time of each course:
+                                        {"PCOM" : {Term 1: [[17, 15.5], 
+                                                   [15.5, 14],
+                                                    ...]},
+                                                  {Term 2: [[17, 15],
+                                                            [15, 13.5],
+                                                            ...]}
+                                        }
+    Will most likely use this, more organized
+
+    I think its best to make a new function and then have it called in schedule_course, that way the parameters can be passed directly in the moment of scheduling
+    function will return boolean just like check_availability.
+    '''
+    
+    
+    
+    '''
+    verify_times: will check to see if there is any overlap with other course belonging to the same course and term.
+    parameters: course; use new calculated start and end times of course to check if overlap occurs 
+                term; uses track attribute, a distinct dictionary for each term taht will track times of each scheduled course
+    '''
+    def verify_times(self, course, term):
+        times = term.track[course.department][course.term]
+        for time in times:
+            if course.lecture_duration in [1.5, 2] and course.count != 2:
+                if course.lecture_start_time == time[1] or course.lecture_end_time == time[0]:
+                    return False
+                elif time[1] < course.lecture_start_time < time[0] or time[1] < course.lecture_end_time < time[0]:
+                    return False
+                else:
+                    course.count += 1
+            elif course.lecture_duration not in [1.5, 2] and course != 1:
+                if course.lecture_start_time == time[1] or course.lecture_end_time == time[0]:
+                    return False
+                elif time[1] < course.lecture_start_time < time[0] or time[1] < course.lecture_end_time < time[0]:
+                    return False
+                else:
+                    course.count += 1
+            elif (course.lecture_duration in [1.5, 2] and course.count != 2) or (course.lecture_duration not in [1.5, 2] and course != 1):
+                return False
+        print(f"check {course.course_id} ***, count {course.count} ")
+        
+        return True
+
+    
+    
+    '''
+    track_times: will add department, course term, and course start/end times in a nested dictionary format, See above.
+    parameters: course; course object where ea can grab the start, end, and term of course
+                term; uses track attribute, a distinct dictionary for each term, that we will later use to check any conflicts between courses with like departments across all classrooms
+    '''
+    def track_times(self, course, term):
+        if course.department not in term.track:
+            term.track[course.department] = {}
+            if course.term not in term.track[course.department]:
+                # print(f"check {course.course_id}, count {course.count}")
+                term.track[course.department][course.term] = [[course.lecture_end_time, course.lecture_start_time]]
+            else: 
+                if self.verify_times(course, term) == True:
+                    term.track[course.department][course.term].append([course.lecture_end_time, course.lecture_start_time])
+                else:
+                    if course.department not in term.unsched_courses:
+                        term.unsched_courses[course.department] = [(course)]
+                    else:
+                        term.unsched_courses[course.department].append((course))
+                    return False
+        else:
+            if course.term not in term.track[course.department]:
+                # print(f"check {course.course_id} ***, count {course.count} ")
+                term.track[course.department][course.term] = [[course.lecture_end_time, course.lecture_start_time]]
+            else:
+                if self.verify_times(course, term) == True: 
+                    term.track[course.department][course.term].append([course.lecture_end_time, course.lecture_start_time])
+                else:
+                    if course.department not in term.unsched_courses:
+                        term.unsched_courses[course.department] = [(course)]
+                    else:
+                        term.unsched_courses[course.department].append((course))
+                    return False
+        
+        return True
+
+
+    
+    
+    '''
     replace_course: will first check if there are any empty slots in schedule to add course.
                     If not, will check if course's transcript hours = 0 and swap with new course
     '''
     def replace_course(self, term, classrooms):
-
-        for classroom in classrooms:
-
-            for day, values in classroom.schedule.items():
-                for scheduled_course in values:
-                
-                    #check if scheduled course has transcript hours = 0
-                    if scheduled_course.transcript_hours == 0:
-                        #get index of scheduled course
-                        ind = classroom.schedule[day].index(scheduled_course)
-
-                        self.prereq_check(ind, scheduled_course, term, classroom, day)
-
-
-
-
-    def prereq_check(self, ind, scheduled_course, term, classroom, day):
         
-            #if we have unscheduled courses belonging to sam edepartment as scheduled_course
+        for classroom in classrooms:
+        
+            for day, values in classroom.schedule.items():
+        
+                for scheduled_course in values:
+        
+                    # Check if scheduled course has transcript hours = 0
+                    if scheduled_course.transcript_hours == 0 and scheduled_course.lecture_duration not in [1.5, 2]:
+                        # Get index of scheduled course
+                        scheduled_index = {scheduled_course: {day: classroom.schedule[day].index(scheduled_course)}}
+                        self.prereq_check(scheduled_index, term, classroom)
+        
+                    elif scheduled_course.transcript_hours == 0 and scheduled_course.lecture_duration in [1.5, 2]:
+                        scheduled_index = {scheduled_course: {day: classroom.schedule[day].index(scheduled_course)}}
+        
+                        # Iterate over the remaining days in the schedule to find the second occurrence of the course
+                        for other_day, other_values in classroom.schedule.items():
+        
+                            if other_day != day and scheduled_course in other_values:
+                                scheduled_index[scheduled_course][other_day] = other_values.index(scheduled_course)
+                                break
+        
+                        self.prereq_check(scheduled_index, term, classroom)
+
+
+
+    '''
+    prereq_check: checks to see if a course has a prereq, if prereq is None then pass as parameter to new_course_time
+    '''
+
+    def prereq_check(self, ind, term, classroom):
+        valid_courses = []
+        # print("IND = ", ind)
+
+        for scheduled_course, occurences in ind.items():
+            #if we have unscheduled courses belonging to same department as scheduled_course
             if scheduled_course.department in term.unsched_courses:
-                # for dep, courses in term.unsched_courses.items():
-                    for course in term.unsched_courses[scheduled_course.department]:
-                        if course.pre_req !=  None:
-                            #check if course is not already scheduled and scheduled_course.course_id == course.pre_req
-                            if course not in term.scheduled_courses and scheduled_course.course_id == course.pre_req:
-                                # if yes, compare lecture duration between old and new course and see if they can be swapped
-                                term.new_course_time(classroom, scheduled_course, term.unsched_courses[course.department], course, day, ind)
-                                return
-                        else:
-                            if course not in term.scheduled_courses:
-                                # if yes, compare lecture duration between old and new course and see if they can be swapped
-                                term.new_course_time(classroom, scheduled_course, term.unsched_courses[course.department], course, day, ind)
-                                return
-                            
-            #else, take unsecheduled course from any department
+                for course in term.unsched_courses[scheduled_course.department]:
+                    if course.pre_req !=  None:
+                        #check if course is not already scheduled and scheduled_course.course_id = course.pre_req
+                        if course not in term.scheduled_courses and scheduled_course.course_id == course.pre_req:
+                            # append the valid course to the list
+                            valid_courses.append(course)
+                    else:
+                        if course not in term.scheduled_courses:
+                            # append the valid course to the list
+                            valid_courses.append(course)
+                                    
+            #else, take unscheduled course from any department
             else:
                 for dep, courses in term.unsched_courses.items():
                     for course in courses:
                         if course.pre_req !=  None:
                             #check if course is not already scheduled and scheduled_course.course_id == course.pre_req
                             if course not in term.scheduled_courses and scheduled_course.course_id == course.pre_req:
-                                term.new_course_time(classroom, scheduled_course, courses, course, day, ind)
-                                return
+                                print("#")
+                                # append the valid course to the list
+                                valid_courses.append(course)
                         else:
                             if course not in term.scheduled_courses:
-                                term.new_course_time(classroom, scheduled_course, courses, course, day, ind)
-                                return
+                                # append the valid course to the list
+                                valid_courses.append(course)
+            
+            # pass all the valid courses to the new_course_time method\
+            term.new_course_time(classroom, term.unsched_courses, valid_courses, ind)
+
                         
                             
 
@@ -408,6 +554,7 @@ class Schedule:
                                     print(f"Scheduled {course.course_id} on {day} at {course.lecture_start_time}")
                                     return True
                             
+
     '''
     Helper function for fill_empty_slot:  
                         Will find the index of None in classroom schedule and find the courses scheduled before and after None
@@ -425,3 +572,45 @@ class Schedule:
         next_course = classroom.schedule[day][next_course_index]
 
         return empty_slot_index, prev_course, next_course
+    
+def read_csv(fileName, finalDegree, finalProgram):
+    # Function to read csv file and store in class structures for scheduler.
+    df = pd.read_csv(fileName)
+    df = df.replace(np.nan, None) 
+
+    for i in range(len(df)):
+
+        if (df.values[[i],[0]])[0] == 'PCOM':
+            finalDegree.core_courses["PCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'BCOM':
+            finalDegree.core_courses["BCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'PM':
+            finalProgram.program_courses["PM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'BA':
+            finalProgram.program_courses["BA"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'GLM':
+            finalProgram.program_courses["GLM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'FS':
+            finalProgram.program_courses["FS"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'DXD':
+            finalProgram.program_courses["DXD"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+        
+        elif (df.values[[i],[0]])[0] == 'BK':
+            finalProgram.program_courses["BK"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+
+        else: # new program
+            if  (df.values[[i],[0]])[0] in finalProgram.program_id:
+                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            else:
+                finalProgram.program_id.append((df.values[[i],[0]])[0])
+                finalProgram.program_courses[(df.values[[i],[0]])[0]] = []
+                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+
+        
+        # Note 70 is the max capacity we dont have a field for this so I just chose 70 for now
