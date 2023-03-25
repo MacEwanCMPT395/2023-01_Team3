@@ -98,6 +98,24 @@ def closest_sum(room_hrs_times, target,class_length, extra_classes = [],incremen
 
     return real_schedule,ghost_required
 
+def pretty_print_nested_dict(dictionary, indent=0):
+    for key, value in dictionary.items():
+        print(' ' * indent + str(key))
+        if isinstance(value, dict):
+            pretty_print_nested_dict(value, indent + 4)
+        elif isinstance(value, list):
+            for item in value:
+                if isinstance(item, dict):
+                    pretty_print_nested_dict(item, indent + 4)
+                else:
+                    print(' ' * (indent + 4) + str(item))
+        else:
+            print(' ' * (indent + 4) + str(value))
+
+
+# ------------------------------------------------------------------#
+# MAIN MAIN MAIN MAIN MAIN -----------------------------------------#
+# ------------------------------------------------------------------#
 class Schedule:
     def __init__(self, programs, classrooms):
         self.programs = programs
@@ -146,7 +164,11 @@ class Schedule:
             dict_combined[classroom] = sorted_dict
 
         return num_classes_in_semester,dict_combined
-
+    
+    def print_schedule(self):
+        pretty_print_nested_dict(self.schedule)
+        return None
+    
     def find_range_differences(self, min_max, data_ranges):
         '''
         Use this function to find the times that are FREE.
@@ -271,8 +293,9 @@ class Schedule:
 
         for classroom, dates in real_dates.items():
             free_time = []
-            
+
             for day, times in dates.items():
+
                 # Should create a list of lists or something of that nature. [[time range], class/cohort]
                 # doing element[0] should copy just the time ranges.
                 times_sched = [element[0] for element in times]
@@ -313,6 +336,7 @@ class Schedule:
 
         class_distribution, ghost = closest_sum(possible_times_to_schedule, population, lecture_length)
         return class_distribution, schedule_dates, ghost
+        
 
     def schedule_section(self, course, times_to_schedule,schedule_dates):
 
@@ -382,7 +406,7 @@ class Schedule:
         # Once one class is scheduled, the next 2 cannot
         # be scheduled at the same time
         illegal_times = []
-        times_to_schedule = []
+        times_to_schedule_all = []
 
         # Find possible times one course at a time.
         # We then divide these possible times into our cohort.
@@ -428,13 +452,17 @@ class Schedule:
             #                   2 = Cannot fit class into schedule
             #                   3 = Could not create enough cohorts due to physical class bottleneck
             times_to_schedule, schedule_dates, failed = self.find_schedule_single_class(real_dates, time_restraint, total_classes, course.lecture_duration,population)
-            print(course, times_to_schedule)
+            print(times_to_schedule, "\n\n", schedule_dates,"\n")
             if failed:
                 self.failed.append([course,failed])
 
             # Even if it failed, let's try to add to schedule anyways.
             if times_to_schedule:
                 self.schedule_section(course, times_to_schedule, schedule_dates)
+                
+            times_to_schedule_all.append(times_to_schedule)
+                
+            
 
     def schedule_all(self,highpop_first = 0):
         leftover_cohorts = []
@@ -469,3 +497,4 @@ class Schedule:
 
 newschedule = Schedule(programs, classrooms)
 newschedule.schedule_all()
+newschedule.print_schedule()

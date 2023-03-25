@@ -39,14 +39,12 @@ for date,name in cancellations.items():
 # This would also be the part where we specify the days we
 # do or don't want before creating a dictionary for every
 # day of the week.
+
 days = {
     "Monday":{},
     "Tuesday":{},
     "Wednesday":{},
-    "Thursday":{},
-    "Friday":{},
-    "Saturday":{},
-    "Sunday":{},
+    "Thursday":{}
 }
 
 # Semester start and end determined by the user.
@@ -59,7 +57,9 @@ enddate = datetime.date(2023,4,4)
 currdate = start
 while currdate != enddate:
     if not (currdate in cancellations):
-        days[currdate.strftime("%A")][currdate] = []
+        dow = currdate.strftime("%A")
+        if not dow in ["Friday", "Saturday", "Sunday"]:
+            days[dow][currdate] = []
         
 
     currdate = currdate+datetime.timedelta(days=1)
