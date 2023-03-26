@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         self.program.program_courses["DXD"] = []
         self.program.program_courses["BK"] = []
 
-        self.ui.stackedWidget.setCurrentWidget(self.ui.page12)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page9)
 
         ############ Buttons Clicked ############################
         self.ui.data_page_button.clicked.connect(self.showDataPage)
@@ -56,13 +56,14 @@ class MainWindow(QMainWindow):
         self.ui.load_data_button_program.clicked.connect(lambda: read_csv(self.ui.file_name_input_program.text(), self.degree, self.program))
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
-        self.ui.room_560_page_btn.clicked.connect(self.show560Page)
-        self.ui.room_458_page_btn.clicked.connect(self.show458Page)
-        self.ui.room_562_page_btn.clicked.connect(self.show562Page)
-        self.ui.room_564_page_btn.clicked.connect(self.show564Page)
-        self.ui.room_320_page_btn.clicked.connect(self.show320Page)
-        self.ui.room_430_page_btn.clicked.connect(self.show533Page)
-        self.ui.room_532_lab_page_btn.clicked.connect(self.show532LabPage)
+        self.ui.instructions_page_btn.clicked.connect(self.showInstructionsPage)
+        # self.ui.room_560_page_btn.clicked.connect(self.show560Page)
+        # self.ui.room_458_page_btn.clicked.connect(self.show458Page)
+        # self.ui.room_562_page_btn.clicked.connect(self.show562Page)
+        # self.ui.room_564_page_btn.clicked.connect(self.show564Page)
+        # self.ui.room_320_page_btn.clicked.connect(self.show320Page)
+        # self.ui.room_430_page_btn.clicked.connect(self.show533Page)
+        # self.ui.room_532_lab_page_btn.clicked.connect(self.show532LabPage)
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
 
         ################## Data Page Buttons Clicked ################
@@ -113,9 +114,9 @@ class MainWindow(QMainWindow):
         self.ui.next_button.clicked.connect(self.refresh_table)
 
         # TEst button for dispaying the tableview values
-        self.display_btn = QPushButton("Display", self)
-        self.display_btn.setGeometry(400, 580, 40, 20)
-        self.display_btn.clicked.connect(self.refresh_table)
+        # self.display_btn = QPushButton("Display", self)
+        # self.display_btn.setGeometry(400, 580, 40, 20)
+        self.ui.display_btn.clicked.connect(self.refresh_table)
 
         self.table_fields()
 
@@ -267,7 +268,7 @@ class MainWindow(QMainWindow):
                 if self.term_combo_box.currentText() != '' and self.week_combo_box.currentText() != '':
                     for course_data in final_schedule[self.ui.label_9.text()][
                         self.week_combo_box.currentText()][
-                        columns[col].lower()]:
+                        columns[col]]:
                         start_time = datetime.datetime.strptime(course_data["start_time"], '%I:%M %p').time()
                         end_time = datetime.datetime.strptime(course_data["end_time"], '%I:%M %p').time()
                         if datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
@@ -334,6 +335,8 @@ class MainWindow(QMainWindow):
         if file_name:
             if file_name.endswith('StudentsInfo.csv'):
                 self.update_enrollment(file_name)
+                self.ui.load_data_button.setText("Load Room Data ✔")
+                self.ui.load_data_button.setStyleSheet("background-color: green")
             elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInfo.xlsx'):
                 self.update_enrollment(file_name)
             else:
@@ -379,8 +382,12 @@ class MainWindow(QMainWindow):
         if file_name:
             if file_name.endswith('RoomInfo.csv'):
                 self.df_rooms = pd.read_csv(file_name)
+                self.ui.load_data_button_room.setText("Load Room Data ✔")
+                self.ui.load_data_button_room.setStyleSheet("background-color: green")
+
             elif file_name.endswith('RoomInfo.xls') or file_name.endswith('RoomInfo.xlsx'):
                 self.df_rooms = pd.read_excel(file_name)
+
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
@@ -391,11 +398,15 @@ class MainWindow(QMainWindow):
             print(self.df_rooms)  # print the loaded dataframe
             self.update_rooms()
 
+
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
             msg.setText("Please enter the correct CSV file path")
             msg.exec()
+
+
+
 
     ####################### Menu BUttons #################################
     @pyqtSlot()
@@ -435,7 +446,7 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page8)
 
     @pyqtSlot()
-    def show430Page(self):
+    def showInstructionsPage(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page9)
 
     @pyqtSlot()
