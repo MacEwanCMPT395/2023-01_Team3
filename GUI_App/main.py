@@ -21,9 +21,6 @@ import csv
 import pathlib
 from datetime import datetime
 
-
-
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -413,7 +410,8 @@ class MainWindow(QMainWindow):
 
             print(self.df_rooms)  # print the loaded dataframe
             self.update_rooms()
-
+            
+            sc.Schedule.update_classrooms(sc.Schedule,self.df_rooms.values.tolist())
 
         else:
             msg = QMessageBox()

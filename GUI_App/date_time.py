@@ -31,39 +31,42 @@ for date,name in holidays:
 # Create a loop for this. we can maybe create another CSV file for this.
 cancellations[datetime.date(year,9,30)] = "National Day for Truth and Reconciliation"
 
-'''
-print()
-for date,name in cancellations.items():
-    print(date,name)
-'''
+
 # This would also be the part where we specify the days we
 # do or don't want before creating a dictionary for every
 # day of the week.
 
-days = {
-    "Monday":{},
-    "Tuesday":{},
-    "Wednesday":{},
-    "Thursday":{}
-}
+def create_semester_dates(start_date):
+    days_of_week = {
+        "Monday":{},
+        "Tuesday":{},
+        "Wednesday":{},
+        "Thursday":{}
+    }
 
-# Semester start and end determined by the user.
-# semester start: Jan 3
-# semester end: April 4 (classes, not including exams)
+    # Semester start and end determined by the user.
+    # semester start: Jan 3
+    # semester end: April 4 (classes, not including exams)
 
-start = datetime.date(2023,1,3)
-enddate = datetime.date(2023,4,4)
+    start = start_date
 
-currdate = start
-while currdate != enddate:
-    if not (currdate in cancellations):
-        dow = currdate.strftime("%A")
-        if not dow in ["Friday", "Saturday", "Sunday"]:
-            days[dow][currdate] = []
-        
+    while start in cancellations:
+        start = start+datetime.timedelta(days=1)
 
-    currdate = currdate+datetime.timedelta(days=1)
+    enddate = start + datetime.timedelta(weeks=13)
 
+    currdate = start
+    while currdate != enddate:
+        if not (currdate in cancellations):
+            dow = currdate.strftime("%A")
+            if not dow in ["Friday", "Saturday", "Sunday"]:
+                days_of_week[dow][currdate] = []
+
+        currdate = currdate+datetime.timedelta(days=1)
+
+    return days_of_week
+
+#days = create_semester_dates(datetime.date(2023,1,3))
 '''
 print(days)
 
