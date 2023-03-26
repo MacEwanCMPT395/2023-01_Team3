@@ -4,56 +4,21 @@ CMPT 395 X03L - Team: 3
 Purpose: Build classes for students, degree, program, course, and classroom
 '''
 
-class Student:
-    def __init__(self, student_id, name, degree, program, term):
-        self.student_id = student_id
-        self.name = name
-        self.degree = degree
-        self.program = program
-        self.term = term
-
-
-class Course:
-    def __init__(self, course_id, department, pre_req, max_capacity, term, transcript_hours, lecture_duration, course_type):
-        self.course_id = course_id
-        self.department = department
-        self.pre_req = pre_req
-        self.max_capacity = max_capacity
-        self.term = term
-        self.transcript_hours = transcript_hours
-        self.lecture_duration = lecture_duration
-        self.lecture_start_time = 8
-        self.lecture_end_time = 9
-        self.course_type = course_type
-        # self.sections = []
-
-    # class Section:
-    #     def __init__(self):
-    #         self.section_id = f"{Course.course_id}-{Course.term}-{1 + len(Course.sections)}"
-    #         self.lecture_start_time = 8
-    #         self.lecture_end_time = 9
-    #         self.lecture_duration = self.__class__.lecture_duration
-            
-
-    # def add_section(self):
-    #     section = Course.Section()
-    #     self.sections.append(section)
-
-
 class Degree:
     def __init__(self):
         self.degree_id = ["PCOM", "BCOM"]
         self.core_courses = {
                 "PCOM": [Course("PCOM 0101", "PCOM", None, 70, 1, 35, 1.5, 0),
                         Course("PCOM 0105", "PCOM", None, 70, 1, 35, 1.5, 0),
-                        Course("PCOM 0107", "PCOM", None, 70, 1, 18, 3, 1),
+                        Course("PCOM 0107", "PCOM", None, 70, 1, 18, 1.5, 1),
                         Course("CMSK 0233", "PCOM", None, 70, 1, 7, 1.5, 1), 
                         Course("CMSK 0235", "PCOM", None, 70, 1, 6, 1.5, 1),
                         Course("PCOM 0102", "PCOM", None, 70, 2, 35, 1.5, 0),
                         Course("PCOM 0201", "PCOM", None, 70, 2, 35, 1.5, 0),
                         Course("PCOM 0108", "PCOM", None, 70, 2, 18, 1.5, 1), 
                         Course("PCOM 0202", "PCOM", None, 70, 3, 33, 1.5, 0),
-                        Course("PCOM 0103", "PCOM", None, 70, 3, 35, 1.5, 0)
+                        Course("PCOM 0103", "PCOM", None, 70, 3, 35, 1.5, 0),
+                        Course("PCOM 0109", "PCOM", None, 70, 3, 14, 2, 3),
                         #PCOM 0109 runs in a classroom and lab?
                         ], 
                 "BCOM": [Course("PCOM 0203", "BCOM", None, 70, 1, 15, 1.5, 0),
@@ -76,10 +41,14 @@ class Degree:
                         Course("AVDM 0260", "BCOM", None, 70, 3, 6, 1.5, 2) #schedule after all classes are done, end of the term
                         ]}
 
-
 class Program:
-    def __init__(self, max_capacity, courses):
-        self.program_id = ["PM", "BA", "GLM", "FS", "DXD", "BK"]
+    def __init__(self, program_id="", core=1, populations=[0,0,0],courselist=[[],[],[]] ):
+        self.program_id = program_id
+        self.core = core
+        self.populations = populations
+        self.courselist = courselist
+
+        self.courses = []
         self.program_courses = {"PM" : [Course("PRDV 0201", "PM", None, 70, 1, 21, 1.5, 0),
                                         Course("PRDV 0202", "PM", None, 70, 1, 14, 1.5, 0),
                                         Course("PRDV 0203", "PM", None, 70, 1, 21, 1.5, 0),
@@ -108,6 +77,17 @@ class Program:
                                         Course("SCMT 0505", "GLM", None, 70, 3, 21, 1.5, 0),
                                         Course("PCOM 0151", "GLM", None, 70, 3, 39, 1.5, 0)],
                                 
+                                "FS" : [Course("CMSK 0150", "FS", None, 70, 1, 16, 2, 1),
+                                        Course("CMSK 0151", "FS", None, 70, 1, 16, 2, 1),
+                                        Course("CMSK 0157", "FS", None, 70, 1, 16, 2, 1),
+                                        Course("CMSK 0154", "FS", None, 70, 1, 16, 2, 1),
+                                        Course("CMSK 0152", "FS", "CMSK 0151", 16, 1, 16, 2, 1),
+                                        Course("PCOM 0160", "FS", None, 70, 3, 50, 2, 1),
+                                        Course("CMSK 0153", "FS", None, 70, 2, 18, 2, 1),
+                                        Course("CMSK 0200", "FS", None, 70, 2, 16, 2, 1),
+                                        Course("CMSK 0201", "FS", "CMSK 0200", 70, 2, 18, 2, 1),
+                                        Course("CMSK 0203", "FS", None, 70, 2, 16, 2, 1),
+                                        Course("CMSK 0202", "FS", None, 70, 2, 18, 2, 1)],
 
                                 "DXD" : [Course("AVDM 0165", "DXD", None, 70, 1, 18, 1.5, 1),
                                          Course("DXDI 0101", "DXD", None, 70, 1, 24, 1.5, 1),
@@ -120,20 +100,6 @@ class Program:
                                          Course("AVDM 0270", "DXD", None, 70, 3, 18, 1.5, 1),
                                          Course("DXDI 9901", "DXD", None, 70, 3, 45, 1.5, 1)],
 
-
-                                "FS" : [Course("CMSK 0150", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0151", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0152", "FS", "CMSK 0151", 70, 1, 16, 2, 1),
-                                        Course("CMSK 0157", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0154", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0153", "FS", None, 70, 2, 18, 2, 1),
-                                        Course("CMSK 0200", "FS", None, 70, 2, 16, 2, 1),
-                                        Course("CMSK 0201", "FS", "CMSK 0200", 70, 2, 18, 2, 1),
-                                        Course("CMSK 0203", "FS", None, 70, 2, 16, 2, 1),
-                                        Course("CMSK 0202", "FS", None, 70, 2, 18, 2, 1),
-                                        Course("PCOM 0160", "FS", None, 70, 3, 50, 3, 1)],
-
-
                                 "BK" : [Course("ACCT 0201", "BK", None, 70, 1, 18, 1.5, 0),
                                         Course("ACCT 0202", "BK", None, 70, 1, 12, 1.5, 0),
                                         Course("ACCT 0203", "BK", None, 70, 1, 12, 1.5, 0),
@@ -144,77 +110,72 @@ class Program:
                                         Course("ACCT 9901", "BK", None, 70, 3, 33, 1.5, 1)
                                         ]}
         
-        self.max_capacity = max_capacity
-        self.courses = courses
 
+        
+    def __repr__(self):
+        string = self.program_id
+        return str("[" + string + ": " + ", ".join(str(i) for i in self.courses) + "]")
 
+class Course:
+    def __init__(self, course_id="None", name="", class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
+                 lecture_start_time = 8, lecture_end_time = 17, cap = 0, department = ""):
+
+        self.course_id = course_id
+        self.name = name
+
+        # changing this to class_type
+        # 1 = Lecture
+        # 2 = Lab
+        # 3 = Online
+        # 4 = Virtual (No Scheduling)
+        self.class_type = class_type
+        self.department = department
+        self.preq = preq
+        self.transcript_hours = transcript_hours
+        self.lecture_duration = lecture_duration
+        self.lecture_start_time = lecture_start_time
+        self.lecture_end_time = lecture_end_time
+        self.cap = cap
+
+        # This is the item I will use for prereq checks. This finds the last day this
+        # class was scheduled
+        self.last_day = None
+
+    def __repr__(self):
+        return str(self.course_id + ": " + self.name)
+
+# ---------------------------------------------------
+# -- Classroom class we will populate into a list later.
+# ---------------------------------------------------
 class Classroom:
-    def __init__(self, classroom_id, capacity, class_type):
+    def __init__(self, classroom_id, capacity=0, c_type=0, ghost = 0):
         self.classroom_id = classroom_id
         self.capacity = capacity
-        self.class_type = class_type
-        self.time_slot = {"Monday": {"start": 8, "end": 17},\
-            "Tuesday": {"start": 8, "end": 17}, \
-                "Wednesday": {"start": 8, "end": 17}, \
-                    "Thursday": {"start": 8, "end": 17},}
-
-        self.time_slot_lab = {"Monday": {"start": 8, "end": 20},\
-            "Tuesday": {"start": 8, "end": 20}, \
-                "Wednesday": {"start": 8, "end": 20}, \
-                    "Thursday": {"start": 8, "end": 20},}
+        self.c_type = c_type
         self.schedule = {}
 
-    '''
-    copy: make identical copy of classrooms so each classroom has a distinct scheduled per term.
-    '''
-    def copy(self):
-        return Classroom(self.classroom_id, self.capacity, self.class_type)
+    def is_lab(self):
+        class_types = ["Lecture", "Lab", "Online", "Virtual"]
+        ctype = self.c_type
+        return class_types[ctype]
 
-class Term:
-    def __init__(self, term_id, term_value):
-        self.term_id = term_id
-        self.term_value = term_value
-        self.term_sched = {}
-        self.unsched_courses = {}   #unscheduled_courses waiting to be scheduled        
-        self.term_core_course = []
-        self.term_prog_course = []
-        self.scheduled_courses = []
+    def __repr__(self):
+        lab = self.is_lab()
+        return str("\n"+self.classroom_id + " - " + lab + " - " + str(self.capacity))
+    
+    
 
-    '''
-    assign_unsched: if a course cannot be scheduled, it will be appended to a departments(key) unscheduled courses list(values)
-    '''
-    def assign_unsched(self, course):
-        if course.department in self.unsched_courses:
-            for dep, courses in self.unsched_courses.items():
-                if dep == course.department:
-                    self.unsched_courses[dep].append(course)
-        else:
-            self.unsched_courses[course.department] = [()]
-
-    '''
-    new_course_time: once we determine the scheduled_course that needs to be replaced, we will find a course that satisfies the time constraints(conditions: no overlap) and swap courses
-                     if we cannot find a course that satisfies the time constraints, we will place a None value in its place in case we do find one that does.
-    '''
-    def new_course_time(self, classroom, scheduled_course, courses, course, day, ind):
+def add_course( program,course_id="None", name="", term = 1, class_type=1, preq=None, transcript_hours=0, lecture_duration=0, 
+                lecture_start_time = 8, lecture_end_time = 17, cap = 0, department = ""):
         
-        if scheduled_course.lecture_duration == course.lecture_duration:
-            course.lecture_start_time = scheduled_course.lecture_start_time
-            course.lecture_end_time = scheduled_course.lecture_end_time
-            print(f"{scheduled_course.course_id} is swapped with {course.course_id}")
-            classroom.schedule[day][ind] = course
-            courses.remove(course)
-            return
-        
-        elif scheduled_course.lecture_duration > course.lecture_duration: 
-            course.lecture_start_time = scheduled_course.lecture_start_time
-            course.lecture_end_time = course.lecture_start_time + course.lecture_duration
-            print(f"{scheduled_course.course_id} is swapped with {course.course_id}")
-            classroom.schedule[day][ind] = course
-            courses.remove(course)
-            return
-        
-        # if they cannot be swapped, replace old course with None
-        else:
-            classroom.schedule[day][ind] = None
-            print(f"{scheduled_course.course_id} has been removed from schedule")
+        courses = program.courses
+        for item in courses:
+            if item == course_id:
+                print("Class Conflict. Overwrite? (exiting for now)")
+                return None
 
+        course = Course(course_id, name, class_type, preq, transcript_hours, lecture_duration,
+                        lecture_start_time, lecture_end_time, cap, department)
+        
+        program.courses.append(course_id)
+        program.courselist[term-1].append(course)
