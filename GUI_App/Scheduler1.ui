@@ -14,7 +14,7 @@
    <string>Scheduling App</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resource.qrc">
+   <iconset>
     <normaloff>:/icon/Icons2/menu-4-32.ico</normaloff>:/icon/Icons2/menu-4-32.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -33,9 +33,9 @@
        <widget class="QLabel" name="title_label">
         <property name="geometry">
          <rect>
-          <x>50</x>
+          <x>30</x>
           <y>30</y>
-          <width>141</width>
+          <width>161</width>
           <height>41</height>
          </rect>
         </property>
@@ -46,7 +46,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Scheduler</string>
+         <string>EduSchedule</string>
         </property>
        </widget>
        <widget class="QPushButton" name="exit_button">
@@ -86,6 +86,22 @@
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="instructions_page_btn">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>11</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Instructions</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="rooms_page_btn">
            <property name="font">
@@ -163,118 +179,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="room_560_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 560</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="room_458_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 458</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="room_562_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 562</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="room_564_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 564</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="room_320_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 320</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="room_430_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 430</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="room_532_lab_page_btn">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>11</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Room 532 Lab</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="schedule_page_button">
            <property name="font">
             <font>
@@ -318,7 +222,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>11</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page1">
          <widget class="QLabel" name="label">
@@ -345,8 +249,8 @@
          <widget class="QLabel" name="label_4">
           <property name="geometry">
            <rect>
-            <x>120</x>
-            <y>360</y>
+            <x>110</x>
+            <y>330</y>
             <width>329</width>
             <height>28</height>
            </rect>
@@ -404,8 +308,8 @@
          <widget class="QLabel" name="label_7">
           <property name="geometry">
            <rect>
-            <x>200</x>
-            <y>410</y>
+            <x>190</x>
+            <y>380</y>
             <width>233</width>
             <height>21</height>
            </rect>
@@ -423,8 +327,8 @@
          <widget class="QLabel" name="label_8">
           <property name="geometry">
            <rect>
-            <x>220</x>
-            <y>440</y>
+            <x>210</x>
+            <y>410</y>
             <width>215</width>
             <height>21</height>
            </rect>
@@ -442,8 +346,8 @@
          <widget class="QLabel" name="label_10">
           <property name="geometry">
            <rect>
-            <x>60</x>
-            <y>480</y>
+            <x>50</x>
+            <y>450</y>
             <width>402</width>
             <height>21</height>
            </rect>
@@ -461,8 +365,8 @@
          <widget class="QLabel" name="label_11">
           <property name="geometry">
            <rect>
-            <x>186</x>
-            <y>510</y>
+            <x>176</x>
+            <y>480</y>
             <width>254</width>
             <height>21</height>
            </rect>
@@ -480,8 +384,8 @@
          <widget class="QLabel" name="label_12">
           <property name="geometry">
            <rect>
-            <x>70</x>
-            <y>540</y>
+            <x>60</x>
+            <y>510</y>
             <width>391</width>
             <height>21</height>
            </rect>
@@ -499,8 +403,8 @@
          <widget class="QLabel" name="label_13">
           <property name="geometry">
            <rect>
-            <x>210</x>
-            <y>570</y>
+            <x>200</x>
+            <y>540</y>
             <width>222</width>
             <height>21</height>
            </rect>
@@ -518,10 +422,10 @@
          <widget class="QPushButton" name="save_data_btn">
           <property name="geometry">
            <rect>
-            <x>380</x>
-            <y>630</y>
-            <width>93</width>
-            <height>28</height>
+            <x>630</x>
+            <y>620</y>
+            <width>101</width>
+            <height>31</height>
            </rect>
           </property>
           <property name="text">
@@ -531,8 +435,8 @@
          <widget class="QLineEdit" name="pm_input_1">
           <property name="geometry">
            <rect>
-            <x>433</x>
-            <y>412</y>
+            <x>423</x>
+            <y>382</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -547,8 +451,8 @@
          <widget class="QLineEdit" name="ba_input_1">
           <property name="geometry">
            <rect>
-            <x>433</x>
-            <y>444</y>
+            <x>423</x>
+            <y>414</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -579,8 +483,8 @@
          <widget class="QLineEdit" name="glm_input_1">
           <property name="geometry">
            <rect>
-            <x>433</x>
-            <y>476</y>
+            <x>423</x>
+            <y>446</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -595,8 +499,8 @@
          <widget class="QLineEdit" name="fs_input_1">
           <property name="geometry">
            <rect>
-            <x>433</x>
-            <y>508</y>
+            <x>423</x>
+            <y>478</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -611,8 +515,8 @@
          <widget class="QLineEdit" name="dxd_input_1">
           <property name="geometry">
            <rect>
-            <x>433</x>
-            <y>540</y>
+            <x>423</x>
+            <y>510</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -627,8 +531,8 @@
          <widget class="QLineEdit" name="bookkeep_input">
           <property name="geometry">
            <rect>
-            <x>433</x>
-            <y>572</y>
+            <x>423</x>
+            <y>542</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -643,8 +547,8 @@
          <widget class="QLineEdit" name="bookkeep_input_2">
           <property name="geometry">
            <rect>
-            <x>560</x>
-            <y>570</y>
+            <x>550</x>
+            <y>540</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -659,8 +563,8 @@
          <widget class="QLineEdit" name="pm_input_2">
           <property name="geometry">
            <rect>
-            <x>560</x>
-            <y>410</y>
+            <x>550</x>
+            <y>380</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -691,8 +595,8 @@
          <widget class="QLineEdit" name="ba_input_2">
           <property name="geometry">
            <rect>
-            <x>560</x>
-            <y>442</y>
+            <x>550</x>
+            <y>412</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -723,8 +627,8 @@
          <widget class="QLineEdit" name="glm_input_2">
           <property name="geometry">
            <rect>
-            <x>560</x>
-            <y>474</y>
+            <x>550</x>
+            <y>444</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -739,8 +643,8 @@
          <widget class="QLineEdit" name="dxd_input_2">
           <property name="geometry">
            <rect>
-            <x>560</x>
-            <y>538</y>
+            <x>550</x>
+            <y>508</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -755,8 +659,8 @@
          <widget class="QLineEdit" name="fs_input_2">
           <property name="geometry">
            <rect>
-            <x>560</x>
-            <y>506</y>
+            <x>550</x>
+            <y>476</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -771,8 +675,8 @@
          <widget class="QLineEdit" name="bookkeep_input_3">
           <property name="geometry">
            <rect>
-            <x>680</x>
-            <y>570</y>
+            <x>670</x>
+            <y>540</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -787,8 +691,8 @@
          <widget class="QLineEdit" name="fs_input_3">
           <property name="geometry">
            <rect>
-            <x>680</x>
-            <y>506</y>
+            <x>670</x>
+            <y>476</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -803,8 +707,8 @@
          <widget class="QLineEdit" name="dxd_input_3">
           <property name="geometry">
            <rect>
-            <x>680</x>
-            <y>538</y>
+            <x>670</x>
+            <y>508</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -851,8 +755,8 @@
          <widget class="QLineEdit" name="pm_input_3">
           <property name="geometry">
            <rect>
-            <x>680</x>
-            <y>410</y>
+            <x>670</x>
+            <y>380</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -867,8 +771,8 @@
          <widget class="QLineEdit" name="glm_input_3">
           <property name="geometry">
            <rect>
-            <x>680</x>
-            <y>474</y>
+            <x>670</x>
+            <y>444</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -883,8 +787,8 @@
          <widget class="QLineEdit" name="ba_input_3">
           <property name="geometry">
            <rect>
-            <x>680</x>
-            <y>442</y>
+            <x>670</x>
+            <y>412</y>
             <width>91</width>
             <height>22</height>
            </rect>
@@ -1043,6 +947,61 @@
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
+         <widget class="QLabel" name="label_16">
+          <property name="geometry">
+           <rect>
+            <x>190</x>
+            <y>630</y>
+            <width>171</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Rounded MT Bold</family>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Choose Semester:</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="semester_select_combobox">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>620</y>
+            <width>171</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <item>
+           <property name="text">
+            <string>(make selection)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Fall</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Winter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Spring/Summer</string>
+           </property>
+          </item>
+         </widget>
         </widget>
         <widget class="QWidget" name="page2">
          <widget class="QPushButton" name="next_button">
@@ -1088,6 +1047,19 @@
           </property>
           <property name="text">
            <string>Week 1</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="display_btn">
+          <property name="geometry">
+           <rect>
+            <x>530</x>
+            <y>40</y>
+            <width>131</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Display</string>
           </property>
          </widget>
         </widget>
@@ -1326,32 +1298,233 @@
          <widget class="QLabel" name="label_28">
           <property name="geometry">
            <rect>
-            <x>30</x>
+            <x>350</x>
             <y>20</y>
-            <width>361</width>
+            <width>151</width>
             <height>51</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <family>Arial Black</family>
-            <pointsize>14</pointsize>
+            <pointsize>16</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>Room 11 - 430 (Capacity 30)</string>
+           <string>Instructions</string>
           </property>
          </widget>
-         <widget class="QTextEdit" name="text_430">
+         <widget class="QLabel" name="label_30">
           <property name="geometry">
            <rect>
-            <x>30</x>
-            <y>90</y>
-            <width>811</width>
-            <height>481</height>
+            <x>60</x>
+            <y>100</y>
+            <width>91</width>
+            <height>21</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Rounded MT Bold</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Steps:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_31">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>140</y>
+            <width>741</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>1. On the Data Input page, browse and select, then load the following files complete with the information necessary: </string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_32">
+          <property name="geometry">
+           <rect>
+            <x>160</x>
+            <y>180</y>
+            <width>151</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>- RoomInformation</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_33">
+          <property name="geometry">
+           <rect>
+            <x>160</x>
+            <y>220</y>
+            <width>161</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>- ClassesInformation</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_34">
+          <property name="geometry">
+           <rect>
+            <x>160</x>
+            <y>260</y>
+            <width>161</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>- StudentsInformation</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_35">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>300</y>
+            <width>711</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>2. Browse the Data Summary page and confirm the information is accurate, or make any adjustments.</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_36">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>350</y>
+            <width>701</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>3. Use the Schedule page to select a room to display, and click the Display Button in order to show</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_37">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>380</y>
+            <width>701</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>    the Room schedule. Use the previous and next buttons to display a different week for that </string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_38">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>410</y>
+            <width>701</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Narrow</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>    classroom. You will need to use the display button for all classrooms.</string>
           </property>
          </widget>
         </widget>
@@ -1600,61 +1773,6 @@
           </property>
           <property name="placeholderText">
            <string>Select File...</string>
-          </property>
-         </widget>
-         <widget class="QComboBox" name="semester_select_combobox">
-          <property name="geometry">
-           <rect>
-            <x>420</x>
-            <y>530</y>
-            <width>171</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <item>
-           <property name="text">
-            <string>(make selection)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Fall</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Winter</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Spring/Summer</string>
-           </property>
-          </item>
-         </widget>
-         <widget class="QLabel" name="label_16">
-          <property name="geometry">
-           <rect>
-            <x>210</x>
-            <y>540</y>
-            <width>171</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial Rounded MT Bold</family>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Choose Semester:</string>
           </property>
          </widget>
         </widget>
