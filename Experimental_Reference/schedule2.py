@@ -84,7 +84,7 @@ def possible_times(room_hrs_times, class_length):
 
 def closest_sum(room_hrs_times, target,class_length, extra_classes = [],increment = 0):
     classrooms,time_starts = possible_times(room_hrs_times,class_length)
-    print(time_starts)
+    #print(time_starts)
     real_schedule = []
     ghost_required  = 0
 
@@ -341,9 +341,9 @@ class Schedule:
 
                     break
 
-        print("=======================================")
-        print(possible_times_to_schedule)
-        print("=======================================")
+        #print("=======================================")
+        #print(possible_times_to_schedule)
+        #print("=======================================")
 
         if not able_to_schedule:
             return [],[],2
