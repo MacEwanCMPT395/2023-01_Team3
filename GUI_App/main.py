@@ -19,6 +19,7 @@ import random
 import csv
 
 import pathlib
+from datetime import datetime
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -53,16 +54,17 @@ class MainWindow(QMainWindow):
         self.ui.load_data_button.clicked.connect(self.load_student_data)
         self.ui.load_data_button_room.clicked.connect(self.load_room_data)
         self.ui.load_data_button_program.clicked.connect(lambda: read_csv(self.ui.file_name_input_program.text(), self.degree, self.program))
+        self.ui.load_data_button_program.clicked.connect(self.change_button_color)
+        # self.ui.calendar.clicked.connect(self.print_selected_date)
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
         self.ui.instructions_page_btn.clicked.connect(self.showInstructionsPage)
-        # self.ui.room_560_page_btn.clicked.connect(self.show560Page)
-        # self.ui.room_458_page_btn.clicked.connect(self.show458Page)
-        # self.ui.room_562_page_btn.clicked.connect(self.show562Page)
-        # self.ui.room_564_page_btn.clicked.connect(self.show564Page)
-        # self.ui.room_320_page_btn.clicked.connect(self.show320Page)
-        # self.ui.room_430_page_btn.clicked.connect(self.show533Page)
-        # self.ui.room_532_lab_page_btn.clicked.connect(self.show532LabPage)
+
+        ###################### Calendar  ####################################
+        self.selected_date = self.ui.calendar.selectedDate()
+        self.date_time = datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
+
+
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
 
         ################## Data Page Buttons Clicked ################
@@ -326,6 +328,18 @@ class MainWindow(QMainWindow):
 
     ############################## Button Functions ###################################
 
+    def print_selected_date(self):
+        selected_date = self.ui.calendar.selectedDate()
+        date_time = datetime(selected_date.year(), selected_date.month(), selected_date.day())
+        print("Type:", type(selected_date))
+        print("Selected date:", selected_date.toString("yyyy-MM-dd"))
+        print("Type of selected_date:", type(date_time))
+    
+    def change_button_color(self):
+        if self.degree.core_courses:
+            self.ui.load_data_button_program.setText("Load Room Data ✔")
+            self.ui.load_data_button_program.setStyleSheet("background-color: green")
+
     @pyqtSlot()
     def load_student_data(self):
 
@@ -347,11 +361,6 @@ class MainWindow(QMainWindow):
 
             print(self.df_students)  # print the loaded dataframe
             self.updateProgramsFields()
-
-            output_dict = self.df_students.to_dict(orient='index')
-            output_dict = {key: list(values.values()) for key, values in output_dict.items()}
-
-            sc.Schedule.update_program_populations(sc.Schedule,output_dict)
             
         else:
             msg = QMessageBox()
@@ -401,9 +410,8 @@ class MainWindow(QMainWindow):
 
             print(self.df_rooms)  # print the loaded dataframe
             self.update_rooms()
-
+            
             sc.Schedule.update_classrooms(sc.Schedule,self.df_rooms.values.tolist())
-
 
         else:
             msg = QMessageBox()
@@ -581,28 +589,28 @@ class MainWindow(QMainWindow):
         output_dict = {key: list(values.values()) for key, values in output_dict.items()}
 
         sc.Schedule.update_program_populations(sc.Schedule,output_dict)
-
+        
         print(self.df_students)
 
     @pyqtSlot()
     def save_data(self):
 
         # Get the currently selected index of the semester_select_combobox
-        selected_index = self.ui.semester_select_combobox.currentIndex()
+
         # Check if the selected index is 0
-        if selected_index == 0:
-            # Display a warning message
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Please Select a Semester!")
-            msg.setWindowTitle("Warning")
-            msg.exec()
-        else:
-            if self.input_check():
-                self.update_data()
+        # if selected_index == 0:
+        #     # Display a warning message
+        #     msg = QMessageBox()
+        #     msg.setIcon(QMessageBox.Icon.Warning)
+        #     msg.setText("Please Select a Semester!")
+        #     msg.setWindowTitle("Warning")
+        #     msg.exec()
+        # else:
+        if self.input_check():
+            self.update_data()
                 # print(self.df[0])
-            else:
-                return
+        else:
+            return
 
     @pyqtSlot()
     def save_input(self):
@@ -674,9 +682,6 @@ class MainWindow(QMainWindow):
         output_dict = self.df_students.to_dict(orient='index')
         output_dict = {key: list(values.values()) for key, values in output_dict.items()}
 
-        sc.Schedule.update_program_populations(sc.Schedule,output_dict)
-
-
     ######################### Rooms updates ###############################################
     @pyqtSlot()
     def update_rooms(self):
@@ -741,38 +746,7 @@ class MainWindow(QMainWindow):
         # Return new df
         return new_df
 
-    ################################ Populating the Classroom Tables ##################
-    '''
-    def classroom_schedule(self, index):
-        student = Student(1, "John Doe", "BCOM", "PM", 1)
-        degree = Degree()
-        program = Program(150, ["PCOM 0203", "SUPR 0751", "PCOM0204", "CMSK 0237", "SUPR 0837", "SUPR 0841"])
-        courses = [Course("PCOM 0203", "PCOM", None, 36, 1, 15, 1.5, 0),
-                   Course("SUPR 0751", "PCOM", None, 36, 1, 7, 1.5, 0),
-                   Course("PRDV 0201", "PCOM", None, 20, 1, 21, 1.5, 0),
-                   Course("PRDV 0202", "PCOM", None, 20, 1, 14, 1.5, 0),
-                   Course("FODDER 101", "PCOM", None, 40, 1, 40, 3, 0)]
-        classrooms = [Classroom("11-532", 30, 1),
-                      Classroom("11-533", 36, 0),
-                      Classroom("11-534", 36, 0),
-                      Classroom("11-560", 24, 0),
-                      Classroom("11-562", 24, 0),
-                      Classroom("11-564", 24, 0),
-                      Classroom("11-458", 40, 0),
-                      Classroom("11-430", 30, 0),
-                      Classroom("11-320", 30, 0)]
-        term = [Term("Term 1", 1),
-                Term("Term 2", 2),
-                Term("Term 3", 3)]
-        schedule = Schedule(student, degree, program, courses, classrooms, term)
 
-        schedule.term_schedule(classrooms, term)
-        schedule.display_classroom(term[0], classrooms[index])
-        return schedule.return_classroom(term[0], classrooms[index])
-    '''
-    #sched = classroom_schedule(1, 1)
-    #print("Type: ", type(sched))
-    #print("the shchedule:", classroom_schedule(1, 1))
 
     def edit_room_text(self, room_textbox, text):
         # Get the current text in the text edit
