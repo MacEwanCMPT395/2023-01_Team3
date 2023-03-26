@@ -13,9 +13,12 @@ import pandas as pd
 
 from Scheduler1 import Ui_MainWindow
 from courseClass import *
+import schedule2 as sc
 
 import random
 import csv
+
+
 
 
 class MainWindow(QMainWindow):
@@ -158,6 +161,15 @@ class MainWindow(QMainWindow):
 
         # Keep track of colors and testing dictionary
         course_color = {}
+
+        #scheduling algorithm create dictionary
+        newschedule = sc.Schedule(sc.programs, sc.classrooms)
+        newschedule.schedule_all(self.df_students)
+        failed = newschedule.failed
+
+        final_schedule = newschedule.generate_out() 
+        sc.pretty_print_nested_dict(final_schedule["Week 1"])
+
         classes = {
             "Term 1": {
                 "Week 1": {
@@ -253,7 +265,7 @@ class MainWindow(QMainWindow):
                 # Check if this cell is within the start and end time of any course in week 1 on this day
                 course_in_cell = None
                 if self.term_combo_box.currentText() != '' and self.week_combo_box.currentText() != '':
-                    for course_data in classes[self.term_combo_box.currentText()][self.ui.label_9.text()][
+                    for course_data in final_schedule[self.ui.label_9.text()][
                         self.week_combo_box.currentText()][
                         columns[col].lower()]:
                         start_time = datetime.datetime.strptime(course_data["start_time"], '%I:%M %p').time()
