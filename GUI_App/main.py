@@ -1,4 +1,5 @@
 import datetime
+
 import sys
 
 from courseClass import *
@@ -19,7 +20,7 @@ import random
 import csv
 
 import pathlib
-from datetime import datetime
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -46,6 +47,9 @@ class MainWindow(QMainWindow):
         self.program.program_courses["DXD"] = []
         self.program.program_courses["BK"] = []
 
+        self.schedule = sc.Schedule([],[])
+        self.schedule_out = {}
+
         self.ui.stackedWidget.setCurrentWidget(self.ui.page9)
 
         ############ Buttons Clicked ############################
@@ -62,7 +66,9 @@ class MainWindow(QMainWindow):
 
         ###################### Calendar  ####################################
         self.selected_date = self.ui.calendar.selectedDate()
-        self.date_time = datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
+        self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
+
+
 
 
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
@@ -164,14 +170,8 @@ class MainWindow(QMainWindow):
         # Keep track of colors and testing dictionary
         course_color = {}
 
-        #scheduling algorithm create dictionary
-        newschedule = sc.Schedule(sc.programs, sc.classrooms)
-        newschedule.schedule_all(self.df_students)
-        failed = newschedule.failed
-
-        final_schedule = newschedule.generate_out() 
-        sc.pretty_print_nested_dict(final_schedule["Week 1"])
-
+    def populate_table(self,class_dict):
+        '''
         classes = {
             "Term 1": {
                 "Week 1": {
@@ -260,6 +260,21 @@ class MainWindow(QMainWindow):
                 }
             }
         }
+        '''
+
+        # Create table with rows from 8:00am to 10pm incrementing by 30 minutes
+        rows = []
+        row_labels = []
+        current_time = pd.Timestamp("08:00:00")
+        while current_time <= pd.Timestamp("22:00:00"):
+            rows.append([str(current_time.time()), "", "", "", ""])
+            row_labels.append(current_time.strftime("%I:%M %p"))
+            current_time += pd.Timedelta(minutes=30)
+
+        # Create table with columns from Monday to Thursday
+        columns = ["Monday", "Tuesday", "Wednesday", "Thursday"]
+        
+        course_color = {}
 
         # Iterate through each row and column of the table model and set dummy text
         for row in range(len(rows)):
@@ -267,7 +282,7 @@ class MainWindow(QMainWindow):
                 # Check if this cell is within the start and end time of any course in week 1 on this day
                 course_in_cell = None
                 if self.term_combo_box.currentText() != '' and self.week_combo_box.currentText() != '':
-                    for course_data in final_schedule[self.ui.label_9.text()][
+                    for course_data in class_dict[self.ui.label_9.text()][
                         self.week_combo_box.currentText()][
                         columns[col]]:
                         start_time = datetime.datetime.strptime(course_data["start_time"], '%I:%M %p').time()
@@ -330,7 +345,7 @@ class MainWindow(QMainWindow):
 
     def print_selected_date(self):
         selected_date = self.ui.calendar.selectedDate()
-        date_time = datetime(selected_date.year(), selected_date.month(), selected_date.day())
+        date_time = datetime.datetime(selected_date.year(), selected_date.month(), selected_date.day())
         print("Type:", type(selected_date))
         print("Selected date:", selected_date.toString("yyyy-MM-dd"))
         print("Type of selected_date:", type(date_time))
@@ -411,7 +426,7 @@ class MainWindow(QMainWindow):
             print(self.df_rooms)  # print the loaded dataframe
             self.update_rooms()
             
-            sc.Schedule.update_classrooms(sc.Schedule,self.df_rooms.values.tolist())
+            self.schedule.update_classrooms(self.df_rooms.values.tolist())
 
         else:
             msg = QMessageBox()
@@ -588,7 +603,7 @@ class MainWindow(QMainWindow):
         output_dict = self.df_students.to_dict(orient='index')
         output_dict = {key: list(values.values()) for key, values in output_dict.items()}
 
-        sc.Schedule.update_program_populations(sc.Schedule,output_dict)
+        self.schedule.update_program_populations(output_dict)
         
         print(self.df_students)
 
