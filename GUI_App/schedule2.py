@@ -1,6 +1,6 @@
 # days is a list of teachable days.
 import datetime
-from Time_Stuff import days
+from Time_Stuff import days as time_stuff_days
 import copy
 #print(days)
 
@@ -118,7 +118,7 @@ def pretty_print_nested_dict(dictionary, indent=0):
 # MAIN MAIN MAIN MAIN MAIN -----------------------------------------#
 # ------------------------------------------------------------------#
 class Schedule:
-    def __init__(self, programs, classrooms):
+    def __init__(self, programs=[], classrooms=[]):
         self.programs = programs
         self.classrooms = classrooms
 
@@ -134,8 +134,7 @@ class Schedule:
 
         # for now no need for friday and saturday, but can easily be added.
 
-        self.schedule = {classroom:copy.deepcopy(days) for classroom in classrooms}
-        self.scheduled_classes = {}
+        self.schedule = {}
         self.failed = []
         self.courselist = []
         self.virtual_courses = []
@@ -143,6 +142,18 @@ class Schedule:
         self.raw_schedule = {}
 
         #self.print_schedule()
+
+    def update_classrooms(self, object):
+        print(object)
+
+    def update_program_populations(self, object):
+        for k,v in object.items():
+            for obj in programs:
+                if k == obj.program_id:
+                    obj.populations = copy.deepcopy(v)
+                    break
+            else:
+                new_program = classes.Program(k,((k=="PCOM" or k=="BCOM") and 1 or 0),copy.deepcopy(v),[[],[],[]])
         
     def get_raw_schedule(self):
         return self.combine_dates(["Monday", "Tuesday", "Wednesday", "Thursday"])[1]
@@ -348,9 +359,6 @@ class Schedule:
         class_distribution, ghost = closest_sum(possible_times_to_schedule, population, lecture_length)
 
         return class_distribution, copy.deepcopy(schedule_dates), ghost
-    
-
-        
 
     def schedule_section(self, course, times_to_schedule,schedule_dates):
         
@@ -478,6 +486,9 @@ class Schedule:
             
 
     def schedule_all(self,highpop_first = 0):
+
+        self.schedule = {classroom:copy.deepcopy(time_stuff_days) for classroom in classrooms}
+
         leftover_cohorts = []
         all_cohorts = []
         days = []
