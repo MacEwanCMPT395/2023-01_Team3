@@ -350,6 +350,11 @@ class MainWindow(QMainWindow):
 
             print(self.df_students)  # print the loaded dataframe
             self.updateProgramsFields()
+
+            output_dict = self.df_students.to_dict(orient='index')
+            output_dict = {key: list(values.values()) for key, values in output_dict.items()}
+
+            sc.Schedule.update_program_populations(sc.Schedule,output_dict)
             
         else:
             msg = QMessageBox()
@@ -399,6 +404,8 @@ class MainWindow(QMainWindow):
 
             print(self.df_rooms)  # print the loaded dataframe
             self.update_rooms()
+            
+            sc.Schedule.update_classrooms(sc.Schedule,self.df_rooms.values.tolist())
 
 
         else:
@@ -469,7 +476,7 @@ class MainWindow(QMainWindow):
         self.ui.glm_input_1.setText(str(self.df_students.loc['GLM', '1st Term Students']))
         self.ui.fs_input_1.setText(str(self.df_students.loc['FS', '1st Term Students']))
         self.ui.dxd_input_1.setText(str(self.df_students.loc['DXD', '1st Term Students']))
-        self.ui.bookkeep_input.setText(str(self.df_students.loc['BOOK', '1st Term Students']))
+        self.ui.bookkeep_input.setText(str(self.df_students.loc['BK', '1st Term Students']))
 
         # update QLineEdits for second term
         self.ui.p_comm_input_2.setText(str(self.df_students.loc['PCOM', '2nd Term Students']))
@@ -479,7 +486,7 @@ class MainWindow(QMainWindow):
         self.ui.glm_input_2.setText(str(self.df_students.loc['GLM', '2nd Term Students']))
         self.ui.fs_input_2.setText(str(self.df_students.loc['FS', '2nd Term Students']))
         self.ui.dxd_input_2.setText(str(self.df_students.loc['DXD', '2nd Term Students']))
-        self.ui.bookkeep_input_2.setText(str(self.df_students.loc['BOOK', '2nd Term Students']))
+        self.ui.bookkeep_input_2.setText(str(self.df_students.loc['BK', '2nd Term Students']))
 
         # update QLineEdits for third term
         self.ui.p_comm_input_3.setText(str(self.df_students.loc['PCOM', '3rd Term Students']))
@@ -489,7 +496,7 @@ class MainWindow(QMainWindow):
         self.ui.glm_input_3.setText(str(self.df_students.loc['GLM', '3rd Term Students']))
         self.ui.fs_input_3.setText(str(self.df_students.loc['FS', '3rd Term Students']))
         self.ui.dxd_input_3.setText(str(self.df_students.loc['DXD', '3rd Term Students']))
-        self.ui.bookkeep_input_3.setText(str(self.df_students.loc['BOOK', '3rd Term Students']))
+        self.ui.bookkeep_input_3.setText(str(self.df_students.loc['BK', '3rd Term Students']))
 
     @pyqtSlot()
     def input_check(self):
@@ -551,7 +558,7 @@ class MainWindow(QMainWindow):
         self.df_students.loc['GLM', '1st Term Students'] = int(self.ui.glm_input_1.text() or 0)
         self.df_students.loc['FS', '1st Term Students'] = int(self.ui.fs_input_1.text() or 0)
         self.df_students.loc['DXD', '1st Term Students'] = int(self.ui.dxd_input_1.text() or 0)
-        self.df_students.loc['BOOK', '1st Term Students'] = int(self.ui.bookkeep_input.text() or 0)
+        self.df_students.loc['BK', '1st Term Students'] = int(self.ui.bookkeep_input.text() or 0)
 
         # update second term
         self.df_students.loc['PCOM', '2nd Term Students'] = int(self.ui.p_comm_input_2.text() or 0)
@@ -561,7 +568,7 @@ class MainWindow(QMainWindow):
         self.df_students.loc['GLM', '2nd Term Students'] = int(self.ui.glm_input_2.text() or 0)
         self.df_students.loc['FS', '2nd Term Students'] = int(self.ui.fs_input_2.text() or 0)
         self.df_students.loc['DXD', '2nd Term Students'] = int(self.ui.dxd_input_2.text() or 0)
-        self.df_students.loc['BOOK', '2nd Term Students'] = int(self.ui.bookkeep_input_2.text() or 0)
+        self.df_students.loc['BK', '2nd Term Students'] = int(self.ui.bookkeep_input_2.text() or 0)
 
         # update third term
         self.df_students.loc['PCOM', '3rd Term Students'] = int(self.ui.p_comm_input_3.text() or 0)
@@ -571,7 +578,12 @@ class MainWindow(QMainWindow):
         self.df_students.loc['GLM', '3rd Term Students'] = int(self.ui.glm_input_3.text() or 0)
         self.df_students.loc['FS', '3rd Term Students'] = int(self.ui.fs_input_3.text() or 0)
         self.df_students.loc['DXD', '3rd Term Students'] = int(self.ui.dxd_input_3.text() or 0)
-        self.df_students.loc['BOOK', '3rd Term Students'] = int(self.ui.bookkeep_input_3.text() or 0)
+        self.df_students.loc['BK', '3rd Term Students'] = int(self.ui.bookkeep_input_3.text() or 0)
+
+        output_dict = self.df_students.to_dict(orient='index')
+        output_dict = {key: list(values.values()) for key, values in output_dict.items()}
+
+        sc.Schedule.update_program_populations(sc.Schedule,output_dict)
 
         print(self.df_students)
 
@@ -661,6 +673,11 @@ class MainWindow(QMainWindow):
                     elif term == '3':
                         self.df_students.loc[degree, '3rd Term Students'] += 1
                         self.df_students.loc[program, '3rd Term Students'] += 1
+        
+        output_dict = self.df_students.to_dict(orient='index')
+        output_dict = {key: list(values.values()) for key, values in output_dict.items()}
+
+        sc.Schedule.update_program_populations(sc.Schedule,output_dict)
 
 
     ######################### Rooms updates ###############################################
@@ -719,7 +736,7 @@ class MainWindow(QMainWindow):
                     'GLM',
                     'FS',
                     'DXD',
-                    'BOOK']
+                    'BK']
 
         # Create a new dataframe with the programs as the index and 0 as the initial values
         new_df = pd.DataFrame(index=programs, columns=['1st Term Students', '2nd Term Students', '3rd Term Students']).fillna(0)
