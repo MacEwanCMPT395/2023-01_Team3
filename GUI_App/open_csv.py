@@ -6,7 +6,7 @@ import pathlib
 # -- Opening file and checking out the course stuff
 # ---------------------------------------------------
 programs = []
-classrooms = []
+all_classrooms = []
 
 extra_capacity = 2
 
@@ -22,7 +22,7 @@ with open(filename+"populations.csv") as csvfile:
         programs.append(program)
 
 # open the CSV file and create a bunch of Course objects, as well as populating the Program list with said classes.
-with open(filename+'classes.csv') as csvfile:
+with open(filename+'classes2.csv') as csvfile:
     reader = csv.reader(csvfile)
     next(reader) # skip header
     for row in reader:
@@ -40,7 +40,7 @@ with open(filename+'classrooms.csv') as csvfile:
     for row in reader:
         name, classtype, capacity = row
         classroom = classes.Classroom(name,int(capacity)-extra_capacity,int(classtype))
-        classrooms.append(classroom)
+        all_classrooms.append(classroom)
 '''
 for i in programs:
     print(i.program_id, i.courselist,i.populations)

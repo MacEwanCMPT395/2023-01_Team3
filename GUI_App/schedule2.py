@@ -1,11 +1,11 @@
 # days is a list of teachable days.
 import datetime
-from Time_Stuff import days as time_stuff_days
+from date_time import create_semester_dates
 import copy
 #print(days)
 
 import Classes as classes
-from open_csv import programs, classrooms
+from open_csv import programs, all_classrooms
 
 def takeSecond(elem):
     return elem[1]
@@ -126,13 +126,8 @@ class Schedule:
         # infinite capacity for online classrooms
         self.classrooms.append(classes.Classroom("Online",999,2))
 
-        self._schedule = {"Monday":[],
-                         "Tuesday":[],
-                         "Wednesday":[],
-                         "Thursday":[],
-                         "Virtual":[]}
-
         # for now no need for friday and saturday, but can easily be added.
+        self.schedule_days = {}
 
         self.schedule = {}
         self.failed = []
@@ -142,6 +137,9 @@ class Schedule:
         self.raw_schedule = {}
 
         #self.print_schedule()
+
+    def update_start_date(self, datetime):
+        self.schedule_days = create_semester_dates(datetime)
 
     def update_classrooms(self, object):
         print(object)
@@ -154,7 +152,8 @@ class Schedule:
                     break
             else:
                 new_program = classes.Program(k,((k=="PCOM" or k=="BCOM") and 1 or 0),copy.deepcopy(v),[[],[],[]])
-        
+                self.programs.append(new_program)
+    
     def get_raw_schedule(self):
         return self.combine_dates(["Monday", "Tuesday", "Wednesday", "Thursday"])[1]
 
@@ -482,12 +481,14 @@ class Schedule:
                 self.schedule_section(course, times_to_schedule, schedule_dates)
 
             illegal_times.append([list({(x[1], x[1] + course.lecture_duration) for x in times_to_schedule}), schedule_dates])
-                
-            
 
     def schedule_all(self,highpop_first = 0):
+        
+        if (not self.schedule_days) or (not self.programs) or (not self.classrooms):
+            print("Missing the required information. Cancelling.")
+            return None
 
-        self.schedule = {classroom:copy.deepcopy(time_stuff_days) for classroom in classrooms}
+        self.schedule = {classroom:copy.deepcopy(self.schedule_days) for classroom in self.classrooms}
 
         leftover_cohorts = []
         all_cohorts = []
@@ -571,6 +572,6 @@ class Schedule:
 
         return week_classes
 
-newschedule = Schedule(programs, classrooms)
-newschedule.schedule_all()
+#newschedule = Schedule(programs, all_classrooms)
+#newschedule.schedule_all()
 #pretty_print_nested_dict(newschedule.generate_out())
