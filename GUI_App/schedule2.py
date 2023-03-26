@@ -9,30 +9,6 @@ from open_csv import programs, classrooms
 
 def takeSecond(elem):
     return elem[1]
-        
-def possible_times(room_hrs_times, class_length):
-
-    return_data = []
-    time_starts = {}
-    for item in room_hrs_times:
-        classroom, slots, dates = item
-        
-        time_starts[classroom] = []
-        slot_factor = 0
-        
-        for time_ranges in slots:
-            start_time = time_ranges[0]
-            end_time = time_ranges[1]
-            
-            while (end_time - class_length) >= start_time:
-                time_starts[classroom].append(end_time - class_length)
-                end_time -= class_length
-                slot_factor += 1
-            
-        for i in range(slot_factor):
-            return_data.append(classroom)
-            #print(time_starts)
-    return return_data,time_starts
 
 def add_times(items,time_starts):
     return_result = []
@@ -82,9 +58,33 @@ def get_real_time(items, target):
 
     return None # wtf
 
+def possible_times(room_hrs_times, class_length):
+
+    return_data = []
+    time_starts = {}
+    for item in room_hrs_times:
+        classroom, slots, dates = item
+        
+        time_starts[classroom] = []
+        slot_factor = 0
+        
+        for time_ranges in slots:
+            start_time = time_ranges[0]
+            end_time = time_ranges[1]
+            
+            while (end_time - class_length) >= start_time:
+                time_starts[classroom].append(end_time - class_length)
+                end_time -= class_length
+                slot_factor += 1
+            
+        for i in range(slot_factor):
+            return_data.append(classroom)
+            #print(time_starts)
+    return return_data,time_starts
+
 def closest_sum(room_hrs_times, target,class_length, extra_classes = [],increment = 0):
     classrooms,time_starts = possible_times(room_hrs_times,class_length)
-
+    #print(time_starts)
     real_schedule = []
     ghost_required  = 0
 
@@ -298,18 +298,12 @@ class Schedule:
         able_to_schedule = 0
 
         for classroom, dates in real_dates.items():
-
-            #print(dates)
             free_time = []
             for day, times in dates.items():
-
                 # Should create a list of lists or something of that nature. [[time range], class/cohort]
                 # doing element[0] should copy just the time ranges.
 
-
-
                 times_sched = [element[0] for element in times]
-
                 if illegal_times:
                     times_sched = times_sched + illegal_times[0][0]
                 
@@ -344,6 +338,9 @@ class Schedule:
 
                     break
 
+        #print("=======================================")
+        #print(possible_times_to_schedule)
+        #print("=======================================")
 
         if not able_to_schedule:
             return [],[],2
@@ -516,11 +513,17 @@ class Schedule:
         week_classes = {}
         for room, data in classes.items():
             counter = 1
+            old_monday = 0
             for i, class_date in enumerate(sorted(data.keys())):
 
                 class_times = data[class_date]
+                
                 if class_date.weekday() == 0 and i != 0:
-                    counter += 1
+                    if old_monday:
+                        counter += (class_date - old_monday).days // 7
+                    
+                    old_monday = class_date
+                    
 
                 week_name = "Week "+str(counter) 
 
@@ -530,10 +533,10 @@ class Schedule:
                 class_id = room.classroom_id
                 if class_id not in week_classes[week_name]:
                     week_classes[week_name][class_id] = {}
-                    week_classes[week_name][class_id]["monday"] = []
-                    week_classes[week_name][class_id]["tuesday"] = []
-                    week_classes[week_name][class_id]["wednesday"] = []
-                    week_classes[week_name][class_id]["thursday"] = []
+                    week_classes[week_name][class_id]["Monday"] = []
+                    week_classes[week_name][class_id]["Tuesday"] = []
+                    week_classes[week_name][class_id]["Wednesday"] = []
+                    week_classes[week_name][class_id]["Thursday"] = []
 
                 for class_time in class_times:
                     start_hour = int(class_time[0][0])
@@ -552,11 +555,11 @@ class Schedule:
 
                     start_time = datetime.time(hour=start_hour, minute=start_minute).strftime('%I:%M %p')
                     end_time = datetime.time(hour=end_hour, minute=end_minute).strftime('%I:%M %p')
-                    course = class_time[1].course_id
-                    week_classes[week_name][class_id]["monday"].append({"course": course, "start_time": start_time, "end_time": end_time})
+                    course = class_time[1].course_id + " - AS" + "{:02d}".format(class_time[2])
+                    week_classes[week_name][class_id][class_date.strftime("%A")].append({"course": course, "start_time": start_time, "end_time": end_time})
 
         return week_classes
 
-#newschedule = Schedule(programs, classrooms)
-#newschedule.schedule_all()
+newschedule = Schedule(programs, classrooms)
+newschedule.schedule_all()
 #pretty_print_nested_dict(newschedule.generate_out())
