@@ -17,6 +17,8 @@ from courseClass import *
 import random
 import csv
 
+import pathlib
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -752,7 +754,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # style sheet load
-    with open("style.qss", "r") as style_file:
+    filename = str(pathlib.Path(__file__).parent.resolve())+"\\"
+    with open(filename+"style.qss", "r") as style_file:
         style_str = style_file.read()
 
     app.setStyleSheet(style_str)
