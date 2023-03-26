@@ -9,30 +9,6 @@ from open_csv import programs, classrooms
 
 def takeSecond(elem):
     return elem[1]
-        
-def possible_times(room_hrs_times, class_length):
-
-    return_data = []
-    time_starts = {}
-    for item in room_hrs_times:
-        classroom, slots, dates = item
-        
-        time_starts[classroom] = []
-        slot_factor = 0
-        
-        for time_ranges in slots:
-            start_time = time_ranges[0]
-            end_time = time_ranges[1]
-            
-            while (end_time - class_length) >= start_time:
-                time_starts[classroom].append(end_time - class_length)
-                end_time -= class_length
-                slot_factor += 1
-            
-        for i in range(slot_factor):
-            return_data.append(classroom)
-            #print(time_starts)
-    return return_data,time_starts
 
 def add_times(items,time_starts):
     return_result = []
@@ -82,9 +58,33 @@ def get_real_time(items, target):
 
     return None # wtf
 
+def possible_times(room_hrs_times, class_length):
+
+    return_data = []
+    time_starts = {}
+    for item in room_hrs_times:
+        classroom, slots, dates = item
+        
+        time_starts[classroom] = []
+        slot_factor = 0
+        
+        for time_ranges in slots:
+            start_time = time_ranges[0]
+            end_time = time_ranges[1]
+            
+            while (end_time - class_length) >= start_time:
+                time_starts[classroom].append(end_time - class_length)
+                end_time -= class_length
+                slot_factor += 1
+            
+        for i in range(slot_factor):
+            return_data.append(classroom)
+            #print(time_starts)
+    return return_data,time_starts
+
 def closest_sum(room_hrs_times, target,class_length, extra_classes = [],increment = 0):
     classrooms,time_starts = possible_times(room_hrs_times,class_length)
-
+    print(time_starts)
     real_schedule = []
     ghost_required  = 0
 
@@ -301,18 +301,12 @@ class Schedule:
         able_to_schedule = 0
 
         for classroom, dates in real_dates.items():
-
-            #print(dates)
             free_time = []
             for day, times in dates.items():
-
                 # Should create a list of lists or something of that nature. [[time range], class/cohort]
                 # doing element[0] should copy just the time ranges.
 
-
-
                 times_sched = [element[0] for element in times]
-
                 if illegal_times:
                     times_sched = times_sched + illegal_times[0][0]
                 
@@ -347,6 +341,9 @@ class Schedule:
 
                     break
 
+        print("=======================================")
+        print(possible_times_to_schedule)
+        print("=======================================")
 
         if not able_to_schedule:
             return [],[],2
@@ -566,8 +563,8 @@ class Schedule:
 
         return week_classes
 
-#newschedule = Schedule(programs, classrooms)
-#newschedule.schedule_all()
+newschedule = Schedule(programs, classrooms)
+newschedule.schedule_all()
 #pretty_print_nested_dict(newschedule.generate_out())
 
 
