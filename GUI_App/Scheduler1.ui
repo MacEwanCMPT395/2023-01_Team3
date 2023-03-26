@@ -422,7 +422,7 @@
          <widget class="QPushButton" name="save_data_btn">
           <property name="geometry">
            <rect>
-            <x>630</x>
+            <x>380</x>
             <y>620</y>
             <width>101</width>
             <height>31</height>
@@ -946,61 +946,6 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
-         <widget class="QLabel" name="label_16">
-          <property name="geometry">
-           <rect>
-            <x>190</x>
-            <y>630</y>
-            <width>171</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial Rounded MT Bold</family>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Choose Semester:</string>
-          </property>
-         </widget>
-         <widget class="QComboBox" name="semester_select_combobox">
-          <property name="geometry">
-           <rect>
-            <x>400</x>
-            <y>620</y>
-            <width>171</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <item>
-           <property name="text">
-            <string>(make selection)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Fall</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Winter</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Spring/Summer</string>
-           </property>
-          </item>
          </widget>
         </widget>
         <widget class="QWidget" name="page2">
@@ -1587,7 +1532,7 @@
           <property name="geometry">
            <rect>
             <x>280</x>
-            <y>410</y>
+            <y>310</y>
             <width>311</width>
             <height>31</height>
            </rect>
@@ -1600,7 +1545,7 @@
           <property name="geometry">
            <rect>
             <x>650</x>
-            <y>410</y>
+            <y>310</y>
             <width>171</width>
             <height>31</height>
            </rect>
@@ -1630,7 +1575,7 @@
           <property name="geometry">
            <rect>
             <x>120</x>
-            <y>410</y>
+            <y>310</y>
             <width>151</width>
             <height>41</height>
            </rect>
@@ -1696,7 +1641,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Load Room Data</string>
+           <string>Load Room Data </string>
           </property>
           <property name="iconSize">
            <size>
@@ -1715,7 +1660,7 @@
           <property name="geometry">
            <rect>
             <x>130</x>
-            <y>270</y>
+            <y>230</y>
             <width>141</width>
             <height>41</height>
            </rect>
@@ -1736,7 +1681,7 @@
           <property name="geometry">
            <rect>
             <x>650</x>
-            <y>270</y>
+            <y>230</y>
             <width>171</width>
             <height>31</height>
            </rect>
@@ -1766,13 +1711,44 @@
           <property name="geometry">
            <rect>
             <x>280</x>
-            <y>270</y>
+            <y>230</y>
             <width>311</width>
             <height>31</height>
            </rect>
           </property>
           <property name="placeholderText">
            <string>Select File...</string>
+          </property>
+         </widget>
+         <widget class="QCalendarWidget" name="calendar">
+          <property name="geometry">
+           <rect>
+            <x>260</x>
+            <y>420</y>
+            <width>331</width>
+            <height>181</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_39">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>380</y>
+            <width>151</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Black</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Start of Semester:</string>
           </property>
          </widget>
         </widget>
