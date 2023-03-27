@@ -6,7 +6,7 @@ from courseClass import *
 
 from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, \
-    QComboBox, QSizePolicy, QHeaderView
+    QComboBox, QSizePolicy, QHeaderView, QRadioButton
 from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths, QDate
 
@@ -87,11 +87,15 @@ class MainWindow(QMainWindow):
         # Set the size policy of the table view
         self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+        # Add a core radio button for selecting the display mode
+        self.core_radio_btn = QRadioButton("Core", self.ui.page2)
+        self.core_radio_btn.setGeometry(100, 40, 150, 30)
+        self.core_radio_btn.setChecked(False)
 
         # Add a dropdown for selecting the class
-        self.week_combo_box = QComboBox(self.ui.page2)
-        self.week_combo_box.setGeometry(300, 40, 150, 30)
-        # self.week_combo_box.currentIndexChanged.connect(self.refresh_table)
+        self.classroom_combo_box = QComboBox(self.ui.page2)
+        self.classroom_combo_box.setGeometry(300, 40, 150, 30)
+        # self.classroom_combo_box.currentIndexChanged.connect(self.refresh_table)
 
         # Set schedule default as week 1
         self.week = 1
@@ -278,21 +282,36 @@ class MainWindow(QMainWindow):
         
         course_color = {}
 
+        # testing Core course list
+        core = ["PCOM0101", "PCOM0105", "PCOM0107", "CMSK0233", "CMSK0235", "PCOM0102", "PCOM0201", "PCOM 0108 - AS01",
+                "PCOM0202", "PCOM0103", "PCOM0109", "PCOM0203", "SUPR0751", "PCOM0204", "CMSK0237", "SUPR0837",
+                "SUPR0841", "SUPR0821", "SUPR0822", "SUPR0718", "SUPR0836", "AVDM0199", "PCOM0106", "PCOM0205",
+                "PCOMTBD", "PCOM0207", "SUPR0863", "PCOM0206", "AVDM0260", "PRDV0304 - AS02"]
+
         # Iterate through each row and column of the table model and set dummy text
         for row in range(len(rows)):
             for col in range(len(columns)):
                 # Check if this cell is within the start and end time of any course in week 1 on this day
                 course_in_cell = None
-                if self.week_combo_box.currentText() != '':
-                    for course_data in class_dict[self.ui.label_9.text()][
-                        self.week_combo_box.currentText()][
+                if self.classroom_combo_box.currentText() != '':
+                    for course_data in class_dict[self.ui.label_9.text()][self.classroom_combo_box.currentText()][
                         columns[col]]:
                         start_time = datetime.datetime.strptime(course_data["start_time"], '%I:%M %p').time()
                         end_time = datetime.datetime.strptime(course_data["end_time"], '%I:%M %p').time()
                         if datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
                                 datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
-                            course_in_cell = course_data["course"]
-                            break
+
+                            # Check if the core radio btn is toggled. If it is we want to display only courses that are core
+                            if self.core_radio_btn.isChecked():
+                                print("radio btn checked")
+                                print(course_data["course"])
+                                if course_data["course"] in core:
+                                    course_in_cell = course_data["course"]
+                                    break
+                            else:
+                                print("radio btn unchecked")
+                                course_in_cell = course_data["course"]
+                                break
                     if course_in_cell:
                         # Set the text and alignment for the cell
                         item = QStandardItem(course_in_cell)
@@ -729,10 +748,10 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def update_rooms(self):
         self.ui.rooms_combobox.clear()
-        self.week_combo_box.clear()
+        self.classroom_combo_box.clear()
         classrooms = self.df_rooms.loc[1:, 'Classroom #'].dropna().tolist()
         self.ui.rooms_combobox.addItems(classrooms)
-        self.week_combo_box.addItems(classrooms)
+        self.classroom_combo_box.addItems(classrooms)
 
     @pyqtSlot()
     def remove_classroom(self):
