@@ -13,7 +13,6 @@ from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
 import pandas as pd
 
 from Scheduler1 import Ui_MainWindow
-from courseClass import *
 import schedule2 as sc
 
 import random
@@ -36,17 +35,6 @@ class MainWindow(QMainWindow):
         self.df_programs = pd.DataFrame
         self.df_students = self.create_programs()
 
-        ########## Initialize Degree and Program ############
-        self.degree = Degree()
-        self.program = Program(150, '')
-        self.degree.core_courses["PCOM"] = [] 
-        self.degree.core_courses["BCOM"] = [] 
-        self.program.program_courses["PM"] = []
-        self.program.program_courses["BA"] = []
-        self.program.program_courses["GLM"] = []
-        self.program.program_courses["DXD"] = []
-        self.program.program_courses["BK"] = []
-
         self.schedule = sc.Schedule([],[])
         self.schedule_out = {}
 
@@ -57,8 +45,7 @@ class MainWindow(QMainWindow):
         self.ui.schedule_page_button.clicked.connect(self.showSchedulePage)
         self.ui.load_data_button.clicked.connect(self.load_student_data)
         self.ui.load_data_button_room.clicked.connect(self.load_room_data)
-        self.ui.load_data_button_program.clicked.connect(lambda: read_csv(self.ui.file_name_input_program.text(), self.degree, self.program))
-        self.ui.load_data_button_program.clicked.connect(self.change_button_color)
+        self.ui.load_data_button_program.clicked.connect(self.load_program_data)
         # self.ui.calendar.clicked.connect(self.print_selected_date)
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
@@ -66,9 +53,12 @@ class MainWindow(QMainWindow):
 
         ###################### Calendar  ####################################
         self.selected_date = self.ui.calendar.selectedDate()
+
+        
         self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
-
-
+        
+        # ADD START DATE!!!!!! :)))))))
+        self.schedule.update_start_date(self.date_time)
 
 
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
@@ -349,59 +339,10 @@ class MainWindow(QMainWindow):
         print("Type:", type(selected_date))
         print("Selected date:", selected_date.toString("yyyy-MM-dd"))
         print("Type of selected_date:", type(date_time))
-    
-    def change_button_color(self):
-        if self.degree.core_courses:
-            self.ui.load_data_button_program.setText("Load Room Data ✔")
-            self.ui.load_data_button_program.setStyleSheet("background-color: green")
 
-    @pyqtSlot()
-    def load_student_data(self):
-
-        file_name = self.ui.file_name_input.text()
-
-        if file_name:
-            if file_name.endswith('StudentsInfo.csv'):
-                self.update_enrollment(file_name)
-                self.ui.load_data_button.setText("Load Room Data ✔")
-                self.ui.load_data_button.setStyleSheet("background-color: green")
-            elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInfo.xlsx'):
-                self.update_enrollment(file_name)
-            else:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path")
-                msg.exec()
-                return
-
-            print(self.df_students)  # print the loaded dataframe
-            self.updateProgramsFields()
-            
-        else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Please enter a CSV file path")
-            msg.exec()
-
-        # [Classroom("11-532", 30, 1),
-        #  Classroom("11-533", 36, 0),
-        #  Classroom("11-534", 36, 0),
-        #  Classroom("11-560", 24, 0),
-        #  Classroom("11-562", 24, 0),
-        #  Classroom("11-564", 24, 0),
-        #  Classroom("11-458", 40, 0),
-        #  Classroom("11-430", 30, 0),
-        #  Classroom("11-320", 30, 0)]
-
-        # self.edit_room_text(self.ui.text_533, self.classroom_schedule(0))
-        # self.edit_room_text(self.ui.text_534, self.classroom_schedule(1))
-        # self.edit_room_text(self.ui.text_560, self.classroom_schedule(2))
-        # self.edit_room_text(self.ui.text_562, self.classroom_schedule(3))
-        # self.edit_room_text(self.ui.text_564, self.classroom_schedule(4))
-        # self.edit_room_text(self.ui.text_458, self.classroom_schedule(5))
-        # self.edit_room_text(self.ui.text_430, self.classroom_schedule(6))
-        # self.edit_room_text(self.ui.text_320, self.classroom_schedule(7))
-    
+    # ------------------------------------- #
+    # ------------- LOAD CLASSROOMS ------- #
+    # ------------------------------------- #
     @pyqtSlot()
     def load_room_data(self):
 
@@ -434,8 +375,68 @@ class MainWindow(QMainWindow):
             msg.setText("Please enter the correct CSV file path")
             msg.exec()
 
+    # --------------------------------------------- #
+    # ------------- LOAD PROGRAM DATA ------------- #
+    # --------------------------------------------- #
+    @pyqtSlot()
+    def load_program_data(self):
 
+        file_name = self.ui.file_name_input_program.text()
 
+        if file_name:
+            if file_name.endswith('programs.csv'):
+                self.df_programs = pd.read_csv(file_name)
+                self.ui.load_data_button_program.setText("Load Program Data ✔")
+                self.ui.load_data_button_program.setStyleSheet("background-color: green")
+
+            elif file_name.endswith('programs.xls') or file_name.endswith('programs.xlsx'):
+                self.df_programs = pd.read_excel(file_name)
+
+            else:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Icon.Warning)
+                msg.setText("Please enter the correct CSV file path")
+                msg.exec()
+                return
+
+            self.schedule.update_programs(self.df_programs.values.tolist())
+
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("Please enter the correct CSV file path")
+            msg.exec()
+
+    # --------------------------------------- #
+    # ------------- LOAD STUDENT DATA ------- #
+    # --------------------------------------- #
+    @pyqtSlot()
+    def load_student_data(self):
+
+        file_name = self.ui.file_name_input.text()
+
+        if file_name:
+            if file_name.endswith('StudentsInfo.csv'):
+                self.update_enrollment(file_name)
+                self.ui.load_data_button.setText("Load Room Data ✔")
+                self.ui.load_data_button.setStyleSheet("background-color: green")
+            elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInfo.xlsx'):
+                self.update_enrollment(file_name)
+            else:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Icon.Warning)
+                msg.setText("Please enter the correct CSV file path")
+                msg.exec()
+                return
+
+            print(self.df_students)  # print the loaded dataframe
+            self.updateProgramsFields()
+            
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("Please enter a CSV file path")
+            msg.exec()
 
     ####################### Menu BUttons #################################
     @pyqtSlot()
@@ -667,7 +668,6 @@ class MainWindow(QMainWindow):
         print(self.new_list)
         # program = Program()
         # return self.new_list
-    
 
     ######################### Student Enrollment Update ###################################
 

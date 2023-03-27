@@ -49,66 +49,6 @@ class Program:
         self.courselist = courselist
 
         self.courses = []
-        self.program_courses = {"PM" : [Course("PRDV 0201", "PM", None, 70, 1, 21, 1.5, 0),
-                                        Course("PRDV 0202", "PM", None, 70, 1, 14, 1.5, 0),
-                                        Course("PRDV 0203", "PM", None, 70, 1, 21, 1.5, 0),
-                                        Course("PRDV 0204", "PM", None, 70, 2, 14, 1.5, 0),
-                                        Course("PRDV 0205", "PM", None, 70, 2, 21, 1.5, 0),
-                                        Course("PCOM 0103", "PM", None, 70, 2, 21, 1.5, 0),
-                                        Course("PRDV 0206", "PM", None, 70, 2, 14, 1.5, 0),
-                                        Course("PRDV 0207", "PM", None, 70, 3, 14, 1.5, 0),
-                                        Course("PRDV 0131", "PM", None, 70, 3, 39, 1.5, 0)],
-
-                                "BA" : [Course("PRDV 0640", "BA", None, 70, 1, 21, 1.5, 0),
-                                        Course("PRDV 0652", "BA", None, 70, 1, 14, 1.5, 0),
-                                        Course("PRDV 0653", "BA", None, 70, 1, 21, 1.5, 0),
-                                        Course("PRDV 0642", "BA", None, 70, 1, 14, 1.5, 0),
-                                        Course("PRDV 0644", "BA", None, 70, 2, 21, 1.5, 0),
-                                        Course("PRDV 0648", "BA", None, 70, 2, 14, 1.5, 0),
-                                        Course("PCOM 0140", "BA", None, 70, 2, 35, 1.5, 0),
-                                        Course("PRDV 0646", "BA", None, 70, 3, 14, 1.5, 0),
-                                        Course("PRDV 0141", "BA", None, 70, 3, 39, 1.5, 0)],
-                                        
-                                "GLM" : [Course("SCMT 0501", "GLM", None, 70, 1, 21, 1.5, 0),
-                                        Course("SCMT 0502", "GLM", None, 70, 1, 21, 1.5, 0),
-                                        Course("PRDV 0304", "GLM", None, 70, 1, 15, 1.5, 0),
-                                        Course("SCMT 0503", "GLM", None, 70, 2, 15, 1.5, 0),
-                                        Course("SCMT 0504", "GLM", None, 70, 2, 21, 1.5, 0),
-                                        Course("SCMT 0505", "GLM", None, 70, 3, 21, 1.5, 0),
-                                        Course("PCOM 0151", "GLM", None, 70, 3, 39, 1.5, 0)],
-                                
-                                "FS" : [Course("CMSK 0150", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0151", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0157", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0154", "FS", None, 70, 1, 16, 2, 1),
-                                        Course("CMSK 0152", "FS", "CMSK 0151", 16, 1, 16, 2, 1),
-                                        Course("PCOM 0160", "FS", None, 70, 3, 50, 2, 1),
-                                        Course("CMSK 0153", "FS", None, 70, 2, 18, 2, 1),
-                                        Course("CMSK 0200", "FS", None, 70, 2, 16, 2, 1),
-                                        Course("CMSK 0201", "FS", "CMSK 0200", 70, 2, 18, 2, 1),
-                                        Course("CMSK 0203", "FS", None, 70, 2, 16, 2, 1),
-                                        Course("CMSK 0202", "FS", None, 70, 2, 18, 2, 1)],
-
-                                "DXD" : [Course("AVDM 0165", "DXD", None, 70, 1, 18, 1.5, 1),
-                                         Course("DXDI 0101", "DXD", None, 70, 1, 24, 1.5, 1),
-                                         Course("DXDI 0102", "DXD", "DXDI 0101", 70, 1, 24, 1.5, 1),
-                                         Course("AVDM 0170", "DXD", None, 70, 2, 18, 1.5, 1),
-                                         Course("AVDM 0138", "DXD", None, 70, 2, 18, 1.5, 1),
-                                         Course("DXDI 0103", "DXD", None, 70, 2, 24, 1.5, 1),
-                                         Course("DXDI 0104", "DXD", "DXDI 0103", 70, 2, 24, 1.5, 1),
-                                         Course("AVDM 0238", "DXD", None, 70, 3, 18, 1.5, 1),
-                                         Course("AVDM 0270", "DXD", None, 70, 3, 18, 1.5, 1),
-                                         Course("DXDI 9901", "DXD", None, 70, 3, 45, 1.5, 1)],
-
-                                "BK" : [Course("ACCT 0201", "BK", None, 70, 1, 18, 1.5, 0),
-                                        Course("ACCT 0202", "BK", None, 70, 1, 12, 1.5, 0),
-                                        Course("ACCT 0203", "BK", None, 70, 1, 12, 1.5, 0),
-                                        Course("ACCT 0206", "BK", None, 70, 2, 12, 1.5, 0),
-                                        Course("ACCT 0210", "BK", None, 70, 2, 28, 1.5, 1),
-                                        Course("ACCT 0211", "BK", None, 70, 2, 28, 1.5, 1),
-                                        Course("ACCT 0208", "BK", None, 70, 3, 21, 1.5, 1),
-                                        Course("ACCT 9901", "BK", None, 70, 3, 33, 1.5, 1)
-                                        ]}
         
 
         
