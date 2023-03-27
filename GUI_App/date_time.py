@@ -3,7 +3,6 @@ from holidays import Canada
 
 '''
 Notes:
-
 We can import a CSV of holidays/cancellations, import the holidays, double check them, and add any more.
 We can use this method to also let the user define a set of days that could be cancelled for whatever reason they want.
 That's why we had the extra National Day for Truth and Reconcilation day added after. It will be a set
@@ -69,13 +68,9 @@ def create_semester_dates(start_date):
 #days = create_semester_dates(datetime.date(2023,1,3))
 '''
 print(days)
-
 sum = 0
 for i in days.keys():
     sum+= len(days[i])
-
 print(sum)
-
 print(len(days["Monday"]))
-
 '''
