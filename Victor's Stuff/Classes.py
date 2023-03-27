@@ -14,7 +14,7 @@ class Student:
 
 
 class Course:
-    def __init__(self, course_id, department, pre_req, max_capacity, term, transcript_hours, lecture_duration, course_type):
+    def __init__(self, course_id, department, pre_req, max_capacity, term, transcript_hours, lecture_duration, course_type, lecture_start_time = 16, lecture_end_time = 17):
         self.course_id = course_id
         self.department = department
         self.pre_req = pre_req
@@ -22,8 +22,8 @@ class Course:
         self.term = term
         self.transcript_hours = transcript_hours
         self.lecture_duration = lecture_duration
-        self.lecture_start_time = 16
-        self.lecture_end_time = 17
+        self.lecture_start_time = lecture_start_time
+        self.lecture_end_time = lecture_end_time
         self.course_type = course_type
         # self.count = 0
         # self.sections = []
