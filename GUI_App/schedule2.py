@@ -5,7 +5,7 @@ import copy
 #print(days)
 
 import Classes as classes
-from open_csv import programs, all_classrooms
+#from open_csv import programs, all_classrooms
 
 def takeSecond(elem):
     return elem[1]
@@ -140,13 +140,42 @@ class Schedule:
 
     def update_start_date(self, datetime):
         self.schedule_days = create_semester_dates(datetime)
+    
+    def update_programs(self, list_of_stuff):
+
+        for row in list_of_stuff:
+            program, course_id, course_name, term, class_type, prerequisite, transcript_hours, duration, start, end, cap = row
+            
+            the_program = 0
+            for item in self.programs:
+                if item.program_id == program:
+                    the_program = item
+                    break
+            else:
+                the_program = classes.Program(program,((program=="PCOM" or program=="BCOM") and 1 or 0),[[],[],[]],[[],[],[]])
+                self.programs.append(the_program)
+
+
+            courses = the_program.courses
+            for item in courses:
+                if item == course_id:
+                    print("Class Conflict. NICE JOB.")
+            
+            course = classes.Course(course_id, course_name, int(class_type), prerequisite, float(transcript_hours), float(duration),
+                            float(start), float(end), int(cap), program)
+            
+            the_program.courses.append(course_id)
+            the_program.courselist[int(term)-1].append(course)
+
+        print(self.programs)
+
 
     def update_classrooms(self, object):
         print(object)
 
     def update_program_populations(self, object):
         for k,v in object.items():
-            for obj in programs:
+            for obj in self.programs:
                 if k == obj.program_id:
                     obj.populations = copy.deepcopy(v)
                     break
@@ -170,8 +199,6 @@ class Schedule:
                         dict_combined[classroom][copy.deepcopy(dates)].append(times)
                     else:
                         dict_combined[classroom][copy.deepcopy(dates)] = times
-
-                    
 
             # Sort our dictionary.
             keys_sort = list(dict_combined[classroom].keys())
