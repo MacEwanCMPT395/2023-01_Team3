@@ -130,6 +130,14 @@ class MainWindow(QMainWindow):
         print(self.date_time)
 
     def refresh_table(self):
+
+        if not bool(self.schedule_out):
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("You did not generate a schedule yet!")
+            msg.exec()
+            return            
+
         # Clear the current table view and repopulate it
         self.table_model.clear()
         self.table_fields()
@@ -356,12 +364,12 @@ class MainWindow(QMainWindow):
         file_name = self.ui.file_name_input_room.text()
 
         if file_name:
-            if file_name.endswith('RoomInfo.csv'):
+            if file_name.endswith('RoomInformation.csv'):
                 self.df_rooms = pd.read_csv(file_name)
                 self.ui.load_data_button_room.setText("Load Room Data ✔")
                 self.ui.load_data_button_room.setStyleSheet("background-color: green")
 
-            elif file_name.endswith('RoomInfo.xls') or file_name.endswith('RoomInfo.xlsx'):
+            elif file_name.endswith('RoomInformation.xls') or file_name.endswith('RoomInformation.xlsx'):
                 self.df_rooms = pd.read_excel(file_name)
 
             else:
@@ -391,18 +399,18 @@ class MainWindow(QMainWindow):
         file_name = self.ui.file_name_input_program.text()
 
         if file_name:
-            if file_name.endswith('Programs.csv'):
+            if file_name.endswith('ProgramsInformation.csv'):
                 self.df_programs = pd.read_csv(file_name)
                 self.ui.load_data_button_program.setText("Load Program Data ✔")
                 self.ui.load_data_button_program.setStyleSheet("background-color: green")
 
-            elif file_name.endswith('programs.xls') or file_name.endswith('programs.xlsx'):
+            elif file_name.endswith('ProgramsInformation.xls') or file_name.endswith('ProgramsInformation.xlsx'):
                 self.df_programs = pd.read_excel(file_name)
 
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path - Programs.csv")
+                msg.setText("Please enter the correct CSV file path - ProgramsInformation.csv")
                 msg.exec()
                 return
 
@@ -423,16 +431,16 @@ class MainWindow(QMainWindow):
         file_name = self.ui.file_name_input.text()
 
         if file_name:
-            if file_name.endswith('StudentsInfo.csv'):
+            if file_name.endswith('StudentsInformation.csv'):
                 self.update_enrollment(file_name)
                 self.ui.load_data_button_students.setText("Load Student Data ✔")
                 self.ui.load_data_button_students.setStyleSheet("background-color: green")
-            elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInfo.xlsx'):
+            elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInformation.xlsx'):
                 self.update_enrollment(file_name)
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path - StudentsInfo.csv")
+                msg.setText("Please enter the correct CSV file path - StudentsInformation.csv")
                 msg.exec()
                 return
 
