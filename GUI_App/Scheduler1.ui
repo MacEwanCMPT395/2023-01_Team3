@@ -158,7 +158,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Room 533</string>
+            <string>Online Classes</string>
            </property>
           </widget>
          </item>
@@ -417,19 +417,6 @@
           </property>
           <property name="text">
            <string>BookKeeping Certificate:</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="save_data_btn">
-          <property name="geometry">
-           <rect>
-            <x>380</x>
-            <y>620</y>
-            <width>101</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>SAVE DATA</string>
           </property>
          </widget>
          <widget class="QLineEdit" name="pm_input_1">
@@ -947,6 +934,29 @@
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
+         <widget class="QPushButton" name="generate_schedule_btn">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>610</y>
+            <width>191</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Black</family>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>GENERATE SCHEDULE</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="page2">
          <widget class="QPushButton" name="next_button">
@@ -1027,7 +1037,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Room 11 - 533 (Capacity 36)</string>
+           <string>Online Classes Summary:</string>
           </property>
          </widget>
          <widget class="QTextEdit" name="text_533">
@@ -1541,7 +1551,7 @@
            <string>Select File...</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="load_data_button">
+         <widget class="QPushButton" name="load_data_button_students">
           <property name="geometry">
            <rect>
             <x>650</x>
@@ -1733,9 +1743,9 @@
          <widget class="QLabel" name="label_39">
           <property name="geometry">
            <rect>
-            <x>370</x>
+            <x>310</x>
             <y>380</y>
-            <width>151</width>
+            <width>261</width>
             <height>31</height>
            </rect>
           </property>
@@ -1748,7 +1758,26 @@
            </font>
           </property>
           <property name="text">
-           <string>Start of Semester:</string>
+           <string>Please Select Semester Start Date:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="selected_date_label">
+          <property name="geometry">
+           <rect>
+            <x>320</x>
+            <y>630</y>
+            <width>291</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial Rounded MT Bold</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Date selected: NONE</string>
           </property>
          </widget>
         </widget>

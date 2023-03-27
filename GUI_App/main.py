@@ -8,7 +8,7 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, \
     QComboBox, QSizePolicy, QHeaderView
 from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog
-from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths
+from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths, QDate
 
 import pandas as pd
 
@@ -43,20 +43,23 @@ class MainWindow(QMainWindow):
         ############ Buttons Clicked ############################
         self.ui.data_page_button.clicked.connect(self.showDataPage)
         self.ui.schedule_page_button.clicked.connect(self.showSchedulePage)
-        self.ui.load_data_button.clicked.connect(self.load_student_data)
+        self.ui.load_data_button_students.clicked.connect(self.load_student_data)
         self.ui.load_data_button_room.clicked.connect(self.load_room_data)
         self.ui.load_data_button_program.clicked.connect(self.load_program_data)
         # self.ui.calendar.clicked.connect(self.print_selected_date)
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
         self.ui.instructions_page_btn.clicked.connect(self.showInstructionsPage)
+        
 
         ###################### Calendar  ####################################
-        self.selected_date = self.ui.calendar.selectedDate()
 
-        
+        self.ui.calendar.clicked.connect(self.on_calendar_clicked)
+        self.selected_date = self.ui.calendar.selectedDate()
         self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
-        
+
+
+
         # ADD START DATE!!!!!! :)))))))
         self.schedule.update_start_date(self.date_time)
 
@@ -64,7 +67,8 @@ class MainWindow(QMainWindow):
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
 
         ################## Data Page Buttons Clicked ################
-        self.ui.save_data_btn.clicked.connect(self.save_data)
+        # self.ui.save_data_btn.clicked.connect(self.save_data)
+        self.ui.generate_schedule_btn.clicked.connect(self.generate_schedule)
 
         ################## Rooms Page Buttons Clicked ###############
 
@@ -89,13 +93,6 @@ class MainWindow(QMainWindow):
         # Set the size policy of the table view
         self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-        # Add a dropdown for selecting the term
-        self.term_combo_box = QComboBox(self.ui.page2)
-        self.term_combo_box.setGeometry(100, 40, 150, 30)
-        self.term_combo_box.addItem("Term 1")
-        self.term_combo_box.addItem("Term 2")
-        self.term_combo_box.addItem("Term 3")
-        # self.term_combo_box.currentIndexChanged.connect(self.refresh_table)
 
         # Add a dropdown for selecting the class
         self.week_combo_box = QComboBox(self.ui.page2)
@@ -126,12 +123,21 @@ class MainWindow(QMainWindow):
 
         # ----------------- list of lists of text field values------------------
         self.new_list = []
+    
+    ####################### Calendar function ###################################
+
+    @pyqtSlot(QDate)
+    def on_calendar_clicked(self, date: QDate):
+        # Update the selected date label with the selected date
+        self.ui.selected_date_label.setText(f"Date selected: {date.toString()}")
+        self.selected_date = date
+        print(self.selected_date)
+        self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
+        print(self.date_time)
 
     def refresh_table(self):
         # Clear the current table view and repopulate it
         self.table_model.clear()
-        print(self.term_combo_box.currentText())
-        print(self.week_combo_box.currentText())
         self.table_fields()
         header = self.table_view.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
@@ -271,7 +277,7 @@ class MainWindow(QMainWindow):
             for col in range(len(columns)):
                 # Check if this cell is within the start and end time of any course in week 1 on this day
                 course_in_cell = None
-                if self.term_combo_box.currentText() != '' and self.week_combo_box.currentText() != '':
+                if self.week_combo_box.currentText() != '':
                     for course_data in class_dict[self.ui.label_9.text()][
                         self.week_combo_box.currentText()][
                         columns[col]]:
@@ -360,7 +366,7 @@ class MainWindow(QMainWindow):
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path")
+                msg.setText("Please enter the correct CSV file path - RoomInfo.csv")
                 msg.exec()
                 return
 
@@ -384,7 +390,7 @@ class MainWindow(QMainWindow):
         file_name = self.ui.file_name_input_program.text()
 
         if file_name:
-            if file_name.endswith('programs.csv'):
+            if file_name.endswith('Programs.csv'):
                 self.df_programs = pd.read_csv(file_name)
                 self.ui.load_data_button_program.setText("Load Program Data ✔")
                 self.ui.load_data_button_program.setStyleSheet("background-color: green")
@@ -395,7 +401,7 @@ class MainWindow(QMainWindow):
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path")
+                msg.setText("Please enter the correct CSV file path - Programs.csv")
                 msg.exec()
                 return
 
@@ -404,7 +410,7 @@ class MainWindow(QMainWindow):
         else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Please enter the correct CSV file path")
+            msg.setText("Please enter a CSV file path")
             msg.exec()
 
     # --------------------------------------- #
@@ -418,14 +424,14 @@ class MainWindow(QMainWindow):
         if file_name:
             if file_name.endswith('StudentsInfo.csv'):
                 self.update_enrollment(file_name)
-                self.ui.load_data_button.setText("Load Room Data ✔")
-                self.ui.load_data_button.setStyleSheet("background-color: green")
+                self.ui.load_data_button_students.setText("Load Student Data ✔")
+                self.ui.load_data_button_students.setStyleSheet("background-color: green")
             elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInfo.xlsx'):
                 self.update_enrollment(file_name)
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path")
+                msg.setText("Please enter the correct CSV file path - StudentsInfo.csv")
                 msg.exec()
                 return
 
@@ -611,22 +617,25 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def save_data(self):
 
-        # Get the currently selected index of the semester_select_combobox
-
-        # Check if the selected index is 0
-        # if selected_index == 0:
-        #     # Display a warning message
-        #     msg = QMessageBox()
-        #     msg.setIcon(QMessageBox.Icon.Warning)
-        #     msg.setText("Please Select a Semester!")
-        #     msg.setWindowTitle("Warning")
-        #     msg.exec()
-        # else:
         if self.input_check():
             self.update_data()
                 # print(self.df[0])
         else:
             return
+    
+    ######################## Generate Schedule ###########################
+    @pyqtSlot()
+    def generate_schedule(self):
+        
+
+        if self.date_time.date() <= datetime.datetime.now().date() :
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("You did not select a valid Semester Start Date")
+            msg.exec()
+            return
+        else:
+            self.save_data()
 
     @pyqtSlot()
     def save_input(self):
