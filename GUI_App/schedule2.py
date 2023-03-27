@@ -124,7 +124,7 @@ class Schedule:
 
         # insert online classroom
         # infinite capacity for online classrooms
-        self.classrooms.append(classes.Classroom("Online",999,2))
+        self.classrooms.append(classes.Classroom("Online",2,999))
 
         # for now no need for friday and saturday, but can easily be added.
         self.schedule_days = {}
@@ -171,7 +171,14 @@ class Schedule:
 
 
     def update_classrooms(self, object):
-        print(object)
+        extra_capacity = 2
+        for i_class in object:
+            name, classtype, capacity = i_class
+            temp_class = classes.Classroom(name,int(classtype),int(capacity)-extra_capacity)
+            print(temp_class.c_type)
+            self.classrooms.append(temp_class)
+
+        print(self.classrooms)
 
     def update_program_populations(self, object):
         for k,v in object.items():
@@ -416,7 +423,7 @@ class Schedule:
         return new_data
 
     def preq_remove_dates(self, data, course_length, course_to_schedule):
-        
+        latest_date = None
         latest_date_int = 0
         for course in self.courselist:
             if course.course_id == course_to_schedule.preq:
@@ -548,9 +555,10 @@ class Schedule:
     # Generate Out Creates a BROKEN SCHEDULE
 
     def generate_out(self):
-        classes = self.get_raw_schedule()
+        raw_classes = self.get_raw_schedule()
+
         week_classes = {}
-        for room, data in classes.items():
+        for room, data in raw_classes.items():
             counter = 1
             old_monday = 0
             for i, class_date in enumerate(sorted(data.keys())):
