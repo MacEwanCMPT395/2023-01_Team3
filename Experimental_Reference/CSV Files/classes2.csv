@@ -12,73 +12,73 @@ PCOM,PCOM 0103,Canadian Workplace Culture,3,1,,35,1.5,8,17,0
 PCOM,PCOM 0109-1,The Job Hunt in Canada - Lecture,3,4,,2,2,8,17,0
 PCOM,PCOM 0109-2,The Job Hunt in Canada - Module 1,3,4,PCOM 0109-1,8,2,8,17,0
 PCOM,PCOM 0109-3,The Job Hunt in Canada - Module 2,3,4,PCOM 0109-2,6,2,8,17,0
-BCOM,PCOM0203," Effective Professional Writing; Reports, Proposals, Plans and More.",1,1,,15,1.5,8,17,0
-BCOM,SUPR0751,Fundamentals of Management and Supervision,1,1,,7,2,8,17,0
+BCOM,PCOM 0203," Effective Professional Writing; Reports, Proposals, Plans and More.",1,1,,15,1.5,8,17,0
+BCOM,SUPR 0751,Fundamentals of Management and Supervision,1,1,,7,2,8,17,0
 BCOM,PCOM 0204,Business Persuasion and Research,1,1,,35,1.5,8,17,0
-BCOM,CMSK0237,Google Suite Essentials,1,3,,12,1.5,8,17,0
-BCOM,SUPR0837,Building an Engaged Workforce,1,1,,7,2,8,17,0
-BCOM,SUPR0841,Change Management Fundamentals,1,1,,35,2,8,17,0
-BCOM,SUPR0821,Foundations of Leadership I,2,1,,7,2,8,17,0
-BCOM,SUPR0822,Foundations of Leadership II,2,1,,7,2,8,17,0
-BCOM,SUPR0718,Coaching for Performance,2,1,,7,2,8,17,0
-BCOM,SUPR0836,Hiring for success,2,1,,7,2,8,17,0
-BCOM,AVDM0199,Digital Marketing  101,2,3,,3,2,8,17,0
-BCOM,PCOM0106,Operations Management,2,1,,35,2,8,17,0
-BCOM,PCOM0205,Fundamentals of Agile Methdology,3,1,,30,3,8,17,0
-BCOM,PCOMTBD,Story Telling,3,1,,21,1.5,8,17,0
-BCOM,PCOM0207,Developing Your Emotional Intelligence,3,1,,6,2,8,17,0
-BCOM,AVDM0260,WordPress for Web Page Publishing ,3,3,,6,1.5,8,17,0
-PM,PRDV0201,The Basics of Project Management,1,1,,21,1.5,8,17,0
-PM,PRDV0202,Project Scope and Quality,1,1,,14,1.5,8,17,0
-PM,PRDV0203,Fundamentals of Project Planning ,1,1,,21,1.5,8,17,0
-PM,PRDV0204,Working with Stakeholders ,2,1,,14,1.5,8,17,0
-PM,PRDV0205,Leading and Managing a Team,2,1,,21,1.5,8,17,0
-PM,PCOM0130,PM Capstone I,2,1,,21,1.5,8,17,1
-PM,PRDV0206,Managing Risk on Projects,2,1,,14,1.5,8,17,0
-PM,PRDV0207,Measuring and Reporting on Project Activity,3,1,,14,1.5,8,17,0
-PM,PRDV0131,PM Capstone Project,3,1,,39,1.5,8,17,0
-BA,PRDV0640,The Basics of Business Analysis,1,1,,21,1.5,8,17,0
-BA,PRDV0652,Business Analysis Planning & Monitoring ,1,1,,14,1.5,8,17,0
-BA,PRDV0653,Strategy Analysis  ,1,1,,21,1.5,8,17,0
-BA,PRDV0642,Elicitation and Collaboration,1,1,,14,1.5,8,17,0
-BA,PRDV0644,Requirements Analysis & Design Definition,2,1,,21,1.5,8,17,0
-BA,PRDV0648,Requirements Life Cycle Management ,2,1,,14,1.5,8,17,0
-BA,PCOM0140,BA Capstone I,2,1,,35,1.5,8,17,1
-BA,PRDV0646,Solution Evaluation,3,1,,14,1.5,8,17,0
-BA,PRDV0141,BA Capstone Project ,3,1,,39,1.5,8,17,0
-GLM,SCMT0501,Fundamentals of Supply Chain,1,1,,21,1.5,8,17,0
-GLM,SCMT0502,"Supply Chain Strategy, Design, and Warehousing",1,1,,21,1.5,8,17,0
-GLM,PRDV0304,Intelligent Supply Chain,1,1,,15,1.5,8,17,0
-GLM,SCMT0503,Supply Chain Dynamics and Risks ,2,1,,15,1.5,8,17,0
-GLM,SCMT0504,"Foundations of Inventory, Operations, Planning and Control",2,1,,21,1.5,8,17,0
-GLM,SCMT0505,Fundamentals of Supply Chain Analytics ,3,1,,21,1.5,8,17,0
-GLM,PCOM0151,Capstone Project,3,1,,39,1.5,8,17,0
-FS,CMSK0150,Introduction to Web Development,1,2,,16,2,16,20,0
-FS,CMSK0151,HTML/CSS Fundamentals?,1,2,,16,2,16,20,0
-FS,CMSK0157,Introduction to Azure DevOps,1,2,,16,2,16,20,0
-FS,CMSK0154,Introduction to C#,1,2,,16,2,16,20,0
-FS,CMSK0152,Introduction to JavaScript,1,2,CMSK0151,16,2,16,20,0
-FS,PCOM0160,Full Stack - Web Development�Capstone Project,3,2,,50,2,16,20,0
-FS,CMSK0153,Introduction to Angular,2,2,,18,2,16,20,0
-FS,CMSK0200,Advanced C#?,2,2,,16,2,16,20,0
-FS,CMSK0201,Entity Framework Core Fundamentals ,2,2,CMSK0200,18,2,16,20,0
-FS,CMSK0203,RESTful Web Services using?.NET?Core,2,2,,16,2,16,20,0
-FS,CMSK0202,Advanced Angular,2,2,,18,2,16,20,0
-DXD,AVDM0165,Adobe Photoshop,1,2,,18,1.5,8,17,0
-DXD,DXDI0101,Digital Experience Design Basics I,1,2,,24,1.5,8,17,0
-DXD,DXDI0102,Digital Experience Design Basics II,1,2,DXDI0101,24,1.5,8,17,0
-DXD,AVDM0170,Adobe Illustrator Level I,2,2,,18,1.5,8,17,0
-DXD,AVDM0138,Adobe InDesign Level I,2,2,,18,1.5,8,17,0
-DXD,DXDI0103,User Interface Design I,2,2,,24,1.5,8,17,0
-DXD,DXDI0104,User Interface Design II,2,2,DXDI0103,24,1.5,8,17,0
-DXD,AVDM0238,Adobe InDesign Level II,3,2,,18,1.5,8,17,0
-DXD,AVDM0270,Adobe Illustrator Level II,3,2,,18,1.5,8,17,0
-DXD,DXDI9901,DXD Capstone,3,2,,45,1.5,8,17,0
-BK,ACCT0201,Bookkeeping Basics,1,1,,18,1.5,8,17,0
-BK,ACCT0202,Accounting Basics,1,1,,12,1.5,8,17,0
-BK,ACCT0203,Understanding Financial Statements,1,1,,12,1.5,8,17,0
-BK,ACCT0206,Controllership for SMEs ,2,1,,12,1.5,8,17,0
-BK,ACCT0210,Quickbooks,2,2,,28,1.5,8,17,0
-BK,ACCT0211,SAGE 50 & Data Analytics,2,2,,28,1.5,8,17,0
-BK,ACCT0208,Accounting for Entrepreneurs ,3,2,,21,1.5,8,17,0
-BK,ACCT9901,Integrated Case Studies in Accounting,3,2,,33,1.5,8,17,0
+BCOM,CMSK 0237,Google Suite Essentials,1,3,,12,1.5,8,17,0
+BCOM,SUPR 0837,Building an Engaged Workforce,1,1,,7,2,8,17,0
+BCOM,SUPR 0841,Change Management Fundamentals,1,1,,35,2,8,17,0
+BCOM,SUPR 0821,Foundations of Leadership I,2,1,,7,2,8,17,0
+BCOM,SUPR 0822,Foundations of Leadership II,2,1,,7,2,8,17,0
+BCOM,SUPR 0718,Coaching for Performance,2,1,,7,2,8,17,0
+BCOM,SUPR 0836,Hiring for success,2,1,,7,2,8,17,0
+BCOM,AVDM 0199,Digital Marketing  101,2,3,,3,2,8,17,0
+BCOM,PCOM 0106,Operations Management,2,1,,35,2,8,17,0
+BCOM,PCOM 0205,Fundamentals of Agile Methdology,3,1,,30,3,8,17,0
+BCOM,PCOM TBD,Story Telling,3,1,,21,1.5,8,17,0
+BCOM,PCOM 0207,Developing Your Emotional Intelligence,3,1,,6,2,8,17,0
+BCOM,AVDM 0260,WordPress for Web Page Publishing ,3,3,,6,1.5,8,17,0
+PM,PRDV 0201,The Basics of Project Management,1,1,,21,1.5,8,17,0
+PM,PRDV 0202,Project Scope and Quality,1,1,,14,1.5,8,17,0
+PM,PRDV 0203,Fundamentals of Project Planning ,1,1,,21,1.5,8,17,0
+PM,PRDV 0204,Working with Stakeholders ,2,1,,14,1.5,8,17,0
+PM,PRDV 0205,Leading and Managing a Team,2,1,,21,1.5,8,17,0
+PM,PCOM 0130,PM Capstone I,2,1,,21,1.5,8,17,1
+PM,PRDV 0206,Managing Risk on Projects,2,1,,14,1.5,8,17,0
+PM,PRDV 0207,Measuring and Reporting on Project Activity,3,1,,14,1.5,8,17,0
+PM,PRDV 0131,PM Capstone Project,3,1,,39,1.5,8,17,0
+BA,PRDV 0640,The Basics of Business Analysis,1,1,,21,1.5,8,17,0
+BA,PRDV 0652,Business Analysis Planning & Monitoring ,1,1,,14,1.5,8,17,0
+BA,PRDV 0653,Strategy Analysis  ,1,1,,21,1.5,8,17,0
+BA,PRDV 0642,Elicitation and Collaboration,1,1,,14,1.5,8,17,0
+BA,PRDV 0644,Requirements Analysis & Design Definition,2,1,,21,1.5,8,17,0
+BA,PRDV 0648,Requirements Life Cycle Management ,2,1,,14,1.5,8,17,0
+BA,PCOM 0140,BA Capstone I,2,1,,35,1.5,8,17,1
+BA,PRDV 0646,Solution Evaluation,3,1,,14,1.5,8,17,0
+BA,PRDV 0141,BA Capstone Project ,3,1,,39,1.5,8,17,0
+GLM,SCMT 0501,Fundamentals of Supply Chain,1,1,,21,1.5,8,17,0
+GLM,SCMT 0502,"Supply Chain Strategy, Design, and Warehousing",1,1,,21,1.5,8,17,0
+GLM,PRDV 0304,Intelligent Supply Chain,1,1,,15,1.5,8,17,0
+GLM,SCMT 0503,Supply Chain Dynamics and Risks ,2,1,,15,1.5,8,17,0
+GLM,SCMT 0504,"Foundations of Inventory, Operations, Planning and Control",2,1,,21,1.5,8,17,0
+GLM,SCMT 0505,Fundamentals of Supply Chain Analytics ,3,1,,21,1.5,8,17,0
+GLM,PCOM 0151,Capstone Project,3,1,,39,1.5,8,17,0
+FS,CMSK 0150,Introduction to Web Development,1,2,,16,2,16,20,0
+FS,CMSK 0151,HTML/CSS Fundamentals?,1,2,,16,2,16,20,0
+FS,CMSK 0157,Introduction to Azure DevOps,1,2,,16,2,16,20,0
+FS,CMSK 0154,Introduction to C#,1,2,,16,2,16,20,0
+FS,CMSK 0152,Introduction to JavaScript,1,2,CMSK0151,16,2,16,20,0
+FS,PCOM 0160,Full Stack - Web Development�Capstone Project,3,2,,50,2,16,20,0
+FS,CMSK 0153,Introduction to Angular,2,2,,18,2,16,20,0
+FS,CMSK 0200,Advanced C#?,2,2,,16,2,16,20,0
+FS,CMSK 0201,Entity Framework Core Fundamentals ,2,2,CMSK0200,18,2,16,20,0
+FS,CMSK 0203,RESTful Web Services using?.NET?Core,2,2,,16,2,16,20,0
+FS,CMSK 0202,Advanced Angular,2,2,,18,2,16,20,0
+DXD,AVDM 0165,Adobe Photoshop,1,2,,18,1.5,8,17,0
+DXD,DXDI 0101,Digital Experience Design Basics I,1,2,,24,1.5,8,17,0
+DXD,DXDI 0102,Digital Experience Design Basics II,1,2,DXDI0101,24,1.5,8,17,0
+DXD,AVDM 0170,Adobe Illustrator Level I,2,2,,18,1.5,8,17,0
+DXD,AVDM 0138,Adobe InDesign Level I,2,2,,18,1.5,8,17,0
+DXD,DXDI 0103,User Interface Design I,2,2,,24,1.5,8,17,0
+DXD,DXDI 0104,User Interface Design II,2,2,DXDI0103,24,1.5,8,17,0
+DXD,AVDM 0238,Adobe InDesign Level II,3,2,,18,1.5,8,17,0
+DXD,AVDM 0270,Adobe Illustrator Level II,3,2,,18,1.5,8,17,0
+DXD,DXDI 9901,DXD Capstone,3,2,,45,1.5,8,17,0
+BK,ACCT 0201,Bookkeeping Basics,1,1,,18,1.5,8,17,0
+BK,ACCT 0202,Accounting Basics,1,1,,12,1.5,8,17,0
+BK,ACCT 0203,Understanding Financial Statements,1,1,,12,1.5,8,17,0
+BK,ACCT 0206,Controllership for SMEs ,2,1,,12,1.5,8,17,0
+BK,ACCT 0210,Quickbooks,2,2,,28,1.5,8,17,0
+BK,ACCT 0211,SAGE 50 & Data Analytics,2,2,,28,1.5,8,17,0
+BK,ACCT 0208,Accounting for Entrepreneurs ,3,2,,21,1.5,8,17,0
+BK,ACCT 9901,Integrated Case Studies in Accounting,3,2,,33,1.5,8,17,0
