@@ -58,12 +58,6 @@ class MainWindow(QMainWindow):
         self.selected_date = self.ui.calendar.selectedDate()
         self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
 
-
-
-        # ADD START DATE!!!!!! :)))))))
-        self.schedule.update_start_date(self.date_time)
-
-
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
 
         ################## Data Page Buttons Clicked ################
@@ -636,6 +630,18 @@ class MainWindow(QMainWindow):
             return
         else:
             self.save_data()
+
+                    # ADD START DATE!!!!!! :)))))))
+            self.schedule.update_start_date(self.date_time)
+
+            self.schedule.schedule_all()
+            self.schedule_out = self.schedule.generate_out()
+
+            # POO POO LINE 640
+            self.populate_table(self.schedule_out)
+            
+
+            #sc.pretty_print_nested_dict(self.schedule_out)
 
     @pyqtSlot()
     def save_input(self):
