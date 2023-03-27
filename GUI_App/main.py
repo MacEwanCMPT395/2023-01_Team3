@@ -133,6 +133,10 @@ class MainWindow(QMainWindow):
         # Clear the current table view and repopulate it
         self.table_model.clear()
         self.table_fields()
+
+        # POO POO LINE 640
+        self.populate_table(self.schedule_out)
+
         header = self.table_view.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
@@ -302,9 +306,12 @@ class MainWindow(QMainWindow):
                         self.table_model.setItem(row, col, item)
 
     def increment_week(self):
-        if self.week < 13:
+        if self.week > 11:
+            self.week = 1
+        else:
             self.week += 1
-            self.ui.label_9.setText(f"Week {self.week}")
+
+        self.ui.label_9.setText(f"Week {self.week}")
 
     def decrement_week(self):
         if self.week > 1:
@@ -636,12 +643,10 @@ class MainWindow(QMainWindow):
 
             self.schedule.schedule_all()
             self.schedule_out = self.schedule.generate_out()
-
-            # POO POO LINE 640
-            self.populate_table(self.schedule_out)
+            
             
 
-            #sc.pretty_print_nested_dict(self.schedule_out)
+            sc.pretty_print_nested_dict(self.schedule_out)
 
     @pyqtSlot()
     def save_input(self):
