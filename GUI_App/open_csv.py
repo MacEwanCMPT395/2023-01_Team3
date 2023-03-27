@@ -44,5 +44,4 @@ with open(filename+'classrooms.csv') as csvfile:
 '''
 for i in programs:
     print(i.program_id, i.courselist,i.populations)
-
 '''
