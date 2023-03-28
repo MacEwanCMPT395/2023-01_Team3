@@ -167,7 +167,7 @@ class Schedule:
             the_program.courses.append(course_id)
             the_program.courselist[int(term)-1].append(course)
 
-        print(self.programs)
+        #print(self.programs)
 
 
     def update_classrooms(self, object):
@@ -178,7 +178,7 @@ class Schedule:
             print(temp_class.c_type)
             self.classrooms.append(temp_class)
 
-        print(self.classrooms)
+        #print(self.classrooms)
 
     def update_program_populations(self, object):
         for k,v in object.items():
@@ -235,7 +235,7 @@ class Schedule:
         Output: [(8, 8.5), (11, 13), (15, 17)]
         '''
 
-        if not data_ranges: return min_max
+        if not data_ranges: return [min_max]
         differences = []
 
         data_ranges = sorted(data_ranges, key=lambda x: x[0])
@@ -532,8 +532,6 @@ class Schedule:
 
         self.schedule = {classroom:copy.deepcopy(self.schedule_days) for classroom in self.classrooms}
 
-        leftover_cohorts = []
-        all_cohorts = []
         days = []
 
         cohorts_populations = []
@@ -564,28 +562,43 @@ class Schedule:
 
     def generate_out(self):
         raw_classes = self.get_raw_schedule()
-
+        #print(raw_classes)
         week_classes = {}
         for room, data in raw_classes.items():
-            counter = 1
-            old_monday = 0
-            for i, class_date in enumerate(sorted(data.keys())):
+            
+            class_id = room.classroom_id
+            dates = list(sorted(data.keys()))
+
+            sem_start = dates[0].weekday() + 1
+            old_monday_offset = 0
+            if sem_start != 0:
+                old_monday_offset = -(7 % sem_start)
+
+            sem_start = dates[0] + datetime.timedelta(days=old_monday_offset)
+
+            num_range = (dates[-1] - sem_start).days + 1
+
+            for single_date in range(num_range):
+                date = sem_start + datetime.timedelta(days=single_date)
+                if not date in dates:
+                    if not date.strftime("%A") in ["Friday", "Saturday", "Sunday"]:
+                        data[date] = []
+                        dates.append(date)
+
+            dates = sorted(dates)
+
+            week = 1
+            for i, class_date in enumerate(dates):
 
                 class_times = data[class_date]
                 
-                if class_date.weekday() == 0 and i != 0:
-                    if old_monday:
-                        counter += (class_date - old_monday).days // 7
-                    
-                    old_monday = class_date
-                    
-
-                week_name = "Week "+str(counter) 
+                if class_date.weekday() == 0:
+                    week_name = "Week "+ str(1 + (class_date-sem_start).days // 7)
 
                 if week_name not in week_classes:
                     week_classes[week_name] = {}
 
-                class_id = room.classroom_id
+                
                 if class_id not in week_classes[week_name]:
                     week_classes[week_name][class_id] = {}
                     week_classes[week_name][class_id]["Monday"] = []
