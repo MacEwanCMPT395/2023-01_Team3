@@ -223,7 +223,7 @@ class Schedule:
         #print(self.schedule)
         return None
     
-    def find_range_differences(min_max, data_ranges):
+    def find_range_differences(self, min_max, data_ranges):
         '''
         Use this function to find the times that are FREE.
         To use this function, you can call it like this:
