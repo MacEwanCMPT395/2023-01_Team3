@@ -167,7 +167,7 @@ class Schedule:
             the_program.courses.append(course_id)
             the_program.courselist[int(term)-1].append(course)
 
-        print(self.programs)
+        #print(self.programs)
 
 
     def update_classrooms(self, object):
@@ -178,7 +178,7 @@ class Schedule:
             print(temp_class.c_type)
             self.classrooms.append(temp_class)
 
-        print(self.classrooms)
+        #print(self.classrooms)
 
     def update_program_populations(self, object):
         for k,v in object.items():

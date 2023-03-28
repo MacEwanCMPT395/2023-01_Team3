@@ -676,7 +676,7 @@ class MainWindow(QMainWindow):
             
             
 
-            sc.pretty_print_nested_dict(self.schedule_out)
+            #sc.pretty_print_nested_dict(self.schedule_out)
 
     @pyqtSlot()
     def save_input(self):
