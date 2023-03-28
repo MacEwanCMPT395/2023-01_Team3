@@ -60,9 +60,11 @@ class Classroom:
         ctype = self.c_type
         return class_types[ctype]
 
+    def __str__(self):
+        return f"Classroom({self.classroom_id},{self.capacity},{lab})"
     def __repr__(self):
         lab = self.is_lab()
-        return str("\n"+self.classroom_id + " - " + lab + " - " + str(self.capacity))
+        return f"Classroom({self.classroom_id},{self.capacity},{lab})"
     
     
 
