@@ -231,9 +231,15 @@ class Schedule:
         data_ranges = [[8.5, 9], [9, 11], [13, 15]]
         differences = find_range_differences(range_to_compare, data_ranges)
         print(differences)
+
         Output: [(8, 8.5), (11, 13), (15, 17)]
         '''
+
+        if not data_ranges: return min_max
         differences = []
+
+        data_ranges = sorted(data_ranges, key=lambda x: x[0])
+        
         start = min_max[0]
 
         for data_range in data_ranges:
@@ -244,7 +250,7 @@ class Schedule:
         if start < min_max[1]:
             differences.append((start, min_max[1]))
         
-        return differences or [min_max]
+        return differences or []
 
     def find_range_overlaps(self, range_set1, range_set2, min_diff):
         '''
@@ -349,7 +355,9 @@ class Schedule:
 
                 times_sched = [element[0] for element in times]
                 if illegal_times:
-                    times_sched = times_sched + illegal_times[0][0]
+                    for time in illegal_times:
+                        if day in time[1]:
+                            times_sched = times_sched + time[0]
                 
                 free_time.append([day, self.find_range_differences(time_restraint, times_sched)])
 
@@ -603,8 +611,8 @@ class Schedule:
                     start_time = datetime.time(hour=start_hour, minute=start_minute).strftime('%I:%M %p')
                     end_time = datetime.time(hour=end_hour, minute=end_minute).strftime('%I:%M %p')
                     course = class_time[1].course_id + " - AS" + "{:02d}".format(class_time[2])
-                    week_classes[week_name][class_id][class_date.strftime("%A")].append({"course": course, "start_time": start_time, "end_time": end_time})
-
+                    week_classes[week_name][class_id][class_date.strftime("%A")].append({"course": course, "start_time": start_time, 
+                                                                                         "end_time": end_time, "department":class_time[1].department})
         return week_classes
 
 #newschedule = Schedule(programs, all_classrooms)
