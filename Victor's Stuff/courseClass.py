@@ -581,42 +581,39 @@ def read_csv(fileName, finalDegree, finalProgram):
     for i in range(len(df)):
 
         if (df.values[[i],[0]])[0] == 'PCOM':
-            finalDegree.core_courses["PCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalDegree.core_courses["PCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0],(df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'BCOM':
-            finalDegree.core_courses["BCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalDegree.core_courses["BCOM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'PM':
-            finalProgram.program_courses["PM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalProgram.program_courses["PM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'BA':
-            finalProgram.program_courses["BA"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalProgram.program_courses["BA"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'GLM':
-            finalProgram.program_courses["GLM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalProgram.program_courses["GLM"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'FS':
-            finalProgram.program_courses["FS"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalProgram.program_courses["FS"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'DXD':
-            finalProgram.program_courses["DXD"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalProgram.program_courses["DXD"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
         
         elif (df.values[[i],[0]])[0] == 'BK':
-            finalProgram.program_courses["BK"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+            finalProgram.program_courses["BK"].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
 
         else: # new program
             if  (df.values[[i],[0]])[0] in finalProgram.program_id:
-                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
             else:
                 finalProgram.program_id.append((df.values[[i],[0]])[0])
                 finalProgram.program_courses[(df.values[[i],[0]])[0]] = []
-                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0]))
+                finalProgram.program_courses[(df.values[[i],[0]])[0]].append(Course((df.values[[i],[1]])[0], (df.values[[i],[0]])[0], (df.values[[i],[5]])[0], 70, (df.values[[i],[3]])[0], (df.values[[i],[6]])[0], (df.values[[i],[7]])[0], (df.values[[i],[4]])[0], (df.values[[i],[8]])[0], (df.values[[i],[9]])[0]))
 
 
         # Note 70 is the max capacity we dont have a field for this so I just chose 70 for now
-        # Note to self remove empty dictionaries if there are any. (Check Degree, Check Program)
-        # del dictionary["key"]
-        # and delete id then from the id list 
 
     
 
