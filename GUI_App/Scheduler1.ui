@@ -81,8 +81,8 @@
          <rect>
           <x>20</x>
           <y>100</y>
-          <width>161</width>
-          <height>439</height>
+          <width>169</width>
+          <height>431</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -197,6 +197,22 @@
            </property>
            <property name="text">
             <string>Overflow Courses</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="export_schedule_btn">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Export Schedule CSV</string>
            </property>
           </widget>
          </item>

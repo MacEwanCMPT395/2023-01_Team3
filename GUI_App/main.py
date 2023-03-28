@@ -25,12 +25,14 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
+        self.schedule_created = False
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
 
         # create the data frames
-        self.df = pd.DataFrame  
+        #self.df = pd.DataFrame  
         self.df_rooms = pd.DataFrame
         self.df_programs = pd.DataFrame
         self.df_students = self.create_programs()
@@ -46,10 +48,10 @@ class MainWindow(QMainWindow):
         self.ui.load_data_button_students.clicked.connect(self.load_student_data)
         self.ui.load_data_button_room.clicked.connect(self.load_room_data)
         self.ui.load_data_button_program.clicked.connect(self.load_program_data)
-        # self.ui.calendar.clicked.connect(self.print_selected_date)
         self.ui.room_533_page_btn.clicked.connect(self.show533Page)
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
         self.ui.instructions_page_btn.clicked.connect(self.showInstructionsPage)
+        self.ui.export_schedule_btn.clicked.connect(self.write_csv)
         
 
         ###################### Calendar  ####################################
@@ -92,6 +94,7 @@ class MainWindow(QMainWindow):
         self.core_radio_btn.setGeometry(100, 40, 150, 30)
         self.core_radio_btn.setChecked(False)
 
+
         # Add a dropdown for selecting the class
         self.classroom_combo_box = QComboBox(self.ui.page2)
         self.classroom_combo_box.setGeometry(300, 40, 150, 30)
@@ -105,9 +108,7 @@ class MainWindow(QMainWindow):
         self.ui.next_button.clicked.connect(self.increment_week)
         self.ui.next_button.clicked.connect(self.refresh_table)
 
-        # TEst button for dispaying the tableview values
-        # self.display_btn = QPushButton("Display", self)
-        # self.display_btn.setGeometry(400, 580, 40, 20)
+ 
         self.ui.display_btn.clicked.connect(self.refresh_table)
 
         self.table_fields()
@@ -136,10 +137,7 @@ class MainWindow(QMainWindow):
     def refresh_table(self):
 
         if not bool(self.schedule_out):
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("You did not generate a schedule yet!")
-            msg.exec()
+            self.message_box("You did not generate a schedule yet!")
             return            
 
         # Clear the current table view and repopulate it
@@ -300,11 +298,12 @@ class MainWindow(QMainWindow):
                         end_time = datetime.datetime.strptime(course_data["end_time"], '%I:%M %p').time()
                         if datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
                                 datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
-
-                            # Check if the core radio btn is toggled. If it is we want to display only courses that are core
+                                                        # Check if the core radio btn is toggled. If it is we want to display only courses that are core
                             if self.core_radio_btn.isChecked():
-                                #print("radio btn checked")
-                                #print(course_data["course"])
+
+                                # print("radio btn checked")
+                                # print(course_data["course"])
+
                                 if course_data["course"] in core:
                                     course_in_cell = course_data["course"]
                                     break
@@ -395,10 +394,7 @@ class MainWindow(QMainWindow):
                 self.df_rooms = pd.read_excel(file_name)
 
             else:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path - RoomInfo.csv")
-                msg.exec()
+                self.message_box("Please enter the correct CSV file path - RoomInformation.csv")
                 return
 
             print(self.df_rooms)  # print the loaded dataframe
@@ -407,10 +403,8 @@ class MainWindow(QMainWindow):
             self.schedule.update_classrooms(self.df_rooms.values.tolist())
 
         else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Please enter the correct CSV file path")
-            msg.exec()
+            self.message_box("Please enter the correct CSV file path")
+
 
     # --------------------------------------------- #
     # ------------- LOAD PROGRAM DATA ------------- #
@@ -430,19 +424,14 @@ class MainWindow(QMainWindow):
                 self.df_programs = pd.read_excel(file_name)
 
             else:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path - ProgramsInformation.csv")
-                msg.exec()
+                self.message_box("Please enter the correct CSV file path - ProgramsInformation.csv")
                 return
 
             self.schedule.update_programs(self.df_programs.values.tolist())
 
         else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Please enter a CSV file path")
-            msg.exec()
+            self.message_box("Please enter a CSV file path")
+
 
     # --------------------------------------- #
     # ------------- LOAD STUDENT DATA ------- #
@@ -460,20 +449,15 @@ class MainWindow(QMainWindow):
             elif file_name.endswith('StudentsInfo.xls') or file_name.endswith('StudentsInformation.xlsx'):
                 self.update_enrollment(file_name)
             else:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Icon.Warning)
-                msg.setText("Please enter the correct CSV file path - StudentsInformation.csv")
-                msg.exec()
+                self.message_box("Please enter the correct CSV file path - StudentsInformation.csv")
                 return
 
             print(self.df_students)  # print the loaded dataframe
             self.updateProgramsFields()
             
         else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("Please enter a CSV file path")
-            msg.exec()
+            self.message_box("Please enter a CSV file path")
+
 
     ####################### Menu BUttons #################################
     @pyqtSlot()
@@ -593,16 +577,10 @@ class MainWindow(QMainWindow):
                 try:
                     num = int(text)
                     if num < 0:
-                        msg = QMessageBox()
-                        msg.setIcon(QMessageBox.Icon.Warning)
-                        msg.setText("Please input only numbers 0 or higher in the text fields")
-                        msg.exec()
+                        self.message_box("Please input only numbers 0 or higher in the text fields")
                         return False
                 except ValueError:
-                    msg = QMessageBox()
-                    msg.setIcon(QMessageBox.Icon.Warning)
-                    msg.setText("Please input only numbers 0 or higher in the text fields")
-                    msg.exec()
+                    self.message_box("Please input only numbers 0 or higher in the text fields")
                     return False
         return True
 
@@ -659,24 +637,100 @@ class MainWindow(QMainWindow):
     def generate_schedule(self):
         
 
-        if self.date_time.date() <= datetime.datetime.now().date() :
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText("You did not select a valid Semester Start Date")
-            msg.exec()
+        if self.date_time.date() <= datetime.datetime.now().date():
+            self.message_box("You did not select a valid Semester Start Date")
             return
         else:
             self.save_data()
 
-                    # ADD START DATE!!!!!! :)))))))
+            
             self.schedule.update_start_date(self.date_time)
 
             self.schedule.schedule_all()
             self.schedule_out = self.schedule.generate_out()
-            
-            
 
-            #sc.pretty_print_nested_dict(self.schedule_out)
+            #failed classes page
+            failed_courses = self.schedule.failed
+            self.display_failed_classes(failed_courses)
+
+            #online classes page
+            self.display_online_room()
+            self.schedule_created = True
+
+            #change generate schedule button green 
+            self.ui.generate_schedule_btn.setText("Generate Schedule ✔")
+            self.ui.generate_schedule_btn.setStyleSheet("background-color: green")
+
+
+    #=======================================================
+    #================= Display failed classes ==============
+    def display_failed_classes(self, list):
+        self.ui.text_534.append("The following courses could not be scheduled due to capacity issues:\n")
+        for item in list:
+            str_item = [str(c) for c in item] # Convert all elements to strings
+            self.ui.text_534.append('\n'.join(str_item))
+
+    #=======================================================
+    #================= Display online classes ==============
+
+    def display_online_room(self):
+        text_edit = self.ui.text_533
+        text_edit.clear()
+        
+        if 'Online' not in self.schedule_out.get('Week 1', {}):
+            text_edit.append("No online courses were scheduled in Week 1.")
+            return
+        
+        for i in range(1,14):
+            online_rooms = self.schedule_out[f'Week {i}']['Online']
+            if len(online_rooms['Monday']) == 0:
+                continue
+            text_edit.append(f"<b>\nThe following online courses were scheduled in Week {i}:</b>\n")            
+
+            for day, courses in online_rooms.items():
+                if not courses:
+                    continue
+
+                text_edit.append(f"\n{day.capitalize()}:")
+                for course in courses:
+                    course_name = course.get('course', '')
+                    start_time = course.get('start_time', '')
+                    end_time = course.get('end_time', '')
+                    text_edit.append(f"\n{start_time} - {end_time}: {course_name}\n")
+
+    ########################## CSV Writer ######################################
+    ###########################################################################
+
+    def write_csv(self):
+        dictionary = self.schedule_out
+        if not self.schedule_created:
+                self.message_box("Schedule is not yet created!")
+                return
+        
+        filename, ok = QInputDialog.getText(self, "Choose a file name:", "File name:")
+        
+        if ok and filename:
+            filename += ".csv"
+            with open(filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Week', 'Room', 'Day', 'Course', 'Start Time', 'End Time'])
+                for week, week_data in dictionary.items():
+                    for room, room_data in week_data.items(): 
+                        for day, day_data in room_data.items():
+                            for course in day_data:
+                                course_name = course['course']
+                                start_time = course['start_time']
+                                end_time = course['end_time']
+                                writer.writerow([week, room, day, course_name, start_time, end_time])
+        self.message_box("Schedule Exported to CSV")
+
+    ############################ Message box function #########################################
+
+    def message_box(self, string):
+        msg = QMessageBox()
+        msg.setWindowTitle("Warning")
+        msg.setText(f"{string}")
+        msg.exec()
 
     @pyqtSlot()
     def save_input(self):
@@ -776,10 +830,8 @@ class MainWindow(QMainWindow):
         if ok_pressed:
             # Check if room number already exists in the dataframe
             if room in self.df_rooms['Classroom #'].values:
-                msg = QMessageBox()
-                msg.setWindowTitle("Warning")
-                msg.setText(f"Room number '{room}' already exists!")
-                msg.exec()
+                self.message_box(f"Room number '{room}' already exists!")
+
             else:
                 capacity, ok_pressed = QInputDialog.getInt(self, "Add Room", "Capacity:")
                 if ok_pressed and capacity > 0:
