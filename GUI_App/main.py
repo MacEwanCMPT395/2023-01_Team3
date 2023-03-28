@@ -6,7 +6,7 @@ from courseClass import *
 
 from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, \
-    QComboBox, QSizePolicy, QHeaderView, QRadioButton
+    QComboBox, QSizePolicy, QHeaderView, QRadioButton, QButtonGroup
 from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths, QDate
 
@@ -89,10 +89,29 @@ class MainWindow(QMainWindow):
         # Set the size policy of the table view
         self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+        # Create a button group for the radio buttons
+        self.radio_group = QButtonGroup(self.ui.page2)
+
         # Add a core radio button for selecting the display mode
-        self.core_radio_btn = QRadioButton("Core", self.ui.page2)
+        self.core_radio_btn = QRadioButton("Core Courses", self.ui.page2)
         self.core_radio_btn.setGeometry(100, 40, 150, 30)
         self.core_radio_btn.setChecked(False)
+        self.radio_group.addButton(self.core_radio_btn)
+
+        # Add a program specific radio button for selecting the display mode
+        self.ps_radio_btn = QRadioButton("Program Specific Courses", self.ui.page2)
+        self.ps_radio_btn.setGeometry(100, 20, 150, 30)
+        self.ps_radio_btn.setChecked(False)
+        self.radio_group.addButton(self.ps_radio_btn)
+
+        # Add 'All' button for selecting the display mode
+        self.all_radio_btn = QRadioButton("All Courses", self.ui.page2)
+        self.all_radio_btn.setGeometry(100, 0, 150, 30)
+        self.all_radio_btn.setChecked(True)
+        self.radio_group.addButton(self.all_radio_btn)
+
+        # Connect the buttonClicked signal of the button group to a function
+        self.radio_group.buttonClicked.connect(self.radio_button_click)
 
 
         # Add a dropdown for selecting the class
@@ -301,14 +320,21 @@ class MainWindow(QMainWindow):
                                                         # Check if the core radio btn is toggled. If it is we want to display only courses that are core
                             if self.core_radio_btn.isChecked():
 
-                                # print("radio btn checked")
-                                # print(course_data["course"])
+                                print("radio btn checked")
+                                print(course_data["department"])
 
-                                if course_data["course"] in core:
+                                if course_data["department"] == "PCOM" or course_data["department"] == "BCOM":
+                                    course_in_cell = course_data["course"]
+                                    break
+                            elif self.ps_radio_btn.isChecked():
+                                print("program specific btn checked")
+                                print(course_data["department"])
+
+                                if course_data["department"] != "PCOM" and course_data["department"] != "BCOM":
                                     course_in_cell = course_data["course"]
                                     break
                             else:
-                                #print("radio btn unchecked")
+                                print("radio btn unchecked")
                                 course_in_cell = course_data["course"]
                                 break
                     if course_in_cell:
@@ -346,6 +372,12 @@ class MainWindow(QMainWindow):
             self.week = 14
             
         self.ui.label_9.setText(f"Week {self.week}")
+
+    def radio_button_click(self, radioButton):
+        # Uncheck every other button in this group
+        for button in self.radio_group.buttons():
+            if button is not radioButton:
+                button.setChecked(False)
 
     @pyqtSlot()
     def browse_student_file(self, line_edit):
