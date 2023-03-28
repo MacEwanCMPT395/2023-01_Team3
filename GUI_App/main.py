@@ -303,13 +303,13 @@ class MainWindow(QMainWindow):
 
                             # Check if the core radio btn is toggled. If it is we want to display only courses that are core
                             if self.core_radio_btn.isChecked():
-                                print("radio btn checked")
-                                print(course_data["course"])
+                                #print("radio btn checked")
+                                #print(course_data["course"])
                                 if course_data["course"] in core:
                                     course_in_cell = course_data["course"]
                                     break
                             else:
-                                print("radio btn unchecked")
+                                #print("radio btn unchecked")
                                 course_in_cell = course_data["course"]
                                 break
                     if course_in_cell:
@@ -333,7 +333,7 @@ class MainWindow(QMainWindow):
                         self.table_model.setItem(row, col, item)
 
     def increment_week(self):
-        if self.week > 11:
+        if self.week > 14:
             self.week = 1
         else:
             self.week += 1
@@ -343,7 +343,10 @@ class MainWindow(QMainWindow):
     def decrement_week(self):
         if self.week > 1:
             self.week -= 1
-            self.ui.label_9.setText(f"Week {self.week}")
+        else:
+            self.week = 14
+            
+        self.ui.label_9.setText(f"Week {self.week}")
 
     @pyqtSlot()
     def browse_student_file(self, line_edit):
