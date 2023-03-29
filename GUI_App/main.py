@@ -273,7 +273,7 @@ class MainWindow(QMainWindow):
     # Increment the week selected --> Connected to the ui.next_button
     # Week will loop back around to "Week 1" if passes "Week 14"
     def increment_week(self):
-        if self.week > 14:
+        if self.week > 13:
             self.week = 1
         else:
             self.week += 1
@@ -613,11 +613,11 @@ class MainWindow(QMainWindow):
         self.ui.text_534.append(
             "The following courses could not be scheduled in their entirety due to capacity issues:\n")
         out_string = ""
-        failed_reasons = ["Too many hours for the semester (expand date range or reduce course hours)",
-                          "Not enough room in the schedule (add more classrooms)",
-                          "Could not create enough cohorts due to physical class bottleneck (add more classrooms)"]
+        failed_reasons = ["\tToo many hours for the semester (expand date range or reduce course hours)",
+                          "\tNot enough room in the schedule (add more classrooms)",
+                          "\tCould not create enough cohorts due to physical class bottleneck (add more classrooms)"]
         for item in list:
-            out_string += f"{item[0]}:\n{failed_reasons[item[1] - 1]}\n"
+            out_string += f"{item[0]}:\n{failed_reasons[item[1] - 1]}\n\n"
         self.ui.text_534.append(out_string)
 
     # =======================================================

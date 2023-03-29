@@ -44,9 +44,16 @@ def create_semester_dates(start_date):
                 cancellations[date+datetime.timedelta(days=i)] = "Reading Week"
 
     # Create a loop for this. we can maybe create another CSV file for this.
-    cancellations[datetime.date(year,9,30)+datetime.timedelta(days=(7 % datetime.date(year,9,30).weekday()))] = "National Day for Truth and Reconciliation"
+    target_date = datetime.date(year,9,30)
 
+    if target_date.weekday() >= 5: # Saturday or Sunday
+        target_date += datetime.timedelta(days=((7 % target_date.weekday())))
+    
+    cancellations[target_date] = "National Day for Truth and Reconciliation"
+    
     days_of_week = {
+
+
         "Monday":{},
         "Tuesday":{},
         "Wednesday":{},
