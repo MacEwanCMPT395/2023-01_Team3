@@ -1,4 +1,4 @@
-﻿Name,Student ID,Degree,Program ,Term Student
+﻿Name,Student ID,Degree,Program,Term
 
 Vlad,21121,PCOM,PM,1
 Vlad,21121,PCOM,PM,1
@@ -6,31 +6,31 @@ Vlad,21121,PCOM,PM,1
 Vlad,21121,PCOM,PM,1
 Vlad,21121,PCOM,PM,1
 Richard,223350,BCOM,BA,1
-Richard,223351,BCOM,BA,1
-Richard,223357,BCOM,BA,1
-Richard,223358,BCOM,BA,1
-Richard,223359,BCOM,BA,1
+Richard,223351,BCOM,BA,2
+Richard,223357,BCOM,BA,2
+Richard,223358,BCOM,BA,2
+Richard,223359,BCOM,BA,2
 Graham,1232,PCOM,BA,1
 Graham,1233,PCOM,BA,1
 Graham,1234,PCOM,BA,1
-Graham,1230,PCOM,BA,1
-Graham,1231,PCOM,BA,1
-Graham,1232,PCOM,BA,1
-Graham,1233,PCOM,BA,1
+Graham,1230,PCOM,BA,2
+Graham,1231,PCOM,BA,2
+Graham,1232,PCOM,BA,2
+Graham,1233,PCOM,BA,2
 Sage,1,PCOM,GLM,1
 Sage,1,PCOM,GLM,1
 Sage,1,PCOM,GLM,1
-Sage,1,PCOM,GLM,1
-Sage,1,PCOM,GLM,1
-Sage,1,PCOM,GLM,1
+Sage,1,PCOM,GLM,2
+Sage,1,PCOM,GLM,2
+Sage,1,PCOM,GLM,3
 Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
-Victor,323,PCOM,FS,1
+Victor,323,PCOM,FS,3
+Victor,323,PCOM,FS,3
+Victor,323,PCOM,FS,3
+Victor,323,PCOM,FS,3
+Victor,323,PCOM,FS,3
+Victor,323,PCOM,FS,3
+Victor,323,PCOM,FS,3
 Vlad,223,BCOM,BA,2
 Vlad,223,BCOM,BA,2
 Vlad,223,BCOM,BA,2
