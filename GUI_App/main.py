@@ -2,11 +2,13 @@ import datetime
 
 import sys
 
+from PyQt6.uic.Compiler.qtproxies import QtGui
+
 from courseClass import *
 
-from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
+from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor, QFont
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog, QLineEdit, QTableView, QMessageBox, \
-    QComboBox, QSizePolicy, QHeaderView, QRadioButton
+    QComboBox, QSizePolicy, QHeaderView, QRadioButton, QButtonGroup
 from PyQt6.QtWidgets import QDialog, QLabel, QInputDialog
 from PyQt6.QtCore import pyqtSlot, QFile, QTextStream, QDir, Qt, QStandardPaths, QDate
 
@@ -32,12 +34,12 @@ class MainWindow(QMainWindow):
         self.setFixedSize(self.size())
 
         # create the data frames
-        #self.df = pd.DataFrame  
+        # self.df = pd.DataFrame
         self.df_rooms = pd.DataFrame
         self.df_programs = pd.DataFrame
         self.df_students = self.create_programs()
 
-        self.schedule = sc.Schedule([],[])
+        self.schedule = sc.Schedule([], [])
         self.schedule_out = {}
 
         self.ui.stackedWidget.setCurrentWidget(self.ui.page9)
@@ -52,13 +54,13 @@ class MainWindow(QMainWindow):
         self.ui.room_534_page_btn.clicked.connect(self.show534Page)
         self.ui.instructions_page_btn.clicked.connect(self.showInstructionsPage)
         self.ui.export_schedule_btn.clicked.connect(self.write_csv)
-        
 
         ###################### Calendar  ####################################
 
         self.ui.calendar.clicked.connect(self.on_calendar_clicked)
         self.selected_date = self.ui.calendar.selectedDate()
-        self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
+        self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(),
+                                           self.selected_date.day())
 
         self.ui.rooms_page_btn.clicked.connect(self.showRoomsPage)
 
@@ -85,15 +87,48 @@ class MainWindow(QMainWindow):
         self.table_view.setGeometry(100, 70, 700, 500)
         self.table_model = QStandardItemModel()
         self.table_view.setModel(self.table_model)
+        self.table_view.setStyleSheet("QTableWidget::item {border: 0px; padding: 5px;}")
+
+        # Styling Headers for tableview
+        self.table_view.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: silver}");
+        self.table_view.verticalHeader().setStyleSheet("QHeaderView::section { background-color: silver}");
+
+        # Font styles
+        self.font = QFont()
+        self.font.setBold(True)
+
+        self.ui.label_9.setFont(self.font)
+        self.ui.label_9.setGeometry(460, 610, 50, 50)
 
         # Set the size policy of the table view
         self.table_view.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+        # Create a button group for the radio buttons
+        self.radio_group = QButtonGroup(self.ui.page2)
+
         # Add a core radio button for selecting the display mode
-        self.core_radio_btn = QRadioButton("Core", self.ui.page2)
+        self.core_radio_btn = QRadioButton("Core Courses", self.ui.page2)
+        self.core_radio_btn.setFont(self.font)
         self.core_radio_btn.setGeometry(100, 40, 150, 30)
         self.core_radio_btn.setChecked(False)
+        self.radio_group.addButton(self.core_radio_btn)
 
+        # Add a program specific radio button for selecting the display mode
+        self.ps_radio_btn = QRadioButton("Program Courses", self.ui.page2)
+        self.ps_radio_btn.setFont(self.font)
+        self.ps_radio_btn.setGeometry(100, 20, 150, 30)
+        self.ps_radio_btn.setChecked(False)
+        self.radio_group.addButton(self.ps_radio_btn)
+
+        # Add 'All' button for selecting the display mode
+        self.all_radio_btn = QRadioButton("All Courses", self.ui.page2)
+        self.all_radio_btn.setFont(self.font)
+        self.all_radio_btn.setGeometry(100, 0, 150, 30)
+        self.all_radio_btn.setChecked(True)
+        self.radio_group.addButton(self.all_radio_btn)
+
+        # Connect the buttonClicked signal of the button group to a function
+        self.radio_group.buttonClicked.connect(self.radio_button_click)
 
         # Add a dropdown for selecting the class
         self.classroom_combo_box = QComboBox(self.ui.page2)
@@ -108,7 +143,6 @@ class MainWindow(QMainWindow):
         self.ui.next_button.clicked.connect(self.increment_week)
         self.ui.next_button.clicked.connect(self.refresh_table)
 
- 
         self.ui.display_btn.clicked.connect(self.refresh_table)
 
         self.table_fields()
@@ -122,7 +156,7 @@ class MainWindow(QMainWindow):
 
         # ----------------- list of lists of text field values------------------
         self.new_list = []
-    
+
     ####################### Calendar function ###################################
 
     @pyqtSlot(QDate)
@@ -131,20 +165,20 @@ class MainWindow(QMainWindow):
         self.ui.selected_date_label.setText(f"Date selected: {date.toString()}")
         self.selected_date = date
         print(self.selected_date)
-        self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
+        self.date_time = datetime.datetime(self.selected_date.year(), self.selected_date.month(),
+                                           self.selected_date.day())
         print(self.date_time)
 
+    # Method to clear and repopulate the table --> Connected to the "Display" button
     def refresh_table(self):
 
         if not bool(self.schedule_out):
             self.message_box("You did not generate a schedule yet!")
-            return            
+            return
 
-        # Clear the current table view and repopulate it
+            # Clear the current table view and repopulate it
         self.table_model.clear()
         self.table_fields()
-
-        # POO POO LINE 640
         self.populate_table(self.schedule_out)
 
         header = self.table_view.horizontalHeader()
@@ -153,6 +187,7 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
 
+    # Fills in the headers (rows and columns) of the tableview with the Day (Mon, Tues...) and times (8:00,...)
     def table_fields(self):
         # Create table with rows from 8:00am to 10pm incrementing by 30 minutes
         rows = []
@@ -174,98 +209,9 @@ class MainWindow(QMainWindow):
         # Keep track of colors and testing dictionary
         course_color = {}
 
-    def populate_table(self,class_dict):
-        '''
-        classes = {
-            "Term 1": {
-                "Week 1": {
-                    "11-534": {
-                        "monday": [
-                            {"course": "Math 534A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "Science 534A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "English 534A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ],
-                        "tuesday": [
-                            {"course": "History 534A", "start_time": "09:00 AM", "end_time": "10:30 AM"},
-                            {"course": "Math 534A", "start_time": "01:00 PM", "end_time": "02:30 PM"},
-                            {"course": "Science 534A", "start_time": "03:00 PM", "end_time": "04:30 PM"}
-                        ],
-                        "wednesday": [
-                            {"course": "English 534A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "History 534A", "start_time": "11:00 AM", "end_time": "12:30 PM"}
-                        ],
-                        "thursday": [
-                            {"course": "Math 534A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "Science 534A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ]
-                    },
-                    "11-560": {
-                        "monday": [
-                            {"course": "Math 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "Science 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "English 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ],
-                        "tuesday": [
-                            {"course": "History 560A", "start_time": "09:00 AM", "end_time": "10:30 AM"},
-                            {"course": "Math 560A", "start_time": "01:00 PM", "end_time": "02:30 PM"},
-                            {"course": "Science 560A", "start_time": "03:00 PM", "end_time": "04:30 PM"}
-                        ],
-                        "wednesday": [
-                            {"course": "English 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "History 560A", "start_time": "11:00 AM", "end_time": "12:30 PM"}
-                        ],
-                        "thursday": [
-                            {"course": "Math 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "Science 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ]
-                    }
-                },
-                "Week 2": {
-                    "11-534": {
-                        "monday": [
-                            {"course": "Math 534B", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "Science 534B", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "English 534B", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ],
-                        "tuesday": [
-                            {"course": "History 534B", "start_time": "09:00 AM", "end_time": "10:30 AM"},
-                            {"course": "Math 534B", "start_time": "01:00 PM", "end_time": "02:30 PM"},
-                            {"course": "Science 534B", "start_time": "03:00 PM", "end_time": "04:30 PM"}
-                        ],
-                        "wednesday": [
-                            {"course": "English 534B", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "History 534B", "start_time": "11:00 AM", "end_time": "12:30 PM"}
-                        ],
-                        "thursday": [
-                            {"course": "Math 534B", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "Science 534B", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ]
-                    },
-                    "11-560": {
-                        "monday": [
-                            {"course": "Math 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "Science 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "English 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ],
-                        "tuesday": [
-                            {"course": "History 560A", "start_time": "09:00 AM", "end_time": "10:30 AM"},
-                            {"course": "Math 560A", "start_time": "01:00 PM", "end_time": "02:30 PM"},
-                            {"course": "Science 560A", "start_time": "03:00 PM", "end_time": "04:30 PM"}
-                        ],
-                        "wednesday": [
-                            {"course": "English 560A", "start_time": "08:00 AM", "end_time": "09:30 AM"},
-                            {"course": "History 560A", "start_time": "11:00 AM", "end_time": "12:30 PM"}
-                        ],
-                        "thursday": [
-                            {"course": "Math 560A", "start_time": "10:00 AM", "end_time": "11:30 AM"},
-                            {"course": "Science 560A", "start_time": "02:00 PM", "end_time": "03:30 PM"}
-                        ]
-                    }
-                }
-            }
-        }
-        '''
-
+    # Schedule the courses from dictionary, corresponding to the week selected and the classroom selected into the
+    # tableview
+    def populate_table(self, class_dict):
         # Create table with rows from 8:00am to 10pm incrementing by 30 minutes
         rows = []
         row_labels = []
@@ -277,14 +223,8 @@ class MainWindow(QMainWindow):
 
         # Create table with columns from Monday to Thursday
         columns = ["Monday", "Tuesday", "Wednesday", "Thursday"]
-        
-        course_color = {}
 
-        # testing Core course list
-        core = ["PCOM0101", "PCOM0105", "PCOM0107", "CMSK0233", "CMSK0235", "PCOM0102", "PCOM0201", "PCOM 0108 - AS01",
-                "PCOM0202", "PCOM0103", "PCOM0109", "PCOM0203", "SUPR0751", "PCOM0204", "CMSK0237", "SUPR0837",
-                "SUPR0841", "SUPR0821", "SUPR0822", "SUPR0718", "SUPR0836", "AVDM0199", "PCOM0106", "PCOM0205",
-                "PCOMTBD", "PCOM0207", "SUPR0863", "PCOM0206", "AVDM0260", "PRDV0304 - AS02"]
+        course_color = {}
 
         # Iterate through each row and column of the table model and set dummy text
         for row in range(len(rows)):
@@ -298,17 +238,16 @@ class MainWindow(QMainWindow):
                         end_time = datetime.datetime.strptime(course_data["end_time"], '%I:%M %p').time()
                         if datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() >= start_time and \
                                 datetime.datetime.strptime(rows[row][0], '%H:%M:%S').time() < end_time:
-                                                        # Check if the core radio btn is toggled. If it is we want to display only courses that are core
+                            # Check if the core radio btn is toggled. If it is we want to display only courses that are core
                             if self.core_radio_btn.isChecked():
-
-                                # print("radio btn checked")
-                                # print(course_data["course"])
-
-                                if course_data["course"] in core:
+                                if course_data["department"] == "PCOM" or course_data["department"] == "BCOM":
+                                    course_in_cell = course_data["course"]
+                                    break
+                            elif self.ps_radio_btn.isChecked():
+                                if course_data["department"] != "PCOM" and course_data["department"] != "BCOM":
                                     course_in_cell = course_data["course"]
                                     break
                             else:
-                                #print("radio btn unchecked")
                                 course_in_cell = course_data["course"]
                                 break
                     if course_in_cell:
@@ -331,6 +270,8 @@ class MainWindow(QMainWindow):
                         # Set the item in the table model
                         self.table_model.setItem(row, col, item)
 
+    # Increment the week selected --> Connected to the ui.next_button
+    # Week will loop back around to "Week 1" if passes "Week 14"
     def increment_week(self):
         if self.week > 13:
             self.week = 1
@@ -339,13 +280,22 @@ class MainWindow(QMainWindow):
 
         self.ui.label_9.setText(f"Week {self.week}")
 
+    # Decrement the week selected --> Connected to the ui.prev_button
+    # Week will loop back around to "Week 14" if decreases past "Week 1"
     def decrement_week(self):
         if self.week > 1:
             self.week -= 1
         else:
             self.week = 14
-            
+
         self.ui.label_9.setText(f"Week {self.week}")
+
+    # If a radio button is selected, all other radio buttons will be de-selected
+    def radio_button_click(self, radioButton):
+        # Uncheck every other button in this group
+        for button in self.radio_group.buttons():
+            if button is not radioButton:
+                button.setChecked(False)
 
     @pyqtSlot()
     def browse_student_file(self, line_edit):
@@ -353,13 +303,14 @@ class MainWindow(QMainWindow):
                                                    "CSV files (*.csv);;Excel files (*.xls *.xlsx)")
         if file_name:
             self.ui.file_name_input.setText(file_name)
-    
+
     @pyqtSlot()
     def browse_room_file(self, line_edit):
         file_name, _ = QFileDialog.getOpenFileName(self, "Select file", "",
                                                    "CSV files (*.csv);;Excel files (*.xls *.xlsx)")
         if file_name:
             self.ui.file_name_input_room.setText(file_name)
+
     @pyqtSlot()
     def browse_program_file(self, line_edit):
         file_name, _ = QFileDialog.getOpenFileName(self, "Select file", "",
@@ -399,12 +350,11 @@ class MainWindow(QMainWindow):
 
             print(self.df_rooms)  # print the loaded dataframe
             self.update_rooms()
-            
+
             self.schedule.update_classrooms(self.df_rooms.values.tolist())
 
         else:
             self.message_box("Please enter the correct CSV file path")
-
 
     # --------------------------------------------- #
     # ------------- LOAD PROGRAM DATA ------------- #
@@ -432,7 +382,6 @@ class MainWindow(QMainWindow):
         else:
             self.message_box("Please enter a CSV file path")
 
-
     # --------------------------------------- #
     # ------------- LOAD STUDENT DATA ------- #
     # --------------------------------------- #
@@ -454,10 +403,9 @@ class MainWindow(QMainWindow):
 
             print(self.df_students)  # print the loaded dataframe
             self.updateProgramsFields()
-            
+
         else:
             self.message_box("Please enter a CSV file path")
-
 
     ####################### Menu BUttons #################################
     @pyqtSlot()
@@ -620,7 +568,7 @@ class MainWindow(QMainWindow):
         output_dict = {key: list(values.values()) for key, values in output_dict.items()}
 
         self.schedule.update_program_populations(output_dict)
-        
+
         print(self.df_students)
 
     @pyqtSlot()
@@ -628,14 +576,13 @@ class MainWindow(QMainWindow):
 
         if self.input_check():
             self.update_data()
-                # print(self.df[0])
+            # print(self.df[0])
         else:
             return
-    
+
     ######################## Generate Schedule ###########################
     @pyqtSlot()
     def generate_schedule(self):
-        
 
         if self.date_time.date() <= datetime.datetime.now().date():
             self.message_box("You did not select a valid Semester Start Date")
@@ -643,53 +590,52 @@ class MainWindow(QMainWindow):
         else:
             self.save_data()
 
-            
             self.schedule.update_start_date(self.date_time)
 
             self.schedule.schedule_all()
             self.schedule_out = self.schedule.generate_out()
 
-            #failed classes page
+            # failed classes page
             failed_courses = self.schedule.failed
             self.display_failed_classes(failed_courses)
 
-            #online classes page
+            # online classes page
             self.display_online_room()
             self.schedule_created = True
 
-            #change generate schedule button green 
+            # change generate schedule button green
             self.ui.generate_schedule_btn.setText("Generate Schedule ✔")
             self.ui.generate_schedule_btn.setStyleSheet("background-color: green")
 
-
-    #=======================================================
-    #================= Display failed classes ==============
+    # =======================================================
+    # ================= Display failed classes ==============
     def display_failed_classes(self, list):
-        self.ui.text_534.append("The following courses could not be scheduled in their entirety due to capacity issues:\n")
+        self.ui.text_534.append(
+            "The following courses could not be scheduled in their entirety due to capacity issues:\n")
         out_string = ""
         failed_reasons = ["Too many hours for the semester (expand date range or reduce course hours)",
                           "Not enough room in the schedule (add more classrooms)",
                           "Could not create enough cohorts due to physical class bottleneck (add more classrooms)"]
         for item in list:
-            out_string += f"{item[0]}:\n{failed_reasons[item[1]-1]}\n"
+            out_string += f"{item[0]}:\n{failed_reasons[item[1] - 1]}\n"
         self.ui.text_534.append(out_string)
 
-    #=======================================================
-    #================= Display online classes ==============
+    # =======================================================
+    # ================= Display online classes ==============
 
     def display_online_room(self):
         text_edit = self.ui.text_533
         text_edit.clear()
-        
+
         if 'Online' not in self.schedule_out.get('Week 1', {}):
             text_edit.append("No online courses were scheduled in Week 1.")
             return
-        
-        for i in range(1,14):
+
+        for i in range(1, 14):
             online_rooms = self.schedule_out[f'Week {i}']['Online']
             if len(online_rooms['Monday']) == 0:
                 continue
-            text_edit.append(f"<b>\nThe following online courses were scheduled in Week {i}:</b>\n")            
+            text_edit.append(f"<b>\nThe following online courses were scheduled in Week {i}:</b>\n")
 
             for day, courses in online_rooms.items():
                 if not courses:
@@ -708,18 +654,18 @@ class MainWindow(QMainWindow):
     def write_csv(self):
         dictionary = self.schedule_out
         if not self.schedule_created:
-                self.message_box("Schedule is not yet created!")
-                return
-        
+            self.message_box("Schedule is not yet created!")
+            return
+
         filename, ok = QInputDialog.getText(self, "Choose a file name:", "File name:")
-        
+
         if ok and filename:
             filename += ".csv"
             with open(filename, mode='w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Week', 'Room', 'Day', 'Course', 'Start Time', 'End Time'])
                 for week, week_data in dictionary.items():
-                    for room, room_data in week_data.items(): 
+                    for room, room_data in week_data.items():
                         for day, day_data in room_data.items():
                             for course in day_data:
                                 course_name = course['course']
@@ -801,7 +747,7 @@ class MainWindow(QMainWindow):
                     elif term == '3':
                         self.df_students.loc[degree, '3rd Term Students'] += 1
                         self.df_students.loc[program, '3rd Term Students'] += 1
-        
+
         output_dict = self.df_students.to_dict(orient='index')
         output_dict = {key: list(values.values()) for key, values in output_dict.items()}
 
@@ -848,7 +794,7 @@ class MainWindow(QMainWindow):
                     # update the combobox to reflect the added room
                     self.update_rooms()
                     print(self.df_rooms)
-    
+
     #######################Dataframe initialization function ################################
     def create_programs(self):
         # Define the programs to include in the new dataframe
@@ -862,12 +808,11 @@ class MainWindow(QMainWindow):
                     'BK']
 
         # Create a new dataframe with the programs as the index and 0 as the initial values
-        new_df = pd.DataFrame(index=programs, columns=['1st Term Students', '2nd Term Students', '3rd Term Students']).fillna(0)
+        new_df = pd.DataFrame(index=programs,
+                              columns=['1st Term Students', '2nd Term Students', '3rd Term Students']).fillna(0)
 
         # Return new df
         return new_df
-
-
 
     def edit_room_text(self, room_textbox, text):
         # Get the current text in the text edit
@@ -884,10 +829,11 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyle("Breeze")
 
     # style sheet load
-    filename = str(pathlib.Path(__file__).parent.resolve())+"\\"
-    with open(filename+"style.qss", "r") as style_file:
+    filename = str(pathlib.Path(__file__).parent.resolve()) + "\\"
+    with open(filename + "style.qss", "r") as style_file:
         style_str = style_file.read()
 
     app.setStyleSheet(style_str)
