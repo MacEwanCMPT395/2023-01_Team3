@@ -332,7 +332,7 @@ class MainWindow(QMainWindow):
                         self.table_model.setItem(row, col, item)
 
     def increment_week(self):
-        if self.week > 14:
+        if self.week > 13:
             self.week = 1
         else:
             self.week += 1

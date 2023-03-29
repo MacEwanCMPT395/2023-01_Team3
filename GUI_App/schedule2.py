@@ -569,14 +569,15 @@ class Schedule:
             class_id = room.classroom_id
             dates = list(sorted(data.keys()))
 
-            sem_start = dates[0].weekday() + 1
+            sem_start = dates[0].weekday()
             old_monday_offset = 0
+            
             if sem_start != 0:
-                old_monday_offset = -(7 % sem_start)
+                old_monday_offset = -sem_start
 
             sem_start = dates[0] + datetime.timedelta(days=old_monday_offset)
 
-            num_range = (dates[-1] - sem_start).days + 1
+            num_range = abs((dates[-1] - sem_start).days) + 1
 
             for single_date in range(num_range):
                 date = sem_start + datetime.timedelta(days=single_date)
@@ -586,8 +587,7 @@ class Schedule:
                         dates.append(date)
 
             dates = sorted(dates)
-
-            week = 1
+            week_name = ""
             for i, class_date in enumerate(dates):
 
                 class_times = data[class_date]
